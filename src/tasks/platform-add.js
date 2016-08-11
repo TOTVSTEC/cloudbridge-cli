@@ -34,8 +34,8 @@ CloudBridgeTask.prototype.run = function run(cloudbridge, argv) {
 			unzipPath = path.join(cloudbridge.projectDir, 'build', 'download');
 
 		return promise.then(function() {
-			//return utils.fetchArchive(unzipPath, resourceUrl);
-
+			return utils.fetchArchive(unzipPath, resourceUrl);
+			/*
 			var srcDir = path.join('F:', 'node', 'ionic', 'cloudbridge-kit-android-teste', '*'),
 				targetDir = path.join(unzipPath, 'cloudbridge-kit-android-master');
 
@@ -43,6 +43,7 @@ CloudBridgeTask.prototype.run = function run(cloudbridge, argv) {
 
 			shelljs.mkdir('-p', targetDir);
 			shelljs.cp('-Rf', srcDir, targetDir);
+			*/
 		})
 		/*
 		.then(function() {

@@ -337,12 +337,14 @@ Info.checkRuntime = function checkRuntime() {
 			validRuntime = false;
 		}
 
+		/*
 		if (!cordovaInstalled || cordovaUpgrade) {
 			var action = cordovaInstalled ? 'update' : 'install';
 			var updateMessage = [' Please', action, 'your Cordova CLI to version ', requirements.cordova, '`npm install -g cordova`'].join(' ');
 			logging.logger.info(updateMessage.red.bold);
 			validRuntime = false;
 		}
+		*/
 
 		if (info.ios_sim === 'Not installed') {
 			logging.logger.info(' Install ios-sim to deploy iOS applications. `npm install -g ios-sim` (may require sudo)'.red.bold);

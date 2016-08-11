@@ -1,7 +1,7 @@
 var Updates = module.exports,
 	request = require('request'),
 	semver = require('semver'),
-	Q  = require('Q'),
+	Q  = require('q'),
 	Info = cb_require('utils/info'),
 	CloudBridgeStore = cb_require('utils/store').CloudBridgeStore,
 	CloudBridgeConfig = new CloudBridgeStore('cloudbridge.config');
