@@ -3,7 +3,6 @@ var fs = require('fs'),
 	path = require('path'),
 	Q = require('q'),
 	request = require('request'),
-	xml2js = require('xml2js'),
 	_ = require('underscore'),
 	crc = require('crc'),
 	Task = cb_require('tasks/task').Task,
@@ -720,7 +719,7 @@ function getConfigData(appDirectory) {
 			deferred.resolve(configData);
 		}
 		catch (e) {
-			logging.logger.error('Error xml2js parseString: ' + e);
+			logging.logger.error('Error getConfigData parseString: ' + e);
 			deferred.reject();
 		}
 	});
