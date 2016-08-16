@@ -4,7 +4,6 @@ var PlatformTask = cb_require('tasks/platform'),
 	shelljs = require('shelljs'),
 	Q = require('q');
 
-
 var PlatformAddTask = function() {
 
 };
@@ -18,8 +17,6 @@ PlatformAddTask.prototype.run = function run(cloudbridge, argv) {
 	if (platforms.length === 0) {
 		throw new Error("Invalid platform!");
 	}
-
-
 
 	return platforms.reduce(function(promise, platform, index) {
 		var options = {
