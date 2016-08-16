@@ -98,11 +98,11 @@ Utils.fetchPackage = function fetchPackage(options) {
 		outputDir = path.join(packageDir, options.version),
 		url = 'https://github.com/' + options.group + '/' + options.package + '/archive/' + options.version + '.zip';
 
-	//if (shelljs.test('-d', outputDir)) {
+	if (shelljs.test('-d', outputDir)) {
 		return Q.fcall(function() {
 			return outputDir;
 		});
-	/*}
+	}
 
 	shelljs.mkdir('-p', packageDir);
 
@@ -113,7 +113,6 @@ Utils.fetchPackage = function fetchPackage(options) {
 
 		return outputDir;
 	});
-	*/
 };
 
 Utils.copyPackage = function copyPackage(options) {
