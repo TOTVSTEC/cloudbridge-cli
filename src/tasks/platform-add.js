@@ -1,95 +1,66 @@
-var Task = cb_require('tasks/task').Task,
+var PlatformTask = cb_require('tasks/platform'),
+	utils = cb_require('utils/utils'),
 	path = require('path'),
 	shelljs = require('shelljs'),
-	Q = require('q'),
-	resources = cb_require('utils/resources');
+	Q = require('q');
 
-var utils = cli.utils;
 
-var CloudBridgeTask = function() { };
-CloudBridgeTask.prototype = new Task();
+var PlatformAddTask = function() {
 
-CloudBridgeTask.prototype.run = function run(cloudbridge, argv) {
-	var platforms = [],
-		projectData = null;
+};
 
-	if (argv._.indexOf('android') != -1)
-		platforms.push('android');
+PlatformAddTask.prototype = new PlatformTask();
 
-	if (argv._.indexOf('ios') != -1)
-		platforms.push('ios');
+PlatformAddTask.prototype.run = function run(cloudbridge, argv) {
+	var _this = this,
+		platforms = _this.getPlatforms(argv);
 
 	if (platforms.length === 0) {
 		throw new Error("Invalid platform!");
 	}
 
-	var promise = resources.getConfigData(cloudbridge.projectDir).then(function(data) {
-		projectData = data;
-	});
 
-	// Then execute requirement checks one-by-one
-	promise = platforms.reduce(function(promise, platform, index) {
-		var repo = 'cloudbridge-kit-' + platform,
-			resourceUrl = 'https://github.com/totvstec/' + repo + '/archive/master.zip',
-			unzipPath = path.join(cloudbridge.projectDir, 'build', 'download');
 
-		return promise.then(function() {
-			return utils.fetchArchive(unzipPath, resourceUrl);
-			/*
-			var srcDir = path.join('F:', 'node', 'ionic', 'cloudbridge-kit-android-teste', '*'),
-				targetDir = path.join(unzipPath, 'cloudbridge-kit-android-master');
-
-			shelljs.rm('-rf', path.join(cloudbridge.projectDir, 'src', 'android'));
-
-			shelljs.mkdir('-p', targetDir);
-			shelljs.cp('-Rf', srcDir, targetDir);
-			*/
-		})
-		/*
-		.then(function() {
-			var srcDir = path.join(unzipPath, repo + '-master', 'src'),
-				targetDir = path.join(cloudbridge.projectDir, 'src');
-
-			return utils.copyTemplate(srcDir, targetDir, projectData);
-		})
-		.then(function() {
-			var srcDir = path.join(unzipPath, repo + '-master', 'build', '*'),
-				targetDir = path.join(cloudbridge.projectDir, 'build');
-
-			shelljs.cp('-Rf', srcDir, targetDir);
-		})
-		*/
-		.then(function() {
-			var x = null;
-
-			try {
-				x = require(path.join(unzipPath, repo + '-master', 'index'));
+	return platforms.reduce(function(promise, platform, index) {
+		var options = {
+			platform: platform,
+			package: 'cloudbridge-kit-' + platform,
+			project: {
+				dir: cloudbridge.projectDir,
+				data: _this.project.data()
 			}
-			catch (error) {
-				console.error(error);
-			}
+		};
 
-			if (x !== null)
-				x.run(cloudbridge, projectData);
-		})
-		.then(function() {
-			console.log('The platform "' + platform + '" has been successfully added to your project!');
+		return promise
+			.then(function() {
+				return utils.fetchPackage(options);
+			})
+			.then(function(packageDir) {
+				options.src = packageDir;
 
-			var android = require(__basedir + '/kits/android');
+				return _this.install(options);
+			})
+			.then(function() {
+				return _this.save(options);
+			});
 
-			android.build(cloudbridge);
-
-		})
-		.catch(function(ex) {
-			console.error(ex);
-		});
-	}, promise);
-
-	return promise;
+	}, Q());
 };
 
-CloudBridgeTask.prototype.install = function(promise, platforms) {
-
+PlatformAddTask.prototype.install = function install(options) {
+	return this.execute('add', options);
 };
 
-exports.CloudBridgeTask = CloudBridgeTask;
+PlatformAddTask.prototype.save = function save(options) {
+	var platformData = this.project.get('platform') || {};
+	platformData[options.platform] = {
+		version: options.version
+	};
+
+	this.project.set('platform', platformData);
+	this.project.save();
+
+	console.log('The platform "' + options.platform + '" has been successfully added to your project!');
+};
+
+module.exports = PlatformAddTask;

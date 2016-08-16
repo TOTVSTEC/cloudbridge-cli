@@ -10,19 +10,25 @@ Project.PROJECT_DEFAULT = {
 };
 Project.data = null;
 
-Project.wrap = function wrap(appDirectory, data) {
+Project.wrap = function wrap(appDirectory, _data) {
 	return {
 		get: function get(key) {
-			return Project.get(data, key);
+			return Project.get(_data, key);
 		},
 		remove: function remove(key) {
-			return Project.remove(data, key);
+			return Project.remove(_data, key);
 		},
 		set: function set(key, value) {
-			return Project.set(data, key, value);
+			return Project.set(_data, key, value);
 		},
 		save: function save() {
-			return Project.save(appDirectory, data);
+			return Project.save(appDirectory, _data);
+		},
+		toString: function toString() {
+			return JSON.stringify(_data);
+		},
+		data: function data() {
+			return _data;
 		}
 	};
 };
@@ -42,16 +48,10 @@ Project.load = function load(appDirectory) {
 			throw new Error('There was an error loading your cloudbridge.json file: ' + ex.message);
 		}
 	}
-	else if (fs.existsSync(path.join(appDirectory, 'www'))) {
-		var data = Project.PROJECT_DEFAULT;
-		var parts = path.join(appDirectory, '.').split(path.sep);
-		var dirname = parts[parts.length - 1];
-		Project.create(appDirectory, dirname);
-		Project.save(appDirectory, data);
-	}
 	else {
 		throw new Error('Unable to locate the cloudbridge.json file. Are you in your project directory?');
 	}
+
 	return Project.wrap(appDirectory, data);
 };
 

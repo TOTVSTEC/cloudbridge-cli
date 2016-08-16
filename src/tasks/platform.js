@@ -1,10 +1,17 @@
-var Task = cb_require('tasks/task').Task,
+var AppTask = cb_require('tasks/app-task'),
+	path = require('path'),
 	utils = cli.utils;
 
-var CloudBridgeTask = function() { };
-CloudBridgeTask.prototype = new Task();
+var VALID_PLATFORMS = [
+	'windows',
+	'android',
+	'ios'
+];
 
-CloudBridgeTask.prototype.run = function(cloudbridge, argv) {
+var PlatformTask = function() { };
+PlatformTask.prototype = new AppTask();
+
+PlatformTask.prototype.run = function(cloudbridge, argv) {
 	cloudbridge.projectDir = process.cwd();
 
 	try {
@@ -13,12 +20,12 @@ CloudBridgeTask.prototype.run = function(cloudbridge, argv) {
 		var task = null;
 
 		if (isAddCmd) {
-			var PlatformAddTask = require('./platform-add').CloudBridgeTask,
+			var PlatformAddTask = require('./platform-add'),
 
 			task = new PlatformAddTask();
 		}
 		else if (isRmCmd) {
-			var PlatformRemoveTask = require('./platform-remove').CloudBridgeTask;
+			var PlatformRemoveTask = require('./platform-remove');
 
 			task = new PlatformRemoveTask();
 		}
@@ -30,21 +37,33 @@ CloudBridgeTask.prototype.run = function(cloudbridge, argv) {
 	}
 };
 
-CloudBridgeTask.prototype.runCordova = function(cmdName, argv) {
-	var android = require(__basedir + '/kits/android');
+PlatformTask.prototype.execute = function execute(action, options) {
+	var task = null,
+		moduleName = path.join(options.src, action);
 
-	android.adb.devices().then(function(data) {
-		console.log(data);
-	});
+	try {
+		task = require(moduleName);
+	}
+	catch (error) {
+		console.error(error);
+	}
 
-
-	/*
-	return android.checker.run().then(function() {
-		return android.checker.check_gradle();
-	//}).then(function() {
-	//	return check_reqs.check_ant();
-	});
-	*/
+	if (task !== null) {
+		return task.run(cli, options.project.data);
+	}
 };
 
-exports.CloudBridgeTask = CloudBridgeTask;
+PlatformTask.prototype.getPlatforms = function getPlatforms(argv) {
+	var platforms = [];
+
+	for (var i = 0; i < VALID_PLATFORMS.length; i++) {
+		var platform = VALID_PLATFORMS[i];
+
+		if (argv._.indexOf(platform) != -1)
+			platforms.push(platform);
+	}
+
+	return platforms;
+};
+
+module.exports = PlatformTask;

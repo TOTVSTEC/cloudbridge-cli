@@ -2,13 +2,13 @@ var	path = require('path'),
 	request = require('request'),
 	_ = require('underscore'),
 	Q = require('q'),
-	Task = cb_require('tasks/task').Task;
+	Task = cb_require('tasks/task');
 
-var CloudBridgeTask = function() { };
+var StartListTask = function() { };
 
-CloudBridgeTask.prototype = new Task();
+StartListTask.prototype = new Task();
 
-CloudBridgeTask.prototype.fetchStarterTemplates = function() {
+StartListTask.prototype.fetchStarterTemplates = function() {
 	var self = this;
 
 	// console.log('About to fetch template');
@@ -43,7 +43,7 @@ CloudBridgeTask.prototype.fetchStarterTemplates = function() {
 	return q.promise;
 };
 
-CloudBridgeTask.prototype.list = function list(templates) {
+StartListTask.prototype.list = function list(templates) {
 	//Should have array of [{ name: 'name', description: 'desc' }]
 	console.log('\n');
 	_.each(templates, function(template) {
@@ -57,7 +57,7 @@ CloudBridgeTask.prototype.list = function list(templates) {
 	});
 };
 
-CloudBridgeTask.prototype.run = function(cloudbridge) {
+StartListTask.prototype.run = function(cloudbridge) {
 	var self = this;
 
 	self.fetchStarterTemplates()
@@ -72,4 +72,4 @@ CloudBridgeTask.prototype.run = function(cloudbridge) {
 		});
 };
 
-exports.CloudBridgeTask = CloudBridgeTask;
+module.exports = StartListTask;

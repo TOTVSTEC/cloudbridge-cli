@@ -68,6 +68,19 @@ Cli.run = function run(processArgv) {
 
 		promise.catch(function(ex) {
 			console.error(ex);
+		})
+		.done(function onFulfilled() {
+			Cli.processExit();
+		},
+		function onRejected() {
+			console.log('Fail!');
+			console.log(arguments);
+
+			Cli.processExit(1);
+		},
+		function onProgress() {
+			console.log('Progress...');
+			console.log(arguments);
 		});
 
 		return promise;
@@ -101,7 +114,7 @@ Cli.getBooleanOptionsForTask = function getBooleanOptionsForTask(task) {
 
 Cli.lookupTask = function lookupTask(module) {
 	try {
-		var taskModule = cb_require('tasks/' + module).CloudBridgeTask;
+		var taskModule = cb_require('tasks/' + module);
 		return taskModule;
 	}
 	catch (ex) {

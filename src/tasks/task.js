@@ -6,4 +6,4 @@ Task.prototype = {
 	}
 };
 
-exports.Task = Task;
+module.exports = Task;

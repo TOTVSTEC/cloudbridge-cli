@@ -6,10 +6,10 @@ var fs = require('fs'),
 	prompt = require('prompt'),
 	Q = require('q'),
 
-	StartListTask = cb_require('tasks/start-list').CloudBridgeTask,
+	StartListTask = cb_require('tasks/start-list'),
 	CloudBridgeStore = cb_require('utils/store').CloudBridgeStore,
 	CloudBridgeProject = cb_require('project/project'),
-	Task = require('./task').Task;
+	Task = cb_require('tasks/task');
 
 
 //	shellConfig = require('shelljs').config,
@@ -806,8 +806,8 @@ StartTask.finalize = function(options) {
 		var project = CloudBridgeProject.create(options.targetPath, options.appName);
 		project.set('name', options.appName);
 
-		if (options.cloudbridgeAppId) {
-			project.set('id', options.cloudbridgeAppId);
+		if (options.packageName) {
+			project.set('id', options.packageName);
 		}
 
 		project.save(options.targetPath);
@@ -845,4 +845,4 @@ StartTask.finalize = function(options) {
 };
 
 
-exports.CloudBridgeTask = StartTask;
+module.exports = StartTask;

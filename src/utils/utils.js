@@ -82,6 +82,49 @@ Utils.createArchive = function(appDirectory, documentRoot) {
 	return q.promise;
 };
 
+
+Utils.fetchPackage = function fetchPackage(options) {
+	if (typeof options == 'string') {
+		options = {
+			package: options
+		};
+	}
+
+	options.group = options.group || 'totvstec';
+	options.version = options.version || 'master';
+
+	var homeDir = process.env.HOME || process.env.USERPROFILE || process.env.HOMEPATH,
+		packageDir = path.join(homeDir, '.cloudbridge', 'packages', options.group, options.package),
+		outputDir = path.join(packageDir, options.version),
+		url = 'https://github.com/' + options.group + '/' + options.package + '/archive/' + options.version + '.zip';
+
+	//if (shelljs.test('-d', outputDir)) {
+		return Q.fcall(function() {
+			return outputDir;
+		});
+	/*}
+
+	shelljs.mkdir('-p', packageDir);
+
+	return Utils.fetchArchive(packageDir, url).then(function() {
+		var contentDir = path.join(packageDir, options.package + '-' + options.version);
+
+		shelljs.mv(contentDir, outputDir);
+
+		return outputDir;
+	});
+	*/
+};
+
+Utils.copyPackage = function copyPackage(options) {
+	var targetDir = path.join(options.project.dir, 'build', 'packages', options.package);
+
+	shelljs.rm('-rf', targetDir);
+	shelljs.mkdir('-p', targetDir);
+	shelljs.cp('-Rf', path.join(options.src, '*'), targetDir);
+};
+
+
 Utils.fetchArchive = function fetchArchive(targetPath, archiveUrl, isGui) {
 	var os = require('os');
 	var fs = require('fs');
@@ -94,7 +137,7 @@ Utils.fetchArchive = function fetchArchive(targetPath, archiveUrl, isGui) {
 	logging.logger.info(message);
 
 	var tmpFolder = os.tmpdir();
-	var tempZipFilePath = path.join(tmpFolder, 'cloudbridge-template-' + new Date().getTime() + '.zip');
+	var tempZipFilePath = path.join(tmpFolder, 'cloudbridge-' + new Date().getTime() + '.zip');
 
 	var unzipRepo = function unzipRepo(fileName) {
 		var readStream = fs.createReadStream(fileName);
@@ -190,14 +233,12 @@ Utils.preprocessOptions = function preprocessOptions(options) {
 };
 
 Utils.preprocessCliOptions = function preprocessCliOptions(argv) {
-	logging.logger.debug('Utils.preprocessCliOptions', argv);
-
 	try {
 		var options = {};
 
 		//	  0	 1
 		//cloudbridge start facebooker
-		// Grab the app's relative directory name
+		//Grab the app's relative directory name
 		options.appDirectory = argv._[1];
 
 		// Grab the name of the app from -a or  --app. Defaults to appDirectory if none provided
@@ -210,7 +251,6 @@ Utils.preprocessCliOptions = function preprocessCliOptions(argv) {
 
 		// get a packge name, like com.cloudbridge.myapp
 		options.packageName = argv.id || argv.i;
-		options.cloudbridgeAppId = argv['io-app-id'];
 
 		// start project template can come from cmd line args -t, --template, or the 3rd arg, and defaults to empty
 		options.template = (argv.template || argv.t || argv._[2] || 'empty');
@@ -230,52 +270,16 @@ Utils.getProjectDirectory = function getProjectDirectory(options) {
 	return path.resolve(options.appDirectory);
 };
 
-Utils.getContentSrc = function getContentSrc(appDirectory) {
-	logging.logger.debug('Utils.getContentSrc', appDirectory);
-	var contentSrc;
-	try {
-		var fs = require('fs');
-		var path = require('path');
-		var configXmlPath = path.join(appDirectory, 'config.xml');
-		if (!fs.existsSync(configXmlPath)) {
-			return 'index.html';
-		}
-
-		ConfigJson.setConfigJson(appDirectory, {
-			resetContent: true,
-			errorWhenNotFound: false
-		});
-
-		var configString = fs.readFileSync(configXmlPath, { encoding: 'utf8' });
-
-		var xml2js = require('xml2js');
-		var parseString = xml2js.parseString;
-		parseString(configString, function(err, jsonConfig) {
-			if (err) {
-				return Utils.fail('Error parsing config.xml: ' + err);
-			}
-			try {
-				contentSrc = jsonConfig.main;
-			}
-			catch (e) {
-				return Utils.fail('Error parsing ' + configXmlPath + ': ' + e);
-			}
-		});
-
-	}
-	catch (e) {
-		logging.logger.debug('Utils.getContentSrc failed', e);
-		console.log(e.stack);
-		return Utils.fail('Error loading ' + configXmlPath + ': ' + e);
-	}
-
-	return contentSrc;
-};
-
 Utils.mergeOptions = function mergeOptions(obj1, obj2) {
 	var obj3 = {};
-	for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
-	for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
+
+	for (var attrname in obj1) {
+		obj3[attrname] = obj1[attrname];
+	}
+	for (var attrname in obj2) {
+		obj3[attrname] = obj2[attrname];
+	}
+
 	return obj3;
 };
 
