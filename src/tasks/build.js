@@ -10,9 +10,17 @@ var BuildTask = function() { };
 BuildTask.prototype = new AppTask();
 
 BuildTask.prototype.run = function run(cloudbridge, argv) {
+	/*
 	var android = require(__basedir + '/kits/android');
 
 	return android.build(cloudbridge);
+	*/
+
+	var BuildWindowsTask = require('./build-windows'),
+
+	task = new BuildWindowsTask();
+
+	return task.run(cloudbridge, argv);
 };
 
 module.exports = BuildTask;

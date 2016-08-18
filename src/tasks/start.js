@@ -57,8 +57,7 @@ StartTask.prototype.run = function run(cloudbridge, argv) {
 
 	if (fs.existsSync(options.targetPath)) {
 		var _argv = require('optimist').boolean(['list']).argv,
-
-		promptPromise = StartTask.promptForOverwrite(options.targetPath, _argv);
+			promptPromise = StartTask.promptForOverwrite(options.targetPath, _argv);
 	}
 	else {
 		promptPromise = Q(true);
@@ -101,28 +100,28 @@ StartTask.promptForOverwrite = function promptForOverwrite(targetPath, _argv) {
 	prompt.message = '';
 	prompt.delimiter = '';
 	prompt.start();
-/*
-	prompt.get({ properties: promptProperties }, function(err, promptResult) {
-		if (err && err.message !== 'canceled') {
-			q.reject(err);
-			return logging.logger.error(err);
-		}
-		else if (err && err.message == 'canceled') {
-			return q.resolve(false);
-		}
+	/*
+		prompt.get({ properties: promptProperties }, function(err, promptResult) {
+			if (err && err.message !== 'canceled') {
+				q.reject(err);
+				return logging.logger.error(err);
+			}
+			else if (err && err.message == 'canceled') {
+				return q.resolve(false);
+			}
 
-		var areYouSure = promptResult.areYouSure.toLowerCase().trim();
-		if (areYouSure == 'yes' || areYouSure == 'y') {
-			*/
-			shelljs.rm('-rf', targetPath);
-			q.resolve(true);
-			/*
-		}
-		else {
-			q.resolve(false);
-		}
-	});
-	*/
+			var areYouSure = promptResult.areYouSure.toLowerCase().trim();
+			if (areYouSure == 'yes' || areYouSure == 'y') {
+				*/
+	shelljs.rm('-rf', targetPath);
+	q.resolve(true);
+	/*
+}
+else {
+	q.resolve(false);
+}
+});
+*/
 
 	return q.promise;
 };
@@ -143,6 +142,8 @@ StartTask.startApp = function startApp(options) {
 	if (typeof options.targetPath == 'undefined' || options.targetPath == '.') {
 		throw new Error('Invalid target path, you may not specify \'.\' as an app name');
 	}
+
+	shelljs.mkdir('-p', options.targetPath);
 
 	//CbConfig.warnMissingData();
 
@@ -192,22 +193,30 @@ StartTask.printQuickHelp = function(options) {
 
 StartTask.fetchWrapper = function fetchWrapper(options) {
 	var q = Q.defer();
-	var downloadDir = options.targetPath + '/build/download';
-	// var self = this;
 
-	var repoUrl = 'https://github.com/totvstec/' + WRAPPER_REPO_NAME + '/archive/master.zip';
+	/*
+	var fetchOptions = {
+		package: 'cloudbridge-app-base'
+	};
+	*/
+	var fetchOptions = 'cloudbridge-app-base';
 
-	utils.fetchArchive(downloadDir, repoUrl)
-		.then(function() {
-			var repoFolderName = WRAPPER_REPO_NAME + '-master';
-			//shelljs.cp('-R', downloadDir + '/' + repoFolderName + '/.', options.targetPath);
+	utils.fetchPackage(fetchOptions)
+		.then(function(packageDir) {
+			//options.src = packageDir;
 
-			utils.copyTemplate(downloadDir + '/' + repoFolderName, options.targetPath, {
+			utils.copyTemplate(packageDir, options.targetPath, {
 				appname: options.appName
 			});
 
-			shelljs.rm('-rf', downloadDir + '/' + repoFolderName + '/');
+			var advplDir = path.join(options.targetPath, 'src', 'advpl');
+
+			shelljs.mv(
+				path.join(advplDir, 'program.prw'),
+				path.join(advplDir, options.appName + '.prw'));
+
 			shelljs.cd(options.targetPath);
+			//return _this.install(options);
 
 			q.resolve();
 		}, function(err) {
@@ -216,6 +225,34 @@ StartTask.fetchWrapper = function fetchWrapper(options) {
 			q.reject('Error: Unable to fetch wrapper repo: ' + err);
 			// return utils.fail('Error: Unable to fetch wrapper repo: ' + err);
 		});
+
+
+	/*
+		var downloadDir = options.targetPath + '/build/download';
+		// var self = this;
+
+		var repoUrl = 'https://github.com/totvstec/' + WRAPPER_REPO_NAME + '/archive/master.zip';
+
+		utils.fetchArchive(downloadDir, repoUrl)
+			.then(function() {
+				var repoFolderName = WRAPPER_REPO_NAME + '-master';
+				//shelljs.cp('-R', downloadDir + '/' + repoFolderName + '/.', options.targetPath);
+
+				utils.copyTemplate(downloadDir + '/' + repoFolderName, options.targetPath, {
+					appname: options.appName
+				});
+
+				shelljs.rm('-rf', downloadDir + '/' + repoFolderName + '/');
+				shelljs.cd(options.targetPath);
+
+				q.resolve();
+			}, function(err) {
+				q.reject(err);
+			}).catch(function(err) {
+				q.reject('Error: Unable to fetch wrapper repo: ' + err);
+				// return utils.fail('Error: Unable to fetch wrapper repo: ' + err);
+			});
+		*/
 
 	return q.promise;
 };
