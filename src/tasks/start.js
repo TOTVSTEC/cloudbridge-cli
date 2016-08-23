@@ -6,6 +6,7 @@ var fs = require('fs'),
 	prompt = require('prompt'),
 	Q = require('q'),
 
+	Package = cb_require('utils/package'),
 	StartListTask = cb_require('tasks/start-list'),
 	CloudBridgeStore = cb_require('utils/store').CloudBridgeStore,
 	CloudBridgeProject = cb_require('project/project'),
@@ -19,8 +20,7 @@ var fs = require('fs'),
 var utils = cli.utils,
 	logging = cli.logging;
 
-var WRAPPER_REPO_NAME = 'cloudbridge-app-base',
-	DEFAULT_APP = {
+var DEFAULT_APP = {
 		"id": "",
 		"name": "",
 		"description": "",
@@ -145,22 +145,15 @@ StartTask.startApp = function startApp(options) {
 
 	shelljs.mkdir('-p', options.targetPath);
 
-	//CbConfig.warnMissingData();
-
 	var createMessage = ['Creating CloudBridge app in folder ', options.targetPath, ' based on ', options.template.bold, ' project'].join('');
 	var errorWithStart = false;
 
 	logging.logger.info(createMessage);
 
-	return StartTask.fetchWrapper(options)
-		.then(function(data) {
-			return StartTask.fetchSeed(options);
-		})
+
+	return StartTask.createProjectFile(options)
 		.then(function() {
-			return StartTask.loadAppSetup(options);
-		})
-		.then(function(appSetup) {
-			return StartTask.initCloudBridge(options, appSetup);
+			return StartTask.fetchSeed(options);
 		})
 		.catch(function(ex) {
 			errorWithStart = true;
@@ -193,12 +186,6 @@ StartTask.printQuickHelp = function(options) {
 
 StartTask.fetchWrapper = function fetchWrapper(options) {
 	var q = Q.defer();
-
-	/*
-	var fetchOptions = {
-		package: 'cloudbridge-app-base'
-	};
-	*/
 	var fetchOptions = 'cloudbridge-app-base';
 
 	utils.fetchPackage(fetchOptions)
@@ -225,34 +212,6 @@ StartTask.fetchWrapper = function fetchWrapper(options) {
 			q.reject('Error: Unable to fetch wrapper repo: ' + err);
 			// return utils.fail('Error: Unable to fetch wrapper repo: ' + err);
 		});
-
-
-	/*
-		var downloadDir = options.targetPath + '/build/download';
-		// var self = this;
-
-		var repoUrl = 'https://github.com/totvstec/' + WRAPPER_REPO_NAME + '/archive/master.zip';
-
-		utils.fetchArchive(downloadDir, repoUrl)
-			.then(function() {
-				var repoFolderName = WRAPPER_REPO_NAME + '-master';
-				//shelljs.cp('-R', downloadDir + '/' + repoFolderName + '/.', options.targetPath);
-
-				utils.copyTemplate(downloadDir + '/' + repoFolderName, options.targetPath, {
-					appname: options.appName
-				});
-
-				shelljs.rm('-rf', downloadDir + '/' + repoFolderName + '/');
-				shelljs.cd(options.targetPath);
-
-				q.resolve();
-			}, function(err) {
-				q.reject(err);
-			}).catch(function(err) {
-				q.reject('Error: Unable to fetch wrapper repo: ' + err);
-				// return utils.fail('Error: Unable to fetch wrapper repo: ' + err);
-			});
-		*/
 
 	return q.promise;
 };
@@ -292,24 +251,6 @@ StartTask.fetchSeed = function(options) {
 	// CloudBridge Github Repo
 	seedType = 'cloudbridge-template';
 	return StartTask.fetchCloudBridgeStarter(options);
-};
-
-//Not Tested
-StartTask.loadAppSetup = function loadAppSetup(options) {
-	var appSetup = DEFAULT_APP;
-	var appJsonPath = path.join(options.targetPath, 'www', 'app.json');
-
-	if (fs.existsSync(appJsonPath)) {
-		try {
-			appSetup = JSON.parse(fs.readFileSync(appJsonPath));
-			shelljs.rm('-rf', appJsonPath);
-		}
-		catch (e) {
-			logging.logger.error('app.json error: %s', e, {});
-		}
-	}
-
-	return appSetup;
 };
 
 StartTask.fetchCodepen = function(options) {
@@ -474,25 +415,41 @@ StartTask.fetchLocalStarter = function(options) {
 
 
 StartTask.fetchCloudBridgeStarter = function(options) {
-
+	/*
 	// Get the starter project repo name:
 	var repoName = ['cloudbridge-template-', options.template].join('');
 
 	// Get the URL for the starter project repo:
 	var repoUrl = ['https://github.com/totvstec/', repoName].join('');
+	*/
 
-	return StartTask.fetchGithubStarter(options, repoUrl);
+	var packageOptions = {
+		name: 'cloudbridge-template-' + options.template,
+		group: 'totvstec'
+	};
+
+
+	return StartTask.fetchGithubStarter(options, packageOptions);
 };
 
 
-StartTask.fetchGithubStarter = function(options, repoUrl) {
-	var q = Q.defer();
+StartTask.fetchGithubStarter = function(options, packageOptions) {
+	//var q = Q.defer();
 
+	var package = new Package(packageOptions);
+
+	return package.fetch()
+		.then(function() {
+			return package.install(options.targetPath, {});
+		});
+
+
+/*
 	var urlParse = parseUrl(repoUrl);
 	var pathSplit = urlParse.pathname.replace(/\//g, ' ').trim().split(' ');
 	if (!urlParse.hostname || urlParse.hostname.toLowerCase() !== 'github.com' || pathSplit.length !== 2) {
 		logging.logger.error(('Invalid Github URL: ' + repoUrl).error);
-		logging.logger.error(('Example of a valid URL: https://github.com/totvstec/cloudbridge-template-empty/').error);
+		logging.logger.error(('Example of a valid URL: https://github.com/totvstec/cloudbridge-template-base/').error);
 		utils.fail('');
 		q.reject();
 		return q.promise;
@@ -507,10 +464,11 @@ StartTask.fetchGithubStarter = function(options, repoUrl) {
 	}
 	repoUrl += 'archive/master.zip';
 
+	utils.fetchPackage()
+
 	utils.fetchArchive(downloadDir, repoUrl).then(function() {
 
 		try {
-			// Move the content of this repo into the www folder
 			//shelljs.cp('-Rf', downloadDir + '/' + repoFolderName + '/.', 'src');
 			utils.copyTemplate(downloadDir + '/' + repoFolderName, options.targetPath, {
 				appname: options.appName
@@ -532,8 +490,9 @@ StartTask.fetchGithubStarter = function(options, repoUrl) {
 		logging.logger.error('More info available at: \nhttps://github.com/totvstec/cloudbridge-cli');
 		return utils.fail('');
 	});
+*/
 
-	return q.promise;
+	//return q.promise;
 };
 
 StartTask.fetchZipStarter = function fetchZipStarter(options) {
@@ -627,62 +586,6 @@ StartTask.fetchPlnkr = function fetchPlnkr(options) {
 				q.reject(e);
 			}
 		});
-
-	return q.promise;
-};
-
-StartTask.initCloudBridge = function(options, appSetup) {
-	var q = Q.defer();
-
-	try {
-		if (options.isCordovaProject) {
-			//Hooks.setHooksPermission(options.targetPath);
-			logging.logger.info('Update Config.xml'.green.bold);
-
-			appSetup.bower = appSetup.bower ? appSetup.bower : [];
-
-			var cmds = [];
-
-			if (appSetup.bower) {
-				// add bower packages
-				for (var y = 0; y < appSetup.bower.length; y++) {
-					cmds.push('cloudbridge add ' + appSetup.bower[y]);
-				}
-			}
-
-			// platform add android with --android flag
-			if (options.android) {
-				cmds.push('cloudbridge platform add android');
-			}
-
-			// platform add ios with --android flag
-			if (options.ios) {
-				cmds.push('cloudbridge platform add ios');
-			}
-
-			shelljs.exec(cmds.join(' && '),
-				function(err, stdout, stderr) {
-					if (err) {
-						utils.fail('Unable to add plugins. Perhaps your version of Cordova is too old. ' +
-							'Try updating (npm install -g cordova), removing this project folder, and trying again.');
-						q.reject(stderr);
-					}
-					else {
-						q.resolve(stdout);
-					}
-				});
-
-			logging.logger.info('Initializing cordova project'.green.bold);
-		}
-		else {
-			q.resolve();
-		}
-	}
-	catch (ex) {
-		logging.logger.debug('Exception caught in initCordova: %s', ex, {});
-		logging.logger.debug('Exception details: %s', ex.stack, {});
-		q.reject(ex);
-	}
 
 	return q.promise;
 };
@@ -824,19 +727,23 @@ StartTask.updateLibFiles = function(libPath) {
 };
 
 StartTask.finalize = function(options) {
-	/*
 	try {
-		var packageFilePath = path.join(options.targetPath, 'package.json');
-		var packageData = require(packageFilePath);
-		packageData.name = encodeURIComponent(options.appName.toLowerCase().replace(/\s+/g, '-'));
-		packageData.description = options.appName + ': An CloudBridge project';
-		fs.writeFileSync(packageFilePath, JSON.stringify(packageData, null, 2), 'utf8');
+		// update the app name in the bower.json file
+		var cloudbridgeBower = require('./bower').CloudBridgeBower;
+		cloudbridgeBower.setAppName(options.appName);
 	}
-	catch (e) {
-		logging.logger.error('There was an error finalizing the package.json file. %s', e, {});
-	}
-	*/
+	catch (e) { }
 
+	try {
+		// remove the README file in the root because it
+		// doesn't make sense because its the README for the repo
+		// and not helper text while developing an app
+		fs.unlinkSync(options.targetPath + '/README.md');
+	}
+	catch (e) { }
+};
+
+StartTask.createProjectFile = function createProjectFile(options) {
 	try {
 		// create the cloudbridge.json file and
 		// set the app name
@@ -854,32 +761,7 @@ StartTask.finalize = function(options) {
 		logging.logger.error('Error saving project file');
 	}
 
-	try {
-		// update the app name in the bower.json file
-		var cloudbridgeBower = require('./bower').CloudBridgeBower;
-		cloudbridgeBower.setAppName(options.appName);
-	}
-	catch (e) { }
-
-	try {
-		// remove the README file in the root because it
-		// doesn't make sense because its the README for the repo
-		// and not helper text while developing an app
-		fs.unlinkSync(options.targetPath + '/README.md');
-	}
-	catch (e) { }
-
-	try {
-		// remove the README file in the www root because it
-		// doesn't make sense because its the README for the repo
-		// and not helper text while developing an app
-		fs.unlinkSync(options.targetPath + '/www/README.md');
-	}
-	catch (e) { }
-
-	// StartTask.printQuickHelp();
-
+	return Q();
 };
-
 
 module.exports = StartTask;

@@ -10,6 +10,9 @@ var BuildWindowsTask = function() { };
 BuildWindowsTask.prototype = new AppTask();
 
 BuildWindowsTask.prototype.run = function run(cloudbridge, argv) {
+	path.join(this.projectDir, 'build', 'bin', 'appserver');
+
+
 	var options = {
 		serverType: "Logix",
 		server: "127.0.0.1",

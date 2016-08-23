@@ -9,8 +9,7 @@ var fs = require('fs'),
 var Info = module.exports;
 
 var requirements = {
-	node: '>=0.12.x',
-	cordova: '>=4.2.0'
+	node: '>=0.12.x'
 };
 
 Info.getMacInfo = function getMacInfo() {
@@ -41,17 +40,6 @@ Info.getMacInfo = function getMacInfo() {
 
 	return 'Mac OS X ' + macVersion;
 	// logging.logger.info('Mac OS X', macVersion);
-};
-
-Info.getCordovaInfo = function getCordovaInfo(info) {
-	var command = 'cordova -v';
-	var result = shelljs.exec(command, { silent: true });
-	if (result.code != 0) {
-		info.cordova = 'Not installed';
-		return;
-	}
-
-	info.cordova = result.output.replace('\n', '');
 };
 
 Info.getXcodeInfo = function getXcodeInfo() {
@@ -228,12 +216,9 @@ Info.gatherInfo = function gatherInfo() {
 
 	//For all
 	// Android SDK info
-	// Cordova CLI info
 	// CloudBridge CLI version
-	// CloudBridge version
 
 	// var info = {
-	//   cordova: 'CLI v3.5.0',
 	//   os: 'Mac OSX Yosemite',
 	//   xcode: 'Xcode 6.1.1',
 	//   cloudbridge: '1.0.0-beta.13',
@@ -246,8 +231,6 @@ Info.gatherInfo = function gatherInfo() {
 
 	Info.getOsEnvironment(info);
 
-	Info.getCordovaInfo(info);
-
 	Info.gatherGulpInfo(info);
 
 	return info;
@@ -256,7 +239,6 @@ Info.gatherInfo = function gatherInfo() {
 Info.printInfo = function printInfo(info) {
 	logging.logger.info('\nYour system information:\n');
 
-	logging.logger.info('Cordova CLI:', info.cordova);
 	if (info.gulp) {
 		logging.logger.info('Gulp version:', info.gulp);
 		logging.logger.info('Gulp local: ', info.gulp_local);
@@ -296,15 +278,11 @@ Info.checkRuntime = function checkRuntime() {
 	var info = this.gatherInfo(),
 		iosDeployInstalled = false,
 		iosSimInstalled = false,
-		cordovaInstalled = false,
-		cordovaUpgrade = false,
 		nodeUpgrade = false,
 		validRuntime = true;
 
 	try {
 		nodeUpgrade = !semver.satisfies(info.node, requirements.node);
-		cordovaUpgrade = !semver.satisfies(info.cordova, requirements.cordova);
-		cordovaInstalled = true; //if it throws above, we know cordova is not installed
 	}
 	catch (ex) {
 	}
@@ -322,8 +300,8 @@ Info.checkRuntime = function checkRuntime() {
 
 	var checkOsxDeps = checkOsx && (!iosSimInstalled || !iosDeployInstalled);
 
-	// console.log('nodeUpgrade', nodeUpgrade, 'cordovaUpgrade', cordovaUpgrade, 'cordovaInstalled', cordovaInstalled);
-	var showDepdencyWarning = nodeUpgrade || (!cordovaInstalled || cordovaUpgrade) || checkOsxDeps;
+	// console.log('nodeUpgrade', nodeUpgrade);
+	var showDepdencyWarning = nodeUpgrade || checkOsxDeps;
 
 	if (showDepdencyWarning) {
 		logging.logger.info('******************************************************'.red.bold);
@@ -336,15 +314,6 @@ Info.checkRuntime = function checkRuntime() {
 			logging.logger.info(updateMessage.red.bold);
 			validRuntime = false;
 		}
-
-		/*
-		if (!cordovaInstalled || cordovaUpgrade) {
-			var action = cordovaInstalled ? 'update' : 'install';
-			var updateMessage = [' Please', action, 'your Cordova CLI to version ', requirements.cordova, '`npm install -g cordova`'].join(' ');
-			logging.logger.info(updateMessage.red.bold);
-			validRuntime = false;
-		}
-		*/
 
 		if (info.ios_sim === 'Not installed') {
 			logging.logger.info(' Install ios-sim to deploy iOS applications. `npm install -g ios-sim` (may require sudo)'.red.bold);

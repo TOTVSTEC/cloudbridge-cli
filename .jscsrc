@@ -2,8 +2,8 @@
   "excludeFiles": ["node_modules/**"],
   "requireSemicolons": true,
   "validateIndentation": {
-	  "value": "\t",
-	  "allExcept": ["comments", "emptyLines"]
+    "value": "\t",
+    "allExcept": ["comments", "emptyLines"]
   },
   "disallowKeywords": ["with"],
   "disallowMixedSpacesAndTabs": true,

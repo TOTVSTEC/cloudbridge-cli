@@ -9,12 +9,13 @@ var AppTask = function() {
 
 AppTask.prototype = new Task();
 
-
+/*
 AppTask.prototype = {
 	run: function(cloudbridge) {
 
 	}
 };
+*/
 
 AppTask.__project = null;
 

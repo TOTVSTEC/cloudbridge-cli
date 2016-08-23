@@ -47,18 +47,6 @@ var TASKS = [
 		module: 'platform'
 	},
 	{
-		title: 'run',
-		name: 'run',
-		summary: 'Run an CloudBridge project on a connected device',
-		args: {
-			'[options]': '',
-			'<PLATFORM>': ''
-		},
-		options: {
-		},
-		module: 'run'
-	},
-	{
 		title: 'build',
 		name: 'build',
 		summary: 'Locally build an CloudBridge project for a given platform',
@@ -67,12 +55,22 @@ var TASKS = [
 			'<PLATFORM>': ''
 		},
 		options: {
-			'--nohooks|-n': {
-				title: 'Do not add default CloudBridge hooks for Cordova',
-				boolean: true
-			}
+
 		},
 		module: 'build'
+	},
+	{
+		title: 'run',
+		name: 'run',
+		summary: 'Run an CloudBridge project on a connected device',
+		args: {
+			'[options]': '',
+			'<PLATFORM>': ''
+		},
+		options: {
+
+		},
+		module: 'run'
 	}
 ];
 

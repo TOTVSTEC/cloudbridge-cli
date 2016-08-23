@@ -8,8 +8,6 @@ var Cli = module.exports,
 	Updates = cb_require('utils/updates');
 
 Cli.Tasks = TASKS = Tasks;
-Cli.PRIVATE_PATH = '.cloudbridge';
-
 
 Cli.utils = cb_require('utils/utils'),
 Cli.logging = cb_require('utils/logging'),

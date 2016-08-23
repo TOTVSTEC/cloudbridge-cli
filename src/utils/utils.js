@@ -251,8 +251,15 @@ Utils.preprocessCliOptions = function preprocessCliOptions(argv) {
 		// get a packge name, like com.cloudbridge.myapp
 		options.packageName = argv.id || argv.i;
 
-		// start project template can come from cmd line args -t, --template, or the 3rd arg, and defaults to empty
-		options.template = (argv.template || argv.t || argv._[2] || 'empty');
+		if (!options.packageName) {
+			var appname = options.appName.replace(/[\W_]/igm, '').toLowerCase(),
+				username = require('username').sync().toLowerCase();
+
+			options.packageName = 'com.' + username + '.' + appname;
+		}
+
+		// start project template can come from cmd line args -t, --template, or the 3rd arg, and defaults to base
+		options.template = (argv.template || argv.t || argv._[2] || 'base');
 
 		// figure out the full path
 		options.targetPath = Utils.getProjectDirectory(options);
@@ -323,13 +330,7 @@ Utils.copyTemplate = function copyTemplate(origin, to, data, extensions) {
 		var stat = fs.statSync(current);
 
 		if (stat.isDirectory()) {
-			try {
-				fs.mkdirSync(target);
-			}
-			catch (error) {
-				if (error.code !== 'EEXIST')
-					console.warn(error);
-			}
+			shelljs.mkdir('-p', target);
 
 			Utils.copyTemplate(current, target, data, extensions);
 		}
@@ -347,25 +348,15 @@ Utils.copyTemplate = function copyTemplate(origin, to, data, extensions) {
 				}
 			}
 
+			fs.writeFileSync(target, content);
+
+			/*
 			fs.writeFile(target, content, function(err) {
 				if (err) {
 					console.error(err);
 				}
 			});
+			*/
 		}
 	}
 };
-
-Utils.mkdirSync = function mkdirSync(path, mode) {
-	shelljs.mkdir('-p', path);
-	/*
-	try {
-		fs.mkdirSync(path, mode);
-	}
-	catch (error) {
-		if (error.code !== 'EEXIST')
-			console.error(error);
-	}
-	*/
-};
-
