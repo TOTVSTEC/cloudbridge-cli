@@ -49,7 +49,7 @@ PlatformTask.prototype.execute = function execute(action, options) {
 	}
 
 	if (task !== null) {
-		return task.run(cli, options.project.data);
+		return task.run(cli, options.project.dir);
 	}
 };
 

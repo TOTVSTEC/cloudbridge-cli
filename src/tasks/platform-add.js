@@ -45,7 +45,7 @@ PlatformAddTask.prototype.run = function run(cloudbridge, argv) {
 };
 
 PlatformAddTask.prototype.install = function install(options) {
-	return this.execute('add', options);
+	return this.execute('install', options);
 };
 
 PlatformAddTask.prototype.save = function save(options) {
