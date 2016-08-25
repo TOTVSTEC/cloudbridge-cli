@@ -10,7 +10,6 @@
   },
   "keywords": [
     "cloudbridge",
-    "cloudbridge framework",
     "mobile",
     "app",
     "hybrid"
@@ -36,6 +35,7 @@
     "crc": "3.4.0",
     "ejs": "^2.5.1",
     "gulp": "3.9.1",
+    "ini": "^1.3.4",
     "node-windows": "^0.1.11",
     "npm": "3.10.6",
     "optimist": "0.6.1",

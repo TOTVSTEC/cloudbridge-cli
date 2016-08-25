@@ -56,8 +56,6 @@ AppServer.start = function start(projectDir) {
 
 
 		this.proc.stdout.on('data', function(data) {
-			console.log("proc.stdout.on('data')");
-
 			var out = data.toString('ascii').trim();
 
 			if (out) {
@@ -70,8 +68,6 @@ AppServer.start = function start(projectDir) {
 		});
 
 		this.proc.stderr.on('data', function(data) {
-			console.log("proc.stderr.on('data')");
-
 			var err = data.toString('ascii').replace(/^Warning: NLS unused message: (.*)$/gm, "").trim();
 
 			if (err) {
@@ -80,8 +76,6 @@ AppServer.start = function start(projectDir) {
 		});
 
 		this.proc.on('close', function(code) {
-			console.log("proc.on('close')");
-
 			if (code !== 0) {
 				deferred.reject(new Error("AppServer process exited with code " + code));
 			}
@@ -91,7 +85,6 @@ AppServer.start = function start(projectDir) {
 		});
 
 		this.proc.on('exit', function(code) {
-			console.log("proc.on('exit')");
 			if (code !== 0) {
 				deferred.reject(new Error("AppServer process exited with code " + code));
 			}
@@ -101,7 +94,6 @@ AppServer.start = function start(projectDir) {
 		});
 
 		this.proc.on('error', function(err) {
-			console.log("proc.on('error')");
 			deferred.reject(err);
 		});
 	}
