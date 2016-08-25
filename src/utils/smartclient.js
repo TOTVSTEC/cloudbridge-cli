@@ -3,14 +3,10 @@
 var SmartClient = module.exports,
 	Q = require('q'),
 	path = require('path'),
-	fs = require('fs'),
-	cp = require('child_process'),
-	spawn = cp.spawn,
-	exec = require('shelljs').exec,
-	ini = require('ini');
+	exec = require('shelljs').exec;
 
 
-SmartClient.run = function start(projectDir) {
+SmartClient.run = function run(projectDir) {
 	var home = path.join(projectDir, 'build', 'windows', 'bin', 'smartclient'),
 		cli  = path.join(home, 'smartclient.exe'),
 		project = cb_require('project/project').load(projectDir).data(),
@@ -22,21 +18,12 @@ SmartClient.run = function start(projectDir) {
 	else {
 		var cmd = cli + ' ' + ['-Q', '-P=' + project.name +  '.Cloud', '-C=TCP', '-E=ENVIRONMENT'].join(' ');
 
-		console.log("SMARTCLIENT: " + cmd);
-
-		//this.proc = exec(cli + ' ' + ['-Q', '-P=' + project.name +  '.Cloud', '-C=TCP', '-E=ENVIRONMENT'].join(' '), {
+		//console.log("SMARTCLIENT: " + cmd);
 
 		this.proc = exec(cmd, {
 			cwd: home,
 			async: true
-			/*,
-			stdio: ['ignore', 'pipe', 'pipe']
-			*/
-			//detached: true,
-			//stdio: ['ignore', 'inherit', 'inherit']
 		});
-
-		//this.proc.unref();
 
 		this.proc.stdout.on('data', function(data) {
 			var out = data.toString('ascii').trim();
@@ -84,7 +71,7 @@ SmartClient.run = function start(projectDir) {
 	return deferred.promise;
 };
 
-SmartClient.stop = function stop(projectDir) {
+SmartClient.close = function close(projectDir) {
 	if (this.proc) {
 		this.proc.kill();
 		this.proc = null;
