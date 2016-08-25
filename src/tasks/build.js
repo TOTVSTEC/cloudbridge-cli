@@ -10,17 +10,21 @@ var BuildTask = function() { };
 BuildTask.prototype = new AppTask();
 
 BuildTask.prototype.run = function run(cloudbridge, argv) {
-	/*
-	var android = require(__basedir + '/kits/android');
+		var isWindows = argv._.indexOf('windows') != -1;
+		var isAndroid = argv._.indexOf('android') != -1;
 
-	return android.build(cloudbridge);
-	*/
+		if (isAndroid) {
+			var android = require(__basedir + '/kits/android');
 
-	var BuildWindowsTask = require('./build-windows'),
+			return android.build(cloudbridge);
+		}
+		else {
+			//if ((isWindows) || (!isWindows && !isAndroid)) {
+			var BuildWindowsTask = require('./build-windows'),
+			var task = new BuildWindowsTask();
 
-	task = new BuildWindowsTask();
-
-	return task.run(cloudbridge, argv);
+			return task.run(cloudbridge, argv);
+		}
 };
 
 module.exports = BuildTask;
