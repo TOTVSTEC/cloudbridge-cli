@@ -16,7 +16,7 @@ BuildWindowsTask.prototype.run = function run(cloudbridge, argv) {
 			serverType: "Logix",
 			server: "127.0.0.1",
 			build: "7.00.150715P",
-			port: 5055,
+			port: 5056,
 			//user: "admin",
 			//psw: "",
 			recompile: true,
