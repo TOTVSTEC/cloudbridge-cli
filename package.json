@@ -49,6 +49,7 @@
     "serve-static": "1.11.1",
     "shelljs": "0.7.3",
     "underscore": "~1.8.3",
+    "underscore.string": "^3.3.4",
     "unzip": "0.1.11",
     "username": "^2.2.2",
     "winston": "^2.2.0"
