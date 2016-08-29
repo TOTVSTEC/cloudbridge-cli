@@ -1,6 +1,6 @@
 {
   "name": "cloudbridge",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "preferGlobal": true,
   "description": "A tool for creating and developing CloudBridge mobile apps.",
   "homepage": "http://www.totvs.com/",
@@ -59,26 +59,5 @@
     "jasmine-node": "^1.14.5",
     "rewire": "^2.3.4",
     "coveralls": "^2.2.0"
-  },
-  "bundledDependencies": [
-    "async",
-    "cheerio",
-    "colors",
-    "connect",
-    "connect-livereload",
-    "crc",
-    "gulp",
-    "npm",
-    "optimist",
-    "progress",
-    "prompt",
-    "proxy-middleware",
-    "q",
-    "request",
-    "semver",
-    "serve-static",
-    "shelljs",
-    "underscore",
-    "unzip"
-  ]
+  }
 }
