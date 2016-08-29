@@ -35,13 +35,14 @@ Package.prototype.fetch = function fetch() {
 
 	shelljs.mkdir('-p', packageDir);
 
-	return utils.fetchArchive(packageDir, url).then(function() {
-		var contentDir = path.join(packageDir, _this.name + '-' + _this.version);
+	return utils.fetchArchive(packageDir, url)
+		.then(function() {
+			var contentDir = path.join(packageDir, _this.name + '-' + _this.version);
 
-		shelljs.mv(contentDir, outputDir);
+			shelljs.mv(contentDir, outputDir);
 
-		return outputDir;
-	});
+			return outputDir;
+		});
 };
 
 Package.prototype.install = function install(targetPath, projectData) {

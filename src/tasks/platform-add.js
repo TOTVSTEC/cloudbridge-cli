@@ -1,5 +1,6 @@
 var PlatformTask = cb_require('tasks/platform'),
 	utils = cb_require('utils/utils'),
+	Package = cb_require('utils/package'),
 	path = require('path'),
 	shelljs = require('shelljs'),
 	Q = require('q');
@@ -18,29 +19,26 @@ PlatformAddTask.prototype.run = function run(cloudbridge, argv) {
 		throw new Error("Invalid platform!");
 	}
 
+	var projectData = this.project.data();
+
 	return platforms.reduce(function(promise, platform, index) {
 		var options = {
 			platform: platform,
-			package: 'cloudbridge-kit-' + platform,
-			project: {
-				dir: cloudbridge.projectDir,
-				data: _this.project.data()
-			}
+			package: 'cloudbridge-kit-' + platform
 		};
+
+		var package = new Package(options.package);
 
 		return promise
 			.then(function() {
-				return utils.fetchPackage(options);
+				return package.fetch();
 			})
-			.then(function(packageDir) {
-				options.src = packageDir;
-
-				return _this.install(options);
+			.then(function() {
+				return package.install(_this.projectDir, projectData);
 			})
 			.then(function() {
 				return _this.save(options);
 			});
-
 	}, Q());
 };
 
@@ -51,7 +49,7 @@ PlatformAddTask.prototype.install = function install(options) {
 PlatformAddTask.prototype.save = function save(options) {
 	var platformData = this.project.get('platform') || {};
 	platformData[options.platform] = {
-		version: options.version
+		version: options.package.version || 'master'
 	};
 
 	this.project.set('platform', platformData);
