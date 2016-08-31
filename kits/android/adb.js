@@ -46,7 +46,7 @@ function spawn(command, args, options) {
 			d.resolve(capturedOut.trim());
 		}
 		else {
-			var errMsg = cmd + ': Command failed with exit code ' + code;
+			var errMsg = command + ': Command failed with exit code ' + code;
 			if (capturedErr) {
 				errMsg += ' Error output:\n' + capturedErr.trim();
 			}

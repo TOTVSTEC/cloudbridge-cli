@@ -1,3 +1,5 @@
+'use strict';
+
 var Task = cb_require('tasks/task'),
 	project = cb_require('project/project'),
 	path = require('path');
@@ -8,14 +10,6 @@ var AppTask = function() {
 };
 
 AppTask.prototype = new Task();
-
-/*
-AppTask.prototype = {
-	run: function(cloudbridge) {
-
-	}
-};
-*/
 
 AppTask.__project = null;
 

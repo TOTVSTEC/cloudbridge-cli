@@ -71,6 +71,27 @@ var TASKS = [
 
 		},
 		module: 'run'
+	},
+	{
+		title: 'bower',
+		name: 'bower',
+		//alt: ['bw'],
+		summary: 'Add bower packages to you CloudBridge app',
+		args: {
+			'[options]': '',
+			'<PACKAGE>': ''
+		},
+		options: {
+			/*'--noresources|-r': {
+				title: 'Do not add default CloudBridge icons and splash screen resources',
+				boolean: true
+			},
+			'--nosave|-e': {
+				title: 'Do not save the platform to the package.json file',
+				boolean: true
+			}*/
+		},
+		module: 'bower'
 	}
 ];
 

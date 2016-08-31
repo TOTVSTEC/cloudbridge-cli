@@ -16,26 +16,30 @@ RunAndroidTask.prototype.run = function run(cloudbridge, argv) {
 		opts = {
 			replace: true
 		},
-		target = null;
+		target = null,
+		data = this.project.data(),
+		activity = data.id + '/.' + data.name + 'Activity';
 
 	return adb.devices()
 		.then(function(targetDevice) {
-			target = targetDevice[0];
+			console.log('\n');
+			console.log('targetDevice', targetDevice);
+			console.log('\n');
 
-			console.log(target);
-
-			if (targetDevice === null) {
-				throw new Error("targetDevice == null");
+			if (targetDevice.length === 0) {
+				throw new Error("No devices found.");
 			}
+
+			target = targetDevice[0];
 
 			return adb.install(target, packagePath, opts);
 		})
 		.then(function() {
-			var activityName = 'org.helloworld.app';
-			activityName += '/.';
-			activityName += 'HelloWorldActivity';
+			//var activityName = 'org.helloworld.app';
+			//activityName += '/.';
+			//activityName += 'HelloWorldActivity';
 
-			return adb.start(target, activityName);
+			return adb.start(target, activity);
 		});
 };
 
