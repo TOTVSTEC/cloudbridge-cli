@@ -1,6 +1,10 @@
 'use strict';
 
 var AppTask = cb_require('tasks/app-task'),
+	bower = cb_require('utils/bower'),
+	shelljs = require('shelljs'),
+	path = require('path'),
+	fs = require('fs'),
 	utils = cli.utils;
 
 var BowerTask = function() {
@@ -47,6 +51,43 @@ BowerTask.prototype.getPackages = function getPackages(argv) {
 	}
 
 	return packages;
+};
+
+BowerTask.prototype.updateMain = function updateMain() {
+	var main = this.project.get('main'),
+		content = null,
+		matches = null;
+
+	if (main !== undefined) {
+		main = path.join(this.projectDir, main);
+
+		if (shelljs.test('-f', main)) {
+			content = fs.readFileSync(main, {encoding: 'utf8'});
+		}
+	}
+
+	if (content !== null) {
+		var matches = (/(<!-- bower:.* -->)/igm).exec(content);
+		//'<!-- endbower -->'
+
+		if (matches.length === 0)
+			return;
+
+		//console.log(matches);
+	}
+
+	return bower.list()
+		.then(function(result) {
+			//console.log(result);
+
+			var from = path.parse(main).dir;
+
+			Object.keys(result).forEach(function(key, index) {
+				var to = path.join(process.cwd(), result[key]);
+
+				console.log(path.relative(from, to));
+			});
+		});
 };
 
 module.exports = BowerTask;

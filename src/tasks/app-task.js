@@ -6,7 +6,6 @@ var Task = cb_require('tasks/task'),
 
 var AppTask = function() {
 	this.projectDir = process.cwd();
-	this.projectFile = null;
 };
 
 AppTask.prototype = new Task();

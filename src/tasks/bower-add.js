@@ -14,6 +14,10 @@ BowerAddTask.prototype.run = function(cloudbridge, argv) {
 	var _this = this,
 		packages = this.getPackages(argv);
 
+	return this.updateMain();
+
+/*
+
 	return bower.install(packages)
 		.then(function(result) {
 			//console.log(result);
@@ -22,6 +26,7 @@ BowerAddTask.prototype.run = function(cloudbridge, argv) {
 
 			//TODO: add component to main html
 		});
+		*/
 };
 
 BowerAddTask.prototype.save = function save(packages, bowerResult) {

@@ -26,13 +26,18 @@ AppServer.start = function start(projectDir) {
 				console.log(out);
 			}
 
-			if (out.indexOf('Application Server started on port') > -1) {
+			var pos = out.indexOf('Application Server started on port');
+
+			if (pos > -1) {
+				var end = out.indexOf('\n', pos);
+				this.tcpPort = out.substr(pos, end);
+
 				deferred.resolve();
 			}
 		});
 
 		this.proc.stderr.on('data', function(data) {
-			var err = data.toString('ascii').replace(/^Warning: NLS unused message: (.*)$/gm, "").trim();
+			var err = data.toString('ascii').trim();
 
 			if (err) {
 				console.error(err);

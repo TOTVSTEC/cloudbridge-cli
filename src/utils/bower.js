@@ -9,8 +9,7 @@ var Bower = module.exports,
 	options = { save: true };
 
 Bower.install = function install(packages) {
-	var _this = this,
-		deferred = Q.defer();
+	var deferred = Q.defer();
 
 	bower.commands
 		.install(packages, options, config)
@@ -25,8 +24,7 @@ Bower.install = function install(packages) {
 };
 
 Bower.uninstall = function install(packages) {
-	var _this = this,
-		deferred = Q.defer();
+	var deferred = Q.defer();
 
 	bower.commands
 		.uninstall(packages, options, config)
@@ -35,6 +33,21 @@ Bower.uninstall = function install(packages) {
 				shelljs.rm('-rf', path.join(config.directory, packages[i]));
 			}
 
+			deferred.resolve(result);
+		})
+		.on('error', function(error) {
+			deferred.reject(error);
+		});
+
+	return deferred.promise;
+};
+
+Bower.list = function list() {
+	var deferred = Q.defer();
+	var listOptions = { paths: true, json: true };
+
+	bower.commands.list(listOptions, config)
+		.on('end', function(result) {
 			deferred.resolve(result);
 		})
 		.on('error', function(error) {

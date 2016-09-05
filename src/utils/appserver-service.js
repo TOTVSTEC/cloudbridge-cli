@@ -141,7 +141,7 @@ AppServer.start = function start(projectDir) {
 		this.proc.stderr.on('data', function(data) {
 			console.log("proc.stderr.on('data')");
 
-			var err = data.toString('ascii').replace(/^Warning: NLS unused message: (.*)$/gm, "").trim();
+			var err = data.toString('ascii').trim();
 
 			if (err) {
 				console.error(err);
