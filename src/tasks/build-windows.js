@@ -25,13 +25,15 @@ BuildWindowsTask.prototype.run = function run(cloudbridge, argv) {
 				path.join(projectDir, 'src', 'advpl')
 			],
 			includes: [
-				"C:/dev/src/framework/Lib110/include",
-				"C:/dev/src/framework/Lib110/include-lib"
+				path.join(projectDir, 'src', 'advpl'),
+				path.join(projectDir, 'build', 'advpl', 'includes')
 			]
 		};
 
 	return appserver.start(projectDir)
 		.then(function() {
+			tdsOptions.port = appserver.tcpPort;
+
 			return tds.compile(tdsOptions);
 		})
 		.then(function() {

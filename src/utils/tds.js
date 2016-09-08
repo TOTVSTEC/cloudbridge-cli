@@ -18,22 +18,25 @@ TDS.compile = function compile(data) {
 	}
 	else {
 		var options = TDS.buildOptions(home, cli, 'compile', data),
-			proc = spawn(options.cmd, options.args, {cwd: home});
+			proc = spawn(options.cmd, options.args, {
+				cwd: home,
+				stdio: ['ignore', 'pipe', 'pipe']
+			});
 
 		proc.stdout.on('data', function(data) {
-			var out = data.toString('ascii').trim();
+			var out = data.toString('utf8');
 			out = out.replace(/^>>>>> Compil.*(.|[\r\n])*?>>>>\s*$/gm, "0");
 			out = out.replace(/^>>>>.*(.|[\r\n])*?>>>>\s*$/gm, "");
 
-			if (out) {
+			if (out.trim()) {
 				console.log(out);
 			}
 		});
 
 		proc.stderr.on('data', function(data) {
-			var err = data.toString('ascii').replace(/^Warning: NLS unused message: (.*)$/gm, "").trim();
+			var err = data.toString('ascii').replace(/^Warning: NLS unused message: (.*)$/gm, "");
 
-			if (err) {
+			if (err.trim()) {
 				console.error(err);
 			}
 		});
