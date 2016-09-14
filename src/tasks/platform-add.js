@@ -55,7 +55,7 @@ PlatformAddTask.prototype.save = function save(options) {
 	this.project.set('platform', platformData);
 	this.project.save();
 
-	console.log('The platform "' + options.platform + '" has been successfully added to your project!');
+	console.log('\nThe platform ' + options.platform.bold + ' has been successfully added to your project!');
 };
 
 module.exports = PlatformAddTask;

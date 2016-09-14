@@ -24,7 +24,7 @@ BowerTask.prototype.run = function(cloudbridge, argv) {
 		if (isAddCmd) {
 			var BowerAddTask = require('./bower-add'),
 
-			task = new BowerAddTask();
+				task = new BowerAddTask();
 		}
 		else if (isRmCmd) {
 			var BowerRemoveTask = require('./bower-remove');
@@ -58,12 +58,14 @@ BowerTask.prototype.updateMain = function updateMain() {
 		content = null,
 		matches = null;
 
-	if (main !== undefined) {
-		main = path.join(this.projectDir, main);
+	if (main === undefined) {
+		return;
+	}
 
-		if (shelljs.test('-f', main)) {
-			content = fs.readFileSync(main, {encoding: 'utf8'});
-		}
+	main = path.join(this.projectDir, main);
+
+	if (shelljs.test('-f', main)) {
+		content = fs.readFileSync(main, { encoding: 'utf8' });
 	}
 
 	if (content !== null) {

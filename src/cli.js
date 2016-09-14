@@ -388,8 +388,6 @@ Cli.fail = function fail(err, taskHelp) {
 	this.utils.fail(err, taskHelp);
 };
 
-
-
 Cli.require = function(name) {
 	if ((name.substring(0, 1) === '/') ||
 		(name.substring(0, 2) === './') ||
@@ -399,3 +397,5 @@ Cli.require = function(name) {
 
 	return require(name);
 };
+
+Cli.cb_require = cb_require;

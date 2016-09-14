@@ -176,10 +176,8 @@ StartTask.printQuickHelp = function(options) {
 	logging.logger.info('\n\nYour CloudBridge app is ready to go!'.bold);
 	logging.logger.info('\n\nMake sure to cd into your new app directory:'.bold);
 	logging.logger.info('  cd ' + options.appName);
-	logging.logger.info('\nTo run your app in the browser (great for initial development):'.bold);
-	logging.logger.info('  cloudbridge serve');
-	logging.logger.info('\nTo run on iOS:'.bold);
-	logging.logger.info('  cloudbridge run ios');
+	logging.logger.info('\nTo run on windows:'.bold);
+	logging.logger.info('  cloudbridge run windows');
 	logging.logger.info('\nTo run on Android:'.bold);
 	logging.logger.info('  cloudbridge run android');
 };

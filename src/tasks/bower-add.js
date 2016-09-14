@@ -4,29 +4,34 @@ var BowerTask = cb_require('tasks/bower'),
 	path = require('path'),
 	bower = cb_require('utils/bower');
 
-var BowerAddTask = function() {
+var BowerAddTask = function(options) {
+	options = options || {};
 
+	this.silent = options.silent || false;
+	this.projectDir = options.target || process.cwd();
 };
 
 BowerAddTask.prototype = new BowerTask();
 
 BowerAddTask.prototype.run = function(cloudbridge, argv) {
+	var packages = this.getPackages(argv);
+
+	return this.install(packages);
+};
+
+BowerAddTask.prototype.install = function install(packages) {
 	var _this = this,
-		packages = this.getPackages(argv);
+		config = { directory: path.join(this.projectDir, 'build', 'bower') };
 
-	return this.updateMain();
-
-/*
-
-	return bower.install(packages)
+	return bower.install(packages, null, config)
 		.then(function(result) {
 			//console.log(result);
 
-			_this.save(packages, result);
-
-			//TODO: add component to main html
+			return _this.save(packages, result);
+		})
+		.then(function(result) {
+			return _this.updateMain();
 		});
-		*/
 };
 
 BowerAddTask.prototype.save = function save(packages, bowerResult) {
@@ -34,7 +39,7 @@ BowerAddTask.prototype.save = function save(packages, bowerResult) {
 		message = '';
 
 	for (var i = 0; i < packages.length; i++) {
-		var name = packages[i];
+		var name = packages[i].replace(/#.*/, '');
 
 		Object.keys(bowerResult).forEach(function(key, index) {
 			var endpoint = bowerResult[key].endpoint;
@@ -44,10 +49,11 @@ BowerAddTask.prototype.save = function save(packages, bowerResult) {
 					var version = endpoint.target;
 					bowerComponents[name] = version;
 
-					message += 'The bower package "' + name + '#' + version + '" has been successfully added to your project!\n';
+					if (!this.silent)
+						message += 'The bower package ' + name.bold + '#' + version.bold + ' has been successfully added to your project!\n';
 				}
 			}
-		});
+		}.bind(this));
 	}
 
 	this.project.set('bowerComponents', bowerComponents);

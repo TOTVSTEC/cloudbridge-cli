@@ -16,15 +16,9 @@ BowerRemoveTask.prototype.run = function(cloudbridge, argv) {
 
 	return bower.uninstall(packages)
 		.then(function(result) {
-			//console.log(result);
-
 			_this.save(packages, result);
 
-
-			//TODO: delete component folter
 			//TODO: delete component from main html
-			//TODO: remove component cloudbridge.json
-
 		});
 };
 
@@ -33,10 +27,12 @@ BowerRemoveTask.prototype.save = function save(packages, bowerResult) {
 		message = '';
 
 	for (var i = 0; i < packages.length; i++) {
-		if (bowerComponents[packages[i]]) {
-			delete bowerComponents[packages[i]];
+		var name = packages[i].replace(/#.*/, '');
 
-			message += 'The bower package "' + packages[i] + '" has been removed from your project!\n';
+		if (bowerComponents[name]) {
+			delete bowerComponents[name];
+
+			message += 'The bower package ' + name.bold + ' has been removed from your project!\n';
 		}
 	}
 

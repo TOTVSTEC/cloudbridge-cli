@@ -41,9 +41,6 @@ AppServer.start = function start(projectDir) {
 			}
 
 			if (AppServer.tcpPort !== 0) {
-				//console.log('AppServer.tcpPort', AppServer.tcpPort);
-				//console.log('AppServer.httpPort', AppServer.httpPort);
-
 				deferred.resolve();
 			}
 		});
@@ -115,10 +112,10 @@ AppServer.readPorts = function readPorts(output) {
 		end = output.indexOf('.', pos);
 
 		AppServer.httpPort = Number(output.substring(pos, end));
-		AppServer.updateHttpIni();
+		//AppServer.updateHttpIni();
 	}
 };
-
+/*
 AppServer.updateHttpIni = function updateHttpIni() {
 	var ini = path.join(AppServer.path, 'appserver.ini'),
 		ips = os.networkInterfaces(),
@@ -155,4 +152,4 @@ AppServer.buildBowerMapping = function buildBowerMapping(ip) {
 
 	return content;
 };
-
+*/

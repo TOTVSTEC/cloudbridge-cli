@@ -5,11 +5,14 @@ var Bower = module.exports,
 	path = require('path'),
 	bower = require('bower'),
 	shelljs = require('shelljs'),
-	config = {	directory: path.join('build', 'bower')	},
-	options = { save: true };
+	_ = require('underscore'),
+	defaultConfig = { directory: path.join('build', 'bower') },
+	defaultOptions = { save: true };
 
-Bower.install = function install(packages) {
-	var deferred = Q.defer();
+Bower.install = function install(packages, userOptions, userConfig) {
+	var deferred = Q.defer(),
+		config = Bower.getConfig(userConfig),
+		options = Bower.getOptions(userOptions);
 
 	bower.commands
 		.install(packages, options, config)
@@ -23,8 +26,10 @@ Bower.install = function install(packages) {
 	return deferred.promise;
 };
 
-Bower.uninstall = function install(packages) {
-	var deferred = Q.defer();
+Bower.uninstall = function install(packages, userOptions, userConfig) {
+	var deferred = Q.defer(),
+		config = Bower.getConfig(userConfig),
+		options = Bower.getOptions(userOptions);
 
 	bower.commands
 		.uninstall(packages, options, config)
@@ -42,11 +47,15 @@ Bower.uninstall = function install(packages) {
 	return deferred.promise;
 };
 
-Bower.list = function list() {
-	var deferred = Q.defer();
-	var listOptions = { paths: true, json: true };
+Bower.list = function list(userOptions, userConfig) {
+	var deferred = Q.defer(),
+		config = Bower.getConfig(userConfig),
+		options = Bower.getOptions(userOptions);
 
-	bower.commands.list(listOptions, config)
+	options.paths = true;
+	options.json = true;
+
+	bower.commands.list(options, config)
 		.on('end', function(result) {
 			deferred.resolve(result);
 		})
@@ -55,4 +64,20 @@ Bower.list = function list() {
 		});
 
 	return deferred.promise;
+};
+
+Bower.getConfig = function getConfig(userConfig) {
+	var config = {};
+
+	_.extend(config, defaultConfig, userConfig);
+
+	return config;
+};
+
+Bower.getOptions = function getOptions(userOptions) {
+	var options = {};
+
+	_.extend(options, defaultOptions, userOptions);
+
+	return options;
 };
