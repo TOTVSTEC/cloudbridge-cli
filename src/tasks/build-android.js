@@ -51,6 +51,7 @@ BuildAndroidTask.prototype.assemble = function assemble() {
 	shelljs.cp('-Rf', path.join(androidBuild, 'gradlew'), stagingDir);
 	shelljs.cp('-Rf', path.join(androidBuild, 'gradlew.bat'), stagingDir);
 	shelljs.cp('-Rf', path.join(androidBuild, 'gradle'), stagingDir);
+	shelljs.cp('-Rf', path.join(androidBuild, 'assets'), stagingDir);
 	shelljs.cp('-Rf', path.join(androidBuild, 'libs'), stagingDir);
 
 	shelljs.cp('-Rf', rpoSrc, assetsDir);
