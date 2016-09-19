@@ -29,11 +29,12 @@ BuildAndroidTask.prototype.run = function run(cloudbridge, argv) {
 
 BuildAndroidTask.prototype.clean = function clean() {
 	var stagingDir = path.join(this.projectDir, 'build', 'android', 'staging'),
+		webDir = path.join(stagingDir, 'assets', 'web'),
 		apks = path.join(this.projectDir, 'build', '*.apk');
 
 	shelljs.rm('-rf', apks);
 	shelljs.rm('-rf', stagingDir);
-	shelljs.mkdir('-p', stagingDir);
+	shelljs.mkdir('-p', webDir);
 };
 
 BuildAndroidTask.prototype.assemble = function assemble() {
