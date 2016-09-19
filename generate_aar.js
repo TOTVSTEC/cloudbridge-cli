@@ -6,7 +6,7 @@ process.title = 'cloudbridge aar generator';
 var fs = require('fs'),
 	shell = require('shelljs'),
 	exec = require('child_process').exec,
-	directory = 'C:/dev/src/advtec9/trunk/android-build/',
+	directory = 'C:/dev/src/advtec9/trunk_fat/android-build/',
 	BEGIN_QT = '<!-- BEGIN:QT_METADATA -->',
 	END_QT = '<!-- END:QT_METADATA -->';
 

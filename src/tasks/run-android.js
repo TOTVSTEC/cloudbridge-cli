@@ -12,13 +12,14 @@ var RunAndroidTask = function() {
 RunAndroidTask.prototype = new RunTask();
 
 RunAndroidTask.prototype.run = function run(cloudbridge, argv) {
-	var packagePath = path.join(this.projectDir, 'build', 'android', 'build', 'outputs', 'apk', 'android-debug.apk'),
+	//var packagePath = path.join(this.projectDir, 'build', 'android', 'build', 'outputs', 'apk', 'android-debug.apk'),
+	var project = this.project.data(),
+		packagePath = path.join(this.projectDir, 'build', project.name + '-debug.apk'),
 		opts = {
 			replace: true
 		},
 		target = null,
-		data = this.project.data(),
-		activity = data.id + '/.' + data.name + 'Activity';
+		activity = project.id + '/.' + project.name + 'Activity';
 
 	return adb.devices()
 		.then(function(targetDevice) {

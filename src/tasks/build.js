@@ -16,9 +16,10 @@ BuildTask.prototype.run = function run(cloudbridge, argv) {
 	var isAndroid = argv._.indexOf('android') != -1;
 
 	if (isAndroid) {
-		var android = require(__basedir + '/kits/android');
+		var BuildAndroidTask = require('./build-android'),
+			task = new BuildAndroidTask();
 
-		return android.build(cloudbridge);
+		return task.run(cloudbridge, argv);
 	}
 	else {
 		//if ((isWindows) || (!isWindows && !isAndroid)) {

@@ -1,11 +1,84 @@
 var android = module.exports,
-	child_process = require('child_process'),
+	spawn = require('child_process').spawn,
 	path = require('path'),
+	os = require('os'),
 	Q = require('q');
 
 android.checker = require('./android/checker');
 android.adb = require('./android/adb');
-android.build = function(cli) {
+
+android.build = function(targetDir) {
+	var deferred = Q.defer(),
+		cmd = '',
+		args = null;
+
+	if (os.type() === 'Windows_NT') {
+		cmd = 'cmd.exe';
+		args = ['/c', 'gradlew.bat', 'build'];
+	}
+	else {
+		cmd = 'gradlew';
+		args = ['build'];
+	}
+
+	//cmd += path.join(targetDir, 'gradlew.bat');
+	//cmd += ' build';
+	//cmd += ' -p' + path.join(cli.projectDir, 'src', 'android');
+	//cmd += ' -PbuildDir="' + path.join(cli.projectDir, 'build', 'android', 'build') + '"';
+	//cmd += ' --project-cache-dir "' + path.join(cli.projectDir, 'build', 'android', '.gradle') + '"';
+
+	console.log('cwd: ' + targetDir);
+	console.log('cmd: ' + cmd + ' ' + args.join(' '));
+
+	var proc = spawn(cmd, args, {
+		cwd: targetDir,
+		stdio: ['ignore', 'pipe', 'pipe']
+	});
+
+	proc.stdout.on('data', function(data) {
+		var out = data.toString('ascii');
+
+		if (out.trim()) {
+			console.log(out);
+		}
+	});
+
+	proc.stderr.on('data', function(data) {
+		var err = data.toString('ascii');
+
+		if (err.trim()) {
+			console.error(err);
+		}
+	});
+
+	proc.on('close', function(code) {
+		if (code !== 0) {
+			deferred.reject(new Error("AppServer process exited with code " + code));
+		}
+		else {
+			deferred.resolve();
+		}
+	});
+
+	proc.on('exit', function(code) {
+		if (code !== 0) {
+			deferred.reject(new Error("AppServer process exited with code " + code));
+		}
+		else {
+			deferred.resolve();
+		}
+	});
+
+	proc.on('error', function(err) {
+		deferred.reject(err);
+	});
+
+	return deferred.promise;
+};
+
+
+
+android.build0 = function(cli) {
 	var d = Q.defer(),
 		cmd = '',
 		options = {
