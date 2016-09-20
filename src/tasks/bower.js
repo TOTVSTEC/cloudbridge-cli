@@ -56,16 +56,55 @@ BowerTask.prototype.getPackages = function getPackages(argv) {
 
 
 BowerTask.prototype.updateMain = function updateMain() {
-	var test = wiredep({
+	var main = this.project.get('main'),
+		bowerComponents = this.project.get('bowerComponents') || {},
+		options;
+
+	if (!main)
+		return;
+
+	options = {
 		cwd: this.projectDir,
-		src: this.project.get('main'),
-		directory: path.join('build', 'bower'),
-		//ignorePath: '../../build/',
+		src: path.join(this.projectDir, main),
+		directory: path.join(this.projectDir, 'build', 'bower'),
 		ignorePath: /^.*?\/build\//ig,
 		bowerJson: {
-			dependencies: this.project.get('bowerComponents')
+			dependencies: bowerComponents
+		},
+		onError: function(err) {
+			console.log("onError", err, err.code);
+
+			// If not overridden, an error will throw.
+
+			// err = Error object.
+			// err.code can be:
+			//   - "PKG_NOT_INSTALLED" (a Bower package was not found)
+			//   - "BOWER_COMPONENTS_MISSING" (cannot find the `bower_components` directory)
+		},
+
+		onFileUpdated: function(filePath) {
+			console.log("onFileUpdated", filePath);
+
+			// filePath = 'name-of-file-that-was-updated'
+		},
+
+		onPathInjected: function(fileObject) {
+			console.log("onPathInjected", fileObject);
+
+			// fileObject.block = 'type-of-wiredep-block' ('js', 'css', etc)
+			// fileObject.file = 'name-of-file-that-was-updated'
+			// fileObject.path = 'path-to-file-that-was-injected'
+		},
+
+		onMainNotFound: function(pkg) {
+			console.log("onMainNotFound", pkg);
+
+			// pkg = 'name-of-bower-package-without-main'
 		}
-	});
+	};
+
+
+	wiredep(options);
 };
 
 /*
