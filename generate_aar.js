@@ -4,7 +4,8 @@
 process.title = 'cloudbridge aar generator';
 
 var fs = require('fs'),
-	shell = require('shelljs'),
+	shelljs = require('shelljs'),
+	path = require('path'),
 	exec = require('child_process').exec,
 	directory = 'C:/dev/src/advtec9/trunk_fat/android-build/',
 	BEGIN_QT = '<!-- BEGIN:QT_METADATA -->',
@@ -37,6 +38,10 @@ content = content.replace(/manifest\.srcFile 'AndroidManifest\.xml'/gm,
 
 fs.writeFileSync(directory + 'build.aar.gradle', content);
 
+shelljs.rm('-rf', path.join(directory, 'assets', 'appserver.ini'));
+shelljs.rm('-rf', path.join(directory, 'assets', 'smartclient.ini'));
+shelljs.rm('-rf', path.join(directory, 'assets', '*.rpo'));
+
 exec(directory + 'gradlew -b build.aar.gradle clean build', {cwd: directory}, function(error, stdout, stderr) {
 	if (error) {
 		console.error('exec error: ' + error + '\n');
@@ -45,14 +50,13 @@ exec(directory + 'gradlew -b build.aar.gradle clean build', {cwd: directory}, fu
 	console.log('stdout: ' + stdout + '\n');
 	console.log('stderr: ' + stderr + '\n');
 
-	var src = directory + 'build/outputs/aar/android-build-debug.aar',
-		target = 'C:/Users/roger/AndroidStudioProjects/MyApplication99/app/libs/android-build-debug.aar';
+	var src = path.join(directory, 'build', 'outputs', 'aar');
 
-	fs.createReadStream(src).pipe(fs.createWriteStream(target));
+	shelljs.cp('-Rf',
+		path.join(src, 'android-build-debug.aar'),
+		path.join(directory, 'com.totvs.smartclient-DEBUG.aar'));
 
-/*
-	cp(directory + 'build/outputs/aar/android-build-debug.aar',
-		'C:/Users/roger/AndroidStudioProjects/MyApplication99/app/libs/android-build-debug.aar');
-
-*/
+	shelljs.cp('-Rf',
+		path.join(src, 'android-build-release.aar'),
+		path.join(directory, 'com.totvs.smartclient.aar'));
 });

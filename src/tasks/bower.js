@@ -5,6 +5,7 @@ var AppTask = cb_require('tasks/app-task'),
 	shelljs = require('shelljs'),
 	path = require('path'),
 	fs = require('fs'),
+	wiredep = require('wiredep'),
 	utils = cli.utils;
 
 var BowerTask = function() {
@@ -53,10 +54,25 @@ BowerTask.prototype.getPackages = function getPackages(argv) {
 	return packages;
 };
 
+
+BowerTask.prototype.updateMain = function updateMain() {
+	var test = wiredep({
+		cwd: this.projectDir,
+		src: this.project.get('main'),
+		directory: path.join('build', 'bower'),
+		//ignorePath: '../../build/',
+		ignorePath: /^.*?\/build\//ig,
+		bowerJson: {
+			dependencies: this.project.get('bowerComponents')
+		}
+	});
+};
+
+/*
 BowerTask.prototype.updateMain = function updateMain() {
 	var main = this.project.get('main'),
 		content = null,
-		matches = null;
+		matches = [];
 
 	if (main === undefined) {
 		return;
@@ -68,19 +84,28 @@ BowerTask.prototype.updateMain = function updateMain() {
 		content = fs.readFileSync(main, { encoding: 'utf8' });
 	}
 
-	if (content !== null) {
-		var matches = (/(<!-- bower:.* -->)/igm).exec(content);
-		//'<!-- endbower -->'
+	if (content === null)
+		return;
 
-		if (matches.length === 0)
-			return;
+	//var matches = (/(<!-- bower:.* -->)/igm).exec(content);
+	// (?:<!-- bower:)(.*)(?: -->(?:\r?\n|.)*?<!-- endbower -->)
+	//'<!-- endbower -->'
 
-		//console.log(matches);
+	var regexp = /(?:<!-- bower:(.*) -->)([\s\S]*?)(?:<!-- endbower -->)/igm,
+		match = null;
+
+
+	while (match = regexp.exec(content)) {
+		matches.push(match);
 	}
+
+	if (matches.length === 0)
+		return;
+
 
 	return bower.list()
 		.then(function(result) {
-			//console.log(result);
+			console.log(result);
 
 			var from = path.parse(main).dir;
 
@@ -89,7 +114,9 @@ BowerTask.prototype.updateMain = function updateMain() {
 
 				console.log(path.relative(from, to));
 			});
+
 		});
 };
+*/
 
 module.exports = BowerTask;
