@@ -2,6 +2,7 @@
 
 var BuildTask = cb_require('tasks/build'),
 	path = require('path'),
+	os = require('os'),
 	shelljs = require('shelljs'),
 	android = require(__basedir + '/kits/android'),
 	Q = require('q');
@@ -10,9 +11,28 @@ var BuildAndroidTask = function() { };
 BuildAndroidTask.prototype = new BuildTask();
 
 BuildAndroidTask.prototype.run = function run(cloudbridge, argv) {
-	var _this = this;
+	var _this = this,
+		promise;
 
-	return Q()
+	switch (os.type()) {
+		case 'Windows_NT':
+			var BuildWindowsTask = require('./build-windows'),
+			task = new BuildWindowsTask();
+
+			promise = task.run(cloudbridge, argv);
+			break;
+		case 'Linux':
+			promise = Q();
+			//TODO: compile on linux
+			break;
+		case 'Darwin':
+			promise = Q();
+			//TODO: compile on osx
+
+			break;
+	}
+
+	return promise
 		.then(function() {
 			return _this.clean();
 		})
