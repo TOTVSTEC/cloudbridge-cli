@@ -1,0 +1,11 @@
+npm version patch
+<major> <minor> <patch>
+
+npm publish
+
+git push --tags
+
+ou
+
+git tag 0.1.0
+git push origin master --tags
