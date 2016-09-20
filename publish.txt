@@ -1,9 +1,10 @@
 npm version patch
-<major> <minor> <patch>
+//<major> <minor> <patch>
 
 npm publish
 
 git push --tags
+
 
 ou
 
