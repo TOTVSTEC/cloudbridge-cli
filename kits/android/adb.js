@@ -97,6 +97,8 @@ Adb.install = function(target, packagePath, opts) {
 	if (opts && opts.replace)
 		args.push('-r');
 
+	args.push('-g');
+
 	return spawn('adb', args.concat(packagePath), { cwd: os.tmpdir() })
 		.then(function(output) {
 			// 'adb install' seems to always returns no error, even if installation fails
