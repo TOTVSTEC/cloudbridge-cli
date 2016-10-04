@@ -1,7 +1,9 @@
 var utils = cb_require('utils/utils'),
 	path = require('path'),
 	shelljs = require('shelljs'),
-	Q = require('q');
+	Q = require('q'),
+	semver = require('semver'),
+	npm = require('npm');
 
 var Package = function(name, group, version) {
 	if (typeof name === 'object') {
@@ -18,12 +20,44 @@ var Package = function(name, group, version) {
 	}
 };
 
+Package.prototype.latest = function latest() {
+	var deferred = Q.defer(),
+		_this = this;
+
+	npm.load({}, function(error) {
+		if (error) {
+			deferred.reject(error);
+		}
+
+		npm.commands.view([_this.name, 'version'], true, function(error, data) {
+			if (error) {
+				deferred.reject(error);
+				return;
+			}
+
+			//console.log('npm show ' + _this.name + ' version: ' + data);
+
+			_this.version = Object.keys(data)[0];
+
+			deferred.resolve();
+		});
+	});
+
+	return deferred.promise;
+};
+
 Package.prototype.fetch = function fetch() {
 	var _this = this,
 		homeDir = process.env.HOME || process.env.USERPROFILE || process.env.HOMEPATH,
 		packageDir = path.join(homeDir, '.cloudbridge', 'packages', this.group, this.name),
 		outputDir = path.join(packageDir, this.version),
-		url = 'https://github.com/' + this.group + '/' + this.name + '/archive/' + this.version + '.zip';
+		url = 'https://github.com/' + this.group + '/' + this.name + '/archive/';
+
+	if (semver.valid(this.version)) {
+		url += 'v';
+	}
+
+	url += this.version + '.zip';
 
 	_this.src = outputDir;
 

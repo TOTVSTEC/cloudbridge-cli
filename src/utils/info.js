@@ -4,6 +4,7 @@ var fs = require('fs'),
 	os = require('os'),
 	argv = require('optimist').argv,
 	semver = require('semver'),
+	tds = cb_require('utils/tds'),
 	logging = require('./logging');
 
 var Info = module.exports;
@@ -69,11 +70,12 @@ Info.getIosDeployInfo = function getIosDeployInfo() {
 	return version;
 };
 
-Info.getCloudBridgeCliVersion = function getCloudBridgeCliVersion(info, cloudbridgeCliPath) {
+Info.getCloudBridgeCliVersion = function getCloudBridgeCliVersion(info) {
 	try {
-		var cloudbridgeCliPackageJsonPath = path.join(cloudbridgeCliPath, 'package.json');
-		var cloudbridgeCliPackageJson = require(cloudbridgeCliPackageJsonPath);
-		info.cloudbridge_cli = cloudbridgeCliPackageJson.version;
+		var packagePath = path.join(__basedir, 'package.json');
+		var packageJson = require(packagePath);
+
+		info.cloudbridge_cli = packageJson.version;
 	}
 	catch (ex) { }
 };
@@ -81,9 +83,8 @@ Info.getCloudBridgeCliVersion = function getCloudBridgeCliVersion(info, cloudbri
 Info.getCloudBridgeLibVersion = function getCloudBridgeLibVersion(info) {
 	try {
 		var packageJson = require(path.resolve(__dirname, '../package.json'));
-		var cloudbridgeLibVersion = packageJson.version;
 
-		info.cloudbridge_lib = cloudbridgeLibVersion;
+		info.cloudbridge_lib = packageJson.version;
 	}
 	catch (ex) { }
 };
@@ -181,11 +182,15 @@ Info.getOsEnvironment = function getOsEnvironment(info) {
 	}
 };
 
+Info.getTDSInfo = function getTDSInfo(info) {
+	info.tds_home = tds.getHome();
+};
+
 Info.getNodeVersion = function getNodeVersion(info) {
 	info.node = process.version;
-	// var command = 'node -v';
-	// var result = shelljs.exec(command, { silent: true } );
-	// info.node = result.output.replace('\n','');
+
+	if (info.node[0] === 'v')
+		info.node = info.node.substring(1);
 };
 
 Info.gatherGulpInfo = function gatherGulpInfo(info) {
@@ -215,6 +220,7 @@ Info.gatherInfo = function gatherInfo() {
 	//Windows version
 
 	//For all
+	// TDS
 	// Android SDK info
 	// CloudBridge CLI version
 
@@ -231,13 +237,15 @@ Info.gatherInfo = function gatherInfo() {
 
 	Info.getOsEnvironment(info);
 
-	Info.gatherGulpInfo(info);
+	//Info.gatherGulpInfo(info);
+
+	Info.getTDSInfo(info);
 
 	return info;
 };
 
 Info.printInfo = function printInfo(info) {
-	logging.logger.info('\nYour system information:\n');
+	logging.logger.info('\nYour system information:\n'.bold);
 
 	if (info.gulp) {
 		logging.logger.info('Gulp version:', info.gulp);
@@ -270,6 +278,19 @@ Info.printInfo = function printInfo(info) {
 	if (info.xcode) {
 		logging.logger.info('Xcode version:', info.xcode);
 	}
+
+	logging.logger.info('\nEnvironment Variables:\n'.bold);
+	//if (info.tds_home) {
+	logging.logger.info('TDS_HOME:', info.tds_home);
+	//}
+
+	//if (info.java_home) {
+	logging.logger.info('JAVA_HOME:', info.java_home);
+	//}
+
+	//if (info.android_home) {
+	logging.logger.info('ANDROID_HOME:', info.android_home);
+	//}
 
 	logging.logger.info('\n');
 };
@@ -330,7 +351,6 @@ Info.checkRuntime = function checkRuntime() {
 };
 
 Info.run = function run(cloudbridge) {
-
 	var info = Info.gatherInfo();
 	Info.printInfo(info);
 

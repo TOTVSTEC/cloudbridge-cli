@@ -31,6 +31,9 @@ PlatformAddTask.prototype.run = function run(cloudbridge, argv) {
 
 		return promise
 			.then(function() {
+				return package.latest().catch(function() {});
+			})
+			.then(function() {
 				return package.fetch();
 			})
 			.then(function() {

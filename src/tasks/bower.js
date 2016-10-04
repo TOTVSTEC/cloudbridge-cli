@@ -36,7 +36,7 @@ BowerTask.prototype.run = function(cloudbridge, argv) {
 		return task.run(cloudbridge, argv);
 	}
 	catch (ex) {
-		utils.fail('An error occurred on platform task:' + ex);
+		utils.fail('An error occurred on bower task:' + ex);
 	}
 };
 

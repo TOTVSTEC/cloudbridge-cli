@@ -9,9 +9,19 @@ var TDS = module.exports,
 	utils = cb_require('utils/utils');
 
 TDS.compile = function compile(data) {
-	var home = TDS.getHome(),
-		cli = TDS.getCliExecutable(home),
-		deferred = Q.defer();
+	var deferred = Q.defer(),
+		home = TDS.getHome(),
+		cli = null;
+
+	if (home === '') {
+		deferred.reject(new Error("Variavel de ambiente 'TDS_HOME' nao definida!"));
+		//utils.fail("Variavel de ambiente 'TDS_HOME' nao definida!");
+	}
+	else {
+		console.log("Usando TDS_HOME='" + home + "'");
+
+		cli = TDS.getCliExecutable(home);
+	}
 
 	if (cli === null) {
 		deferred.reject(new Error("Não foi possivel encontrar o tdscli! Verifique se ele foi instalado!"));
@@ -59,15 +69,13 @@ TDS.getHome = function getHome() {
 	var home = process.env["TDS_HOME"];
 
 	if (home === undefined) {
-		utils.fail("Variavel de ambiente 'TDS_HOME' nao definida!");
+		return "";
 	}
 
 	home = path.normalize(home);
 	if (!_s.endsWith(home, path.sep)) {
 		home += path.sep;
 	}
-
-	console.log("Usando TDS_HOME='" + home + "'");
 
 	return home;
 };

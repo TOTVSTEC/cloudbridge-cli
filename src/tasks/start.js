@@ -176,10 +176,12 @@ StartTask.printQuickHelp = function(options) {
 	logging.logger.info('\n\nYour CloudBridge app is ready to go!'.bold);
 	logging.logger.info('\n\nMake sure to cd into your new app directory:'.bold);
 	logging.logger.info('  cd ' + options.appName);
-	logging.logger.info('\nTo run on windows:'.bold);
+	logging.logger.info('\nAdd some platforms:'.bold);
+	logging.logger.info('  cloudbridge platform add windows android');
+	logging.logger.info('\nTo build on windows:'.bold);
+	logging.logger.info('  cloudbridge build windows');
+	logging.logger.info('\nTo run on Windows:'.bold);
 	logging.logger.info('  cloudbridge run windows');
-	logging.logger.info('\nTo run on Android:'.bold);
-	logging.logger.info('  cloudbridge run android');
 };
 
 StartTask.fetchWrapper = function fetchWrapper(options) {

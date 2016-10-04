@@ -1,0 +1,35 @@
+'use strict';
+
+var Task = cb_require('tasks/task'),
+	shelljs = require('shelljs'),
+	path = require('path'),
+	fs = require('fs'),
+	utils = cli.utils;
+
+var CheckTask = function() {
+
+};
+
+CheckTask.prototype = new Task();
+
+CheckTask.prototype.run = function(cloudbridge, argv) {
+	cloudbridge.projectDir = process.cwd();
+
+	try {
+		var isEnvironmentCmd = argv._.indexOf('environment') != -1;
+		var task = null;
+
+		if (isEnvironmentCmd) {
+			var CheckEnvironmentTask = require('./check-environment');
+
+			task = new CheckEnvironmentTask();
+		}
+
+		return task.run(cloudbridge, argv);
+	}
+	catch (ex) {
+		utils.fail('An error occurred on check task:' + ex);
+	}
+};
+
+module.exports = CheckTask;

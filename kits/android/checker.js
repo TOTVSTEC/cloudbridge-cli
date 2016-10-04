@@ -33,8 +33,12 @@ function tryCommand(cmd, errMsg, catchStderr) {
 
 // Get valid target from framework/project.properties
 Checker.get_target = function() {
+	return 'android-24';
+
+	/*
 	function extractFromFile(filePath) {
 		var target = shelljs.grep(/\btarget=/, filePath);
+
 		if (!target) {
 			throw new Error('Could not find android target within: ' + filePath);
 		}
@@ -48,6 +52,7 @@ Checker.get_target = function() {
 		return extractFromFile(path.join(ROOT, 'project.properties'));
 	}
 	throw new Error('Could not find android target. File missing: ' + path.join(ROOT, 'project.properties'));
+	*/
 };
 
 // Returns a promise. Called only by build and clean commands.
@@ -286,7 +291,6 @@ var Requirement = function(id, name, version, installed) {
  * @return Promise<Requirement[]> Array of requirements. Due to implementation, promise is always fulfilled.
  */
 Checker.check_all = function() {
-
 	var requirements = [
 		new Requirement('java', 'Java JDK'),
 		new Requirement('androidSdk', 'Android SDK'),

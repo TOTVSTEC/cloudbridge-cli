@@ -1,3 +1,14 @@
+/*
+Command Line Syntax
+
+Text without brackets or braces   Items you must type as shown
+<Text inside angle brackets>      Placeholder for which you must supply a value
+[Text inside square brackets]     Optional items
+{Text inside braces}              Set of required items; choose one
+Vertical bar (|)                  Separator for mutually exclusive items; choose one
+Ellipsis (…)                      Items that can be repeated
+
+*/
 
 var TASKS = [
 	{
@@ -11,7 +22,7 @@ var TASKS = [
 			'(ex: tabs, sidemenu, blank),\n' +
 			'a Github repo, a Codepen url, or a local directory.\n' +
 			'Codepen url, ex: http://codepen.io/cloudbridge/pen/odqCz\n' +
-			'Defaults to CloudBridge "tabs" starter template'
+			'Defaults to CloudBridge "showcase" starter template'
 		},
 		options: {
 			'--appname|-a': 'Human readable name for the app (Use quotes around the name)',
@@ -76,9 +87,9 @@ var TASKS = [
 		title: 'bower',
 		name: 'bower',
 		//alt: ['bw'],
-		summary: 'Add bower packages to you CloudBridge app',
+		summary: 'Add or remove bower packages to you CloudBridge app',
 		args: {
-			'[options]': '',
+			'{add|remove}': '',
 			'<PACKAGE>': ''
 		},
 		options: {
@@ -92,7 +103,29 @@ var TASKS = [
 			}*/
 		},
 		module: 'bower'
+	},
+	{
+		title: 'check',
+		name: 'check',
+		summary: 'Check environment or project prerequisites.',
+		args: {
+			'{environment|project}': '',
+			'[options]': ''
+		},
+		options: {
+			/*'--noresources|-r': {
+				title: 'Do not add default CloudBridge icons and splash screen resources',
+				boolean: true
+			},
+			'--nosave|-e': {
+				title: 'Do not save the platform to the package.json file',
+				boolean: true
+			}*/
+		},
+		module: 'check'
 	}
+
+
 ];
 
 
