@@ -97,9 +97,21 @@ Adb.install = function(target, packagePath, opts) {
 	if (opts && opts.replace)
 		args.push('-r');
 
-	args.push('-g');
+	//
+	return spawn('adb', ['shell', 'getprop', 'ro.build.version.sdk'])
+		.then(function(output) {
+			output = Number(output);
 
-	return spawn('adb', args.concat(packagePath), { cwd: os.tmpdir() })
+			//Beginning in Android 6.0 (API level 23), users grant permissions to apps
+			//while the app is running, not when they install the app.
+			//The -g arg grants the  permissions automaticaly.
+			if (output >= 23)
+				args.push('-g');
+
+			//console.log('"adb shell getprop ro.build.version.sdk" returned: ' + output);
+
+			return spawn('adb', args.concat(packagePath), { cwd: os.tmpdir() });
+		})
 		.then(function(output) {
 			// 'adb install' seems to always returns no error, even if installation fails
 			// so we catching output to detect installation failure
