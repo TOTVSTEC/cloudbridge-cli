@@ -9,15 +9,15 @@ RunTask.prototype.run = function run(cloudbridge, argv) {
 	var isAndroid = argv._.indexOf('android') != -1;
 
 	if (isAndroid) {
-		var RunAndroidTask = require('./run-android'),
-			task = new RunAndroidTask();
+		var RunAndroidTask = require('./run-android');
+		let task = new RunAndroidTask();
 
 		return task.run(cloudbridge, argv);
 	}
 	else {
 		//if ((isWindows) || (!isWindows && !isAndroid)) {
-		var RunWindowsTask = require('./run-windows'),
-			task = new RunWindowsTask();
+		var RunWindowsTask = require('./run-windows');
+		let task = new RunWindowsTask();
 
 		return task.run(cloudbridge, argv);
 	}

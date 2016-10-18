@@ -17,11 +17,14 @@ Logging.logger = new winston.Logger({
 // To be used by helpers createDefaultLogger and createLoggerWithFile
 Logging.createLogger = function createLogger(transports, level) {
 	level = level || 'info';
-	return Logging.logger = new winston.Logger({
+
+	Logging.logger = new winston.Logger({
 		exitOnError: false,
 		level: level,
 		transports: transports
 	});
+
+	return Logging.logger;
 };
 
 Logging.createDefaultLogger = function createDefaultLogger(level) {
@@ -48,7 +51,7 @@ Logging.createLoggerWithFile = function createLoggerWithFile(logFilePath, level)
 Logging.queryLogs = function queryLogs(searchText, timestamp) {
 	var searchDate = new Date(timestamp) || new Date();
 	var options = {
-		from: new Date - 24 * 60 * 60 * 1000,
+		from: new Date() - (24 * 60 * 60 * 1000),
 		until: searchDate,
 		limit: 10,
 		start: 0,

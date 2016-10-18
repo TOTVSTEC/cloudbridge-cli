@@ -23,9 +23,9 @@ BowerTask.prototype.run = function(cloudbridge, argv) {
 		var task = null;
 
 		if (isAddCmd) {
-			var BowerAddTask = require('./bower-add'),
+			var BowerAddTask = require('./bower-add');
 
-				task = new BowerAddTask();
+			task = new BowerAddTask();
 		}
 		else if (isRmCmd) {
 			var BowerRemoveTask = require('./bower-remove');
@@ -78,56 +78,5 @@ BowerTask.prototype.updateMain = function updateMain() {
 
 	wiredep(options);
 };
-
-/*
-BowerTask.prototype.updateMain = function updateMain() {
-	var main = this.project.get('main'),
-		content = null,
-		matches = [];
-
-	if (main === undefined) {
-		return;
-	}
-
-	main = path.join(this.projectDir, main);
-
-	if (shelljs.test('-f', main)) {
-		content = fs.readFileSync(main, { encoding: 'utf8' });
-	}
-
-	if (content === null)
-		return;
-
-	//var matches = (/(<!-- bower:.* -->)/igm).exec(content);
-	// (?:<!-- bower:)(.*)(?: -->(?:\r?\n|.)*?<!-- endbower -->)
-	//'<!-- endbower -->'
-
-	var regexp = /(?:<!-- bower:(.*) -->)([\s\S]*?)(?:<!-- endbower -->)/igm,
-		match = null;
-
-
-	while (match = regexp.exec(content)) {
-		matches.push(match);
-	}
-
-	if (matches.length === 0)
-		return;
-
-
-	return bower.list()
-		.then(function(result) {
-			console.log(result);
-
-			var from = path.parse(main).dir;
-
-			Object.keys(result).forEach(function(key, index) {
-				var to = path.join(process.cwd(), result[key]);
-
-				console.log(path.relative(from, to));
-			});
-
-		});
-};
-*/
 
 module.exports = BowerTask;

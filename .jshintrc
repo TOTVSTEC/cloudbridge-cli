@@ -1,0 +1,13 @@
+{
+	"node": true,
+	"esversion": 6,
+
+	"eqeqeq": false,
+	"eqnull": true,
+
+	"globals": {
+		"cb_require": true,
+		"__basedir": true,
+		"cli": true
+	}
+}

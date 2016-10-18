@@ -39,9 +39,11 @@ BowerAddTask.prototype.save = function save(packages, bowerResult) {
 		message = '';
 
 	for (var i = 0; i < packages.length; i++) {
-		var name = packages[i].replace(/#.*/, '');
+		var name = packages[i].replace(/#.*/, ''),
+			keys = Object.keys(bowerResult);
 
-		Object.keys(bowerResult).forEach(function(key, index) {
+		for (var j = 0; j < keys.length; j++) {
+			var key = keys[j];
 			var endpoint = bowerResult[key].endpoint;
 
 			if (endpoint.source === name) {
@@ -53,7 +55,7 @@ BowerAddTask.prototype.save = function save(packages, bowerResult) {
 						message += 'The bower package ' + name.bold + '#' + version.bold + ' has been successfully added to your project!\n';
 				}
 			}
-		}.bind(this));
+		}
 	}
 
 	this.project.set('bowerComponents', bowerComponents);

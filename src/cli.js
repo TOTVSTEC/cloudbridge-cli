@@ -9,8 +9,8 @@ var Cli = module.exports,
 
 Cli.Tasks = TASKS = Tasks;
 
-Cli.utils = cb_require('utils/utils'),
-Cli.logging = cb_require('utils/logging'),
+Cli.utils = cb_require('utils/utils');
+Cli.logging = cb_require('utils/logging');
 
 // The main entry point for the CLI
 // This takes the process.argv array for arguments
@@ -39,7 +39,7 @@ Cli.run = function run(processArgv) {
 		//environment and display any upgrade warnings
 		Updates.doRuntimeCheck(settings.version);
 
-		if ((argv.version || argv.v) && !argv._.length) {
+		if ((argv.version || argv.v) && (!argv._.length)) {
 			return Cli.version();
 		}
 
@@ -60,29 +60,29 @@ Cli.run = function run(processArgv) {
 
 		argv = optimist(processArgv.slice(2)).boolean(booleanOptions).argv;
 
-		var taskModule = Cli.lookupTask(taskSetting.module);
-		var taskInstance = new taskModule();
+		var TaskModule = Cli.lookupTask(taskSetting.module);
+		var taskInstance = new TaskModule();
 		var promise = taskInstance.run(Cli, argv);
 
 		promise.catch(function(ex) {
 			console.error(ex);
 		})
-		.done(function onFulfilled() {
-			Cli.processExit();
-		},
-		function onRejected() {
-			console.log('Fail!');
-			console.log(arguments);
+			.done(function onFulfilled() {
+				Cli.processExit();
+			},
+			function onRejected() {
+				console.log('Fail!');
+				console.log(arguments);
 
-			Cli.processExit(1);
-		},
-		function onProgress(output) {
-			if (output.stdout)
-				console.log(output.stdout.toString());
+				Cli.processExit(1);
+			},
+			function onProgress(output) {
+				if (output.stdout)
+					console.log(output.stdout.toString());
 
-			if (output.stderr)
-				console.error(output.stderr.toString());
-		});
+				if (output.stderr)
+					console.error(output.stderr.toString());
+			});
 
 		return promise;
 	}

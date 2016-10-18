@@ -20,7 +20,7 @@ PlatformTask.prototype.run = function(cloudbridge, argv) {
 		var task = null;
 
 		if (isAddCmd) {
-			var PlatformAddTask = require('./platform-add'),
+			var PlatformAddTask = require('./platform-add');
 
 			task = new PlatformAddTask();
 		}

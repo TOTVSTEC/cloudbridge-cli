@@ -1,11 +1,13 @@
 'use strict';
 
-var AppTask = cb_require('tasks/app-task'),
+let AppTask = cb_require('tasks/app-task'),
 	path = require('path'),
-	Q = require('q'),
-	utils = cb_require('utils/utils'),
-	tds = cb_require('utils/tds'),
-	appserver = cb_require('utils/appserver');
+	utils = cb_require('utils/utils');
+
+const AppServer = require('totvs-platform-helper/appserver');
+const DevStudio = require('totvs-platform-helper/tds');
+
+const APPSERVER_DIR = path.join('build', 'windows', 'bin', 'appserver');
 
 var BuildWindowsTask = function() { };
 BuildWindowsTask.prototype = new AppTask();
@@ -30,7 +32,10 @@ BuildWindowsTask.prototype.run = function run(cloudbridge, argv) {
 			]
 		};
 
-	return appserver.start(projectDir)
+	var appserver = new AppServer(path.join(projectDir, APPSERVER_DIR)),
+		tds = new DevStudio();
+
+	return appserver.start()
 		.then(function() {
 			tdsOptions.port = appserver.tcpPort;
 
@@ -39,29 +44,6 @@ BuildWindowsTask.prototype.run = function run(cloudbridge, argv) {
 		.then(function() {
 			return appserver.stop();
 		});
-
-
-/*
-	return appserver.getStatus(projectDir)
-		.then(function(status) {
-			if (!status.installed) {
-				return appserver.install(projectDir, true)
-					.then(function() {
-						appserver.start(projectDir);
-					});
-			}
-
-			if (!status.running) {
-				return appserver.start(projectDir);
-			}
-		})
-		.then(function() {
-			return tds.compile(tdsOptions);
-		})
-		.then(function() {
-			return appserver.stop();
-		});
-		*/
 };
 
 module.exports = BuildWindowsTask;

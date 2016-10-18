@@ -4,7 +4,6 @@ var fs = require('fs'),
 	os = require('os'),
 	argv = require('optimist').argv,
 	semver = require('semver'),
-	tds = cb_require('utils/tds'),
 	logging = require('./logging');
 
 var Info = module.exports;
@@ -45,7 +44,8 @@ Info.getMacInfo = function getMacInfo() {
 
 Info.getXcodeInfo = function getXcodeInfo() {
 	var result = shelljs.exec('/usr/bin/xcodebuild -version', { silent: true });
-	if (result.code != 0) {
+
+	if (result.code !== 0) {
 		return 'Not installed';
 	}
 	var version = result.output.replace(/\n/g, ' ');
@@ -54,7 +54,7 @@ Info.getXcodeInfo = function getXcodeInfo() {
 
 Info.getIosSimInfo = function getIosSimInfo() {
 	var result = shelljs.exec('ios-sim --version', { silent: true });
-	if (result.code != 0) {
+	if (result.code !== 0) {
 		return 'Not installed';
 	}
 	var version = result.output.replace(/\n/g, ' ');
@@ -63,7 +63,7 @@ Info.getIosSimInfo = function getIosSimInfo() {
 
 Info.getIosDeployInfo = function getIosDeployInfo() {
 	var result = shelljs.exec('ios-deploy --version', { silent: true });
-	if (result.code != 0) {
+	if (result.code !== 0) {
 		return 'Not installed';
 	}
 	var version = result.output.replace(/\n/g, ' ');
@@ -96,15 +96,6 @@ Info.getCloudBridgeVersion = function getCloudBridgeVersion(info, appDirectory) 
 		info.cloudbridge = cloudbridgeVersion;
 	}
 	catch (ex) { }
-
-	try {
-		var bowerJsonPath = path.join(appDirectory, 'www', 'lib', 'cloudbridge', 'bower.json');
-		var cloudbridgePackageJson = require(bowerJsonPath);
-		var cloudbridgeVersion = cloudbridgePackageJson.version;
-		info.cloudbridge = cloudbridgeVersion;
-	}
-	catch (ex) { }
-
 };
 
 // Windows XP  5.1.2600
@@ -183,7 +174,7 @@ Info.getOsEnvironment = function getOsEnvironment(info) {
 };
 
 Info.getTDSInfo = function getTDSInfo(info) {
-	info.tds_home = tds.getHome();
+	info.tds_home = process.env.TDS_HOME;
 };
 
 Info.getNodeVersion = function getNodeVersion(info) {
@@ -197,7 +188,7 @@ Info.gatherGulpInfo = function gatherGulpInfo(info) {
 	var result = shelljs.exec('gulp -v', { silent: true });
 
 	try {
-		if (result.code == 0) {
+		if (result.code === 0) {
 			// console.log(result.output);
 			var gulpVersions = result.output.replace(/(\[.*\])/g, '').split('\n');
 			if (gulpVersions.length > 0) {

@@ -56,8 +56,9 @@ StartTask.prototype.run = function run(cloudbridge, argv) {
 		startingApp = true;
 
 	if (fs.existsSync(options.targetPath)) {
-		var _argv = require('optimist').boolean(['list']).argv,
-			promptPromise = StartTask.promptForOverwrite(options.targetPath, _argv);
+		var _argv = require('optimist').boolean(['list']).argv;
+
+		promptPromise = StartTask.promptForOverwrite(options.targetPath, _argv);
 	}
 	else {
 		promptPromise = Q(true);

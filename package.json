@@ -9,7 +9,7 @@
     "cb": "index.js"
   },
   "scripts": {
-    "postinstall": "node index.js check environment",
+    "___postinstall": "node index.js check environment",
     "___prepublish": "npm version patch",
     "___postpublish": "git push --tags"
   },
@@ -47,17 +47,12 @@
     "request-progress": "^2.0.1",
     "semver": "^5.3.0",
     "shelljs": "0.7.4",
+    "totvs-platform-helper": "0.0.1",
     "underscore": "~1.8.3",
     "underscore.string": "^3.3.4",
     "unzip": "0.1.11",
     "username": "^2.2.2",
     "winston": "^2.2.0",
     "wiredep": "^4.0.0"
-  },
-  "devDependencies": {
-    "istanbul": "^0.4.3",
-    "jasmine-node": "^1.14.5",
-    "rewire": "^2.3.4",
-    "coveralls": "^2.2.0"
   }
 }

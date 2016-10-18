@@ -220,8 +220,8 @@ function generate(dir, options) {
 			}
 		}
 
-		if (options['api']) {
-			Settings.apiUrl = options['api'];
+		if (options.api) {
+			Settings.apiUrl = options.api;
 		}
 
 		var promises = [];

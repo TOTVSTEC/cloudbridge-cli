@@ -25,7 +25,7 @@ Utils.transformCookies = function transformCookies(jar) {
 };
 
 Utils.retrieveCsrfToken = function retrieveCsrfToken(jar) {
-	if (!jar || typeof jar == 'undefined' || jar.length == 0) {
+	if (!jar || typeof jar == 'undefined' || jar.length === 0) {
 		return '';
 	}
 	var csrftoken = '';
@@ -276,6 +276,7 @@ Utils.getProjectDirectory = function getProjectDirectory(options) {
 	return path.resolve(options.appDirectory);
 };
 
+/*
 Utils.mergeOptions = function mergeOptions(obj1, obj2) {
 	var obj3 = {};
 
@@ -288,6 +289,7 @@ Utils.mergeOptions = function mergeOptions(obj1, obj2) {
 
 	return obj3;
 };
+*/
 
 Utils.fail = function fail(msg, taskHelp) {
 	try {
@@ -313,9 +315,10 @@ Utils.fail = function fail(msg, taskHelp) {
 Utils.gulpInstalledGlobally = function gulpInstalledGlobally() {
 	var result = shelljs.exec('gulp -v', { silent: true });
 
-	if (result.code != 0) {
+	if (result.code !== 0) {
 		return false;
 	}
+
 	return true;
 };
 
