@@ -151,8 +151,10 @@ StartTask.startApp = function startApp(options) {
 
 	logging.logger.info(createMessage);
 
-
 	return StartTask.createProjectFile(options)
+		.then(function() {
+			return StartTask.fetchWrapper(options);
+		})
 		.then(function() {
 			return StartTask.fetchSeed(options);
 		})
@@ -192,7 +194,10 @@ StartTask.fetchWrapper = function fetchWrapper(options) {
 	utils.fetchPackage(fetchOptions)
 		.then(function(packageDir) {
 			//options.src = packageDir;
+			shelljs.cp('-Rf', path.join(packageDir, 'src'), options.targetPath);
+			shelljs.cp('-Rf', path.join(packageDir, 'build'), options.targetPath);
 
+/*
 			utils.copyTemplate(packageDir, options.targetPath, {
 				appname: options.appName
 			});
@@ -202,7 +207,7 @@ StartTask.fetchWrapper = function fetchWrapper(options) {
 			shelljs.mv(
 				path.join(advplDir, 'program.prw'),
 				path.join(advplDir, options.appName + '.prw'));
-
+*/
 			shelljs.cd(options.targetPath);
 			//return _this.install(options);
 
