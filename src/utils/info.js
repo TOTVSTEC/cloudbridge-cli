@@ -177,6 +177,14 @@ Info.getTDSInfo = function getTDSInfo(info) {
 	info.tds_home = process.env.TDS_HOME;
 };
 
+Info.getJavaInfo = function getJavaInfo(info) {
+	info.java_home = process.env.JAVA_HOME;
+};
+
+Info.getAndroidInfo = function getAndroidInfo(info) {
+	info.android_home = process.env.ANDROID_HOME;
+};
+
 Info.getNodeVersion = function getNodeVersion(info) {
 	info.node = process.version;
 
@@ -231,6 +239,10 @@ Info.gatherInfo = function gatherInfo() {
 	//Info.gatherGulpInfo(info);
 
 	Info.getTDSInfo(info);
+
+	Info.getJavaInfo(info);
+
+	Info.getAndroidInfo(info);
 
 	return info;
 };

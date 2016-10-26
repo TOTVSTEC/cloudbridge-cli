@@ -42,8 +42,8 @@ var TASKS = [
 		alt: ['platforms'],
 		summary: 'Add platform target for building an CloudBridge app',
 		args: {
-			'[options]': '',
-			'<PLATFORM>': ''
+			'{add|remove}': 'Action to perform',
+			'<PLATFORM>': 'One or more of the valid platform {windows|android}'
 		},
 		options: {
 			'--noresources|-r': {
