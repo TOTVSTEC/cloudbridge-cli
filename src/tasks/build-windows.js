@@ -4,7 +4,7 @@ let AppTask = cb_require('tasks/app-task'),
 	path = require('path'),
 	utils = cb_require('utils/utils'),
 	AppServer = require('totvs-platform-helper/appserver'),
-	DevStudio = require('totvs-platform-helper/tds');
+	DevStudio = require('totvs-platform-helper/tdscli');
 
 const APPSERVER_DIR = path.join('build', 'windows', 'bin', 'appserver');
 
