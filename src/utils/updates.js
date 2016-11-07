@@ -1,3 +1,5 @@
+'use strict';
+
 var Updates = module.exports,
 	request = require('request'),
 	semver = require('semver'),

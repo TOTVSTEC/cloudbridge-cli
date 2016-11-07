@@ -1,3 +1,5 @@
+'use strict';
+
 var android = module.exports,
 	spawn = require('child_process').spawn,
 	path = require('path'),
@@ -77,7 +79,7 @@ android.build = function(targetDir) {
 };
 
 
-
+/*
 android.build0 = function(cli) {
 	var d = Q.defer(),
 		cmd = '',
@@ -106,6 +108,8 @@ android.build0 = function(cli) {
 
 	return d.promise;
 };
+*/
+
 
 /*
 gradle build command line:

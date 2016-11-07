@@ -1,3 +1,5 @@
+'use strict';
+
 var PlatformTask = cb_require('tasks/platform'),
 	utils = cb_require('utils/utils'),
 	Package = cb_require('utils/package'),
@@ -27,17 +29,17 @@ PlatformAddTask.prototype.run = function run(cloudbridge, argv) {
 			package: 'cloudbridge-kit-' + platform
 		};
 
-		var package = new Package(options.package);
+		var pack = new Package(options.package);
 
 		return promise
 			.then(function() {
-				return package.latest().catch(function() {});
+				return pack.latest().catch(function() {});
 			})
 			.then(function() {
-				return package.fetch();
+				return pack.fetch();
 			})
 			.then(function() {
-				return package.install(_this.projectDir, projectData);
+				return pack.install(_this.projectDir, projectData);
 			})
 			.then(function() {
 				return _this.save(options);

@@ -1,8 +1,8 @@
-var Q = require('q');
-var os = require('os');
-//var spawn = require('cordova-common').superspawn.spawn;
-var child_process = require('child_process');
+'use strict';
 
+var Q = require('q'),
+	os = require('os'),
+	child_process = require('child_process');
 
 /*
 	adb.on('close', function(code) {

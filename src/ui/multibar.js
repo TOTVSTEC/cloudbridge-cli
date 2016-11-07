@@ -1,3 +1,5 @@
+'use strict';
+
 var ProgressBar = require('progress');
 
 function Multibar(stream) {

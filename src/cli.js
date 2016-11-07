@@ -1,3 +1,5 @@
+'use strict';
+
 var Cli = module.exports,
 	path = require('path'),
 	optimist = require('optimist'),
@@ -7,7 +9,7 @@ var Cli = module.exports,
 	Tasks = cb_require('tasks/task-list'),
 	Updates = cb_require('utils/updates');
 
-Cli.Tasks = TASKS = Tasks;
+//Cli.Tasks = TASKS = Tasks;
 
 Cli.utils = cb_require('utils/utils');
 Cli.logging = cb_require('utils/logging');
@@ -144,7 +146,7 @@ Cli.tryBuildingTask = function tryBuildingTask(argv) {
 	}
 	var taskName = argv._[0];
 
-	return Cli.Tasks.getTaskWithName(taskName);
+	return Tasks.getTaskWithName(taskName);
 };
 
 
@@ -174,8 +176,8 @@ Cli.printAvailableTasks = function printAvailableTasks(argv) {
 	process.stderr.write('Available tasks: '.bold);
 	process.stderr.write('(use --help or -h for more info)\n\n');
 
-	for (var i = 0; i < TASKS.length; i++) {
-		var task = TASKS[i];
+	for (var i = 0; i < Tasks.length; i++) {
+		var task = Tasks[i];
 		if (task.summary) {
 			var name = '   ' + task.name + '  ';
 			var dots = '';
@@ -194,8 +196,8 @@ Cli.printHelpLines = function printHelpLines() {
 	Cli.printCloudBridge();
 	process.stderr.write('\n=======================\n');
 
-	for (var i = 0; i < TASKS.length; i++) {
-		var task = TASKS[i];
+	for (var i = 0; i < Tasks.length; i++) {
+		var task = Tasks[i];
 		if (task.summary) {
 			Cli.printUsage(task);
 		}

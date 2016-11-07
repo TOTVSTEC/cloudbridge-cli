@@ -1,3 +1,5 @@
+'use strict';
+
 var Logging = module.exports,
 	colors = require('colors'),
 	winston = require('winston');

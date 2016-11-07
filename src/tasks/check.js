@@ -19,11 +19,11 @@ CheckTask.prototype.run = function(cloudbridge, argv) {
 		var isEnvironmentCmd = argv._.indexOf('environment') != -1;
 		var task = null;
 
-		if (isEnvironmentCmd) {
-			var CheckEnvironmentTask = require('./check-environment');
+		//if (isEnvironmentCmd) {
+		var CheckEnvironmentTask = require('./check-environment');
 
-			task = new CheckEnvironmentTask();
-		}
+		task = new CheckEnvironmentTask();
+		//}
 
 		return task.run(cloudbridge, argv);
 	}

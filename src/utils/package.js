@@ -1,3 +1,5 @@
+'use strict';
+
 var utils = cb_require('utils/utils'),
 	path = require('path'),
 	shelljs = require('shelljs'),

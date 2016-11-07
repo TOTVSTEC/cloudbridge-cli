@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs'),
 	path = require('path');
 
@@ -71,8 +73,8 @@ Project.save = function save(appDirectory, data) {
 		console.error('This should never happen!');
 	}
 	try {
-		var filePath = path.join(appDirectory, Project.PROJECT_FILE);
-		jsonData = JSON.stringify(data, null, 2);
+		var filePath = path.join(appDirectory, Project.PROJECT_FILE),
+			jsonData = JSON.stringify(data, null, 2);
 
 		fs.writeFileSync(filePath, jsonData + '\n');
 	}

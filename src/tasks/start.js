@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs'),
 	path = require('path'),
 	request = require('request'),
@@ -226,6 +228,8 @@ StartTask.fetchWrapper = function fetchWrapper(options) {
 
 //Tested
 StartTask.fetchSeed = function(options) {
+	var seedType;
+
 	// Codepen: http://codepen.io/cloudbridge/pen/GpCst
 	if (/\/\/codepen.io\//i.test(options.template)) {
 		seedType = 'codepen';
@@ -442,11 +446,11 @@ StartTask.fetchCloudBridgeStarter = function(options) {
 StartTask.fetchGithubStarter = function(options, packageOptions) {
 	//var q = Q.defer();
 
-	var package = new Package(packageOptions);
+	var pack = new Package(packageOptions);
 
-	return package.fetch()
+	return pack.fetch()
 		.then(function() {
-			return package.install(options.targetPath, {});
+			return pack.install(options.targetPath, {});
 		});
 
 

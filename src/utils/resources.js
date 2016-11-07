@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs'),
 	os = require('os'),
 	path = require('path'),
@@ -244,13 +246,7 @@ function generate(dir, options) {
 			.then(loadSourceImages)
 			.then(generateResourceImages)
 			.then(loadResourceImages)
-			// <<<<<<< HEAD:lib/resources/generate.js
-			//	   .then(updateConfigData)
-			//	   .catch(console.error);
-			// =======
 			.then(updateConfigData);
-		// >>>>>>> package:lib/resources.js
-
 	});
 }
 

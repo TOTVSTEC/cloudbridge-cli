@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs'),
 	path = require('path'),
 	shelljs = require('shelljs'),
@@ -9,7 +11,7 @@ var fs = require('fs'),
 var Info = module.exports;
 
 var requirements = {
-	node: '>=0.12.x'
+	node: '>=6.0.0'
 };
 
 Info.getMacInfo = function getMacInfo() {

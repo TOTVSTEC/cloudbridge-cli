@@ -1,3 +1,5 @@
+'use strict';
+
 var shelljs = require('shelljs'),
 	child_process = require('child_process'),
 	Q = require('q'),
@@ -66,7 +68,7 @@ Checker.check_ant = function() {
 
 // Returns a promise. Called only by build and clean commands.
 Checker.check_gradle = function() {
-	var sdkDir = process.env['ANDROID_HOME'];
+	var sdkDir = process.env.ANDROID_HOME;
 	if (!sdkDir)
 		return Q.reject(new Error('Could not find gradle wrapper within Android SDK. Could not find Android SDK directory.\n' +
 			'Might need to install Android SDK or set up \'ANDROID_HOME\' env variable.'));
@@ -82,12 +84,12 @@ Checker.check_gradle = function() {
 // Returns a promise.
 Checker.check_java = function() {
 	var javacPath = forgivingWhichSync('javac');
-	var hasJavaHome = !!process.env['JAVA_HOME'];
+	var hasJavaHome = !!process.env.JAVA_HOME;
 	return Q().then(function() {
 		if (hasJavaHome) {
 			// Windows java installer doesn't add javac to PATH, nor set JAVA_HOME (ugh).
 			if (!javacPath) {
-				process.env['PATH'] += path.delimiter + path.join(process.env['JAVA_HOME'], 'bin');
+				process.env.PATH += path.delimiter + path.join(process.env.JAVA_HOME, 'bin');
 			}
 		}
 		else {
@@ -97,7 +99,7 @@ Checker.check_java = function() {
 				if (fs.existsSync('/usr/libexec/java_home')) {
 					return tryCommand('/usr/libexec/java_home', msg)
 						.then(function(stdout) {
-							process.env['JAVA_HOME'] = stdout.trim();
+							process.env.JAVA_HOME = stdout.trim();
 						});
 				}
 				else {
@@ -105,7 +107,7 @@ Checker.check_java = function() {
 					// fs.realpathSync is require on Ubuntu, which symplinks from /usr/bin -> JDK
 					var maybeJavaHome = path.dirname(path.dirname(javacPath));
 					if (fs.existsSync(path.join(maybeJavaHome, 'lib', 'tools.jar'))) {
-						process.env['JAVA_HOME'] = maybeJavaHome;
+						process.env.JAVA_HOME = maybeJavaHome;
 					}
 					else {
 						throw new Error(msg);
@@ -125,9 +127,9 @@ Checker.check_java = function() {
 					// shelljs always uses / in paths.
 					firstJdkDir = firstJdkDir.replace(/\//g, path.sep);
 					if (!javacPath) {
-						process.env['PATH'] += path.delimiter + path.join(firstJdkDir, 'bin');
+						process.env.PATH += path.delimiter + path.join(firstJdkDir, 'bin');
 					}
-					process.env['JAVA_HOME'] = firstJdkDir;
+					process.env.JAVA_HOME = firstJdkDir;
 				}
 			}
 		}
@@ -135,8 +137,8 @@ Checker.check_java = function() {
 		var msg =
 			'Failed to run "javac -version", make sure that you have a JDK installed.\n' +
 			'You can get it from: http://www.oracle.com/technetwork/java/javase/downloads.\n';
-		if (process.env['JAVA_HOME']) {
-			msg += 'Your JAVA_HOME is invalid: ' + process.env['JAVA_HOME'] + '\n';
+		if (process.env.JAVA_HOME) {
+			msg += 'Your JAVA_HOME is invalid: ' + process.env.JAVA_HOME + '\n';
 		}
 		// We use tryCommand with catchStderr = true, because
 		// javac writes version info to stderr instead of stdout
@@ -153,11 +155,11 @@ Checker.check_android = function() {
 	return Q().then(function() {
 		var androidCmdPath = forgivingWhichSync('android');
 		var adbInPath = !!forgivingWhichSync('adb');
-		var hasAndroidHome = !!process.env['ANDROID_HOME'] && fs.existsSync(process.env['ANDROID_HOME']);
+		var hasAndroidHome = !!process.env.ANDROID_HOME && fs.existsSync(process.env.ANDROID_HOME);
 		function maybeSetAndroidHome(value) {
 			if (!hasAndroidHome && fs.existsSync(value)) {
 				hasAndroidHome = true;
-				process.env['ANDROID_HOME'] = value;
+				process.env.ANDROID_HOME = value;
 			}
 		}
 		if (!hasAndroidHome && !androidCmdPath) {
@@ -188,17 +190,17 @@ Checker.check_android = function() {
 			}
 		}
 		if (hasAndroidHome && !androidCmdPath) {
-			process.env['PATH'] += path.delimiter + path.join(process.env['ANDROID_HOME'], 'tools');
+			process.env.PATH += path.delimiter + path.join(process.env.ANDROID_HOME, 'tools');
 		}
 		if (androidCmdPath && !hasAndroidHome) {
 			var parentDir = path.dirname(androidCmdPath);
 			var grandParentDir = path.dirname(parentDir);
 			if (path.basename(parentDir) == 'tools') {
-				process.env['ANDROID_HOME'] = path.dirname(parentDir);
+				process.env.ANDROID_HOME = path.dirname(parentDir);
 				hasAndroidHome = true;
 			}
 			else if (fs.existsSync(path.join(grandParentDir, 'tools', 'android'))) {
-				process.env['ANDROID_HOME'] = grandParentDir;
+				process.env.ANDROID_HOME = grandParentDir;
 				hasAndroidHome = true;
 			}
 			else {
@@ -208,14 +210,14 @@ Checker.check_android = function() {
 			}
 		}
 		if (hasAndroidHome && !adbInPath) {
-			process.env['PATH'] += path.delimiter + path.join(process.env['ANDROID_HOME'], 'platform-tools');
+			process.env.PATH += path.delimiter + path.join(process.env.ANDROID_HOME, 'platform-tools');
 		}
-		if (!process.env['ANDROID_HOME']) {
+		if (!process.env.ANDROID_HOME) {
 			throw new Error('Failed to find \'ANDROID_HOME\' environment variable. Try setting setting it manually.\n' +
 				'Failed to find \'android\' command in your \'PATH\'. Try update your \'PATH\' to include path to valid SDK directory.');
 		}
-		if (!fs.existsSync(process.env['ANDROID_HOME'])) {
-			throw new Error('\'ANDROID_HOME\' environment variable is set to non-existent path: ' + process.env['ANDROID_HOME'] +
+		if (!fs.existsSync(process.env.ANDROID_HOME)) {
+			throw new Error('\'ANDROID_HOME\' environment variable is set to non-existent path: ' + process.env.ANDROID_HOME +
 				'\nTry update it manually to point to valid SDK directory.');
 		}
 	});
@@ -262,8 +264,8 @@ Checker.check_android_target = function(originalError) {
 Checker.run = function() {
 	return Q.all([this.check_java(), this.check_android()])
 		.then(function() {
-			console.log('ANDROID_HOME=' + process.env['ANDROID_HOME']);
-			console.log('JAVA_HOME=' + process.env['JAVA_HOME']);
+			console.log('ANDROID_HOME=' + process.env.ANDROID_HOME);
+			console.log('JAVA_HOME=' + process.env.JAVA_HOME);
 		});
 };
 

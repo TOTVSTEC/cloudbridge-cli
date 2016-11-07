@@ -1,3 +1,5 @@
+'use strict';
+
 var fs = require('fs'),
 	colors = require('colors'),
 	archiver = require('archiver'),

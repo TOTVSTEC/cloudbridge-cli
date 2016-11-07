@@ -1,3 +1,5 @@
+'use strict';
+
 var Task = function() { };
 
 Task.prototype = {

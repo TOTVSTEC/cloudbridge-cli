@@ -1,3 +1,5 @@
+'use strict';
+
 var PlatformTask = cb_require('tasks/platform'),
 	utils = cb_require('utils/utils'),
 	path = require('path'),

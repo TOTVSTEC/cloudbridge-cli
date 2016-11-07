@@ -1,3 +1,5 @@
+'use strict';
+
 var AppTask = cb_require('tasks/app-task'),
 	path = require('path'),
 	shelljs = require('shelljs'),
