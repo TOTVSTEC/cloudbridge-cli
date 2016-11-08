@@ -1,14 +1,76 @@
 'use strict';
 
-var	Q = require('q'),
+var Q = require('q'),
 	path = require('path'),
-	bower = require('child_process'),
 	shelljs = require('shelljs'),
-	_ = require('underscore'),
-	defaultConfig = { directory: path.join('build', 'bower') },
-	defaultOptions = { save: true },
-	NPM = module.exports;
+	spawn = require('./spawn');
 
+var npm = require('npm');
+
+
+class NPM {
+
+	static install(packages, options) {
+		let deferred = Q.defer();
+
+		if (typeof packages === 'string') {
+			packages = [packages];
+		}
+
+		npm.load({
+			loaded: false
+		}, function(error) {
+			if (error) {
+				console.log(error);
+				deferred.reject(error);
+				return;
+			}
+
+			npm.commands.install(packages, function(error, data) {
+				if (error) {
+					console.log(error);
+					deferred.reject(error);
+					return;
+				}
+
+				console.log(data);
+
+				deferred.resolve();
+			});
+
+			npm.on("log", function(message) {
+				// log the progress of the installation
+				console.log(message);
+			});
+		});
+
+		return deferred.promise;
+	}
+
+}
+/*
+	static install(packages, options) {
+		let args = ['install'];
+
+		options = options || {};
+		options.cwd = options.cwd || process.cwd();
+
+		if (typeof packages === 'string') {
+			args.push(packages);
+		}
+		else if (Array.isArray(packages)) {
+			args = args.concat(packages);
+		}
+
+		return spawn('npm', args, options)
+			.then(function(output) {
+				console.log("NPM INSTALL RESULT:", output);
+			});
+	}
+}
+*/
+
+/*
 NPM.install = function install(packages, options) {
 	var deferred = Q.defer();
 
@@ -63,19 +125,5 @@ NPM.list = function list(userOptions, userConfig) {
 
 	return deferred.promise;
 };
-
-NPM.getConfig = function getConfig(userConfig) {
-	var config = {};
-
-	_.extend(config, defaultConfig, userConfig);
-
-	return config;
-};
-
-NPM.getOptions = function getOptions(userOptions) {
-	var options = {};
-
-	_.extend(options, defaultOptions, userOptions);
-
-	return options;
-};
+*/
+module.exports = NPM;

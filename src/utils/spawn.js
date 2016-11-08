@@ -42,6 +42,9 @@ module.exports = function spawn(command, args, options) {
 			}
 			var err = new Error(errMsg);
 			err.code = code;
+			err.stdout = capturedOut;
+			err.stderr = capturedErr;
+
 			deferred.reject(err);
 		}
 	}

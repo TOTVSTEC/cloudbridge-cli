@@ -77,14 +77,14 @@ Cli.run = function run(processArgv) {
 				console.log(arguments);
 
 				Cli.processExit(1);
-			},
+			}/*,
 			function onProgress(output) {
 				if (output.stdout)
 					console.log(output.stdout.toString());
 
 				if (output.stderr)
 					console.error(output.stderr.toString());
-			});
+			}*/);
 
 		return promise;
 	}
