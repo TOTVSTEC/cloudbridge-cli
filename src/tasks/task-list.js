@@ -81,7 +81,7 @@ var TASKS = [
 			'<PLATFORM>': ''
 		},
 		options: {
-
+			'--debug|-d': 'Enable Chromium DevTools in the given port.'
 		},
 		module: 'run'
 	},
@@ -105,6 +105,26 @@ var TASKS = [
 			}*/
 		},
 		module: 'bower'
+	},
+	{
+		title: 'restore',
+		name: 'restore',
+		summary: 'Restore you project dependencies.',
+		args: {
+			//'{environment|project}': '',
+			//'[options]': ''
+		},
+		options: {
+			/*'--noresources|-r': {
+				title: 'Do not add default CloudBridge icons and splash screen resources',
+				boolean: true
+			},
+			'--nosave|-e': {
+				title: 'Do not save the platform to the package.json file',
+				boolean: true
+			}*/
+		},
+		module: 'restore'
 	},
 	{
 		title: 'check',

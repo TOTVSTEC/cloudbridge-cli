@@ -85,6 +85,10 @@ Package.prototype.install = function install(targetPath, projectData) {
 	return this.execute('install', targetPath, projectData);
 };
 
+Package.prototype.restore = function restore(targetPath, projectData) {
+	return this.execute('restore', targetPath, projectData);
+};
+
 Package.prototype.execute = function execute(action, targetPath, projectData) {
 	var task = null,
 		moduleName = path.join(this.src, action);

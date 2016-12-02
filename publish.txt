@@ -6,6 +6,11 @@ npm publish
 git push --tags
 
 
+git add package.json
+git commit -m="Version 0.0.4-SNAPSHOT"
+git push origin master
+
+
 ou
 
 git tag 0.1.0

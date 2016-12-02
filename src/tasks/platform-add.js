@@ -33,9 +33,11 @@ PlatformAddTask.prototype.run = function run(cloudbridge, argv) {
 
 		return promise
 			.then(function() {
-				return pack.latest().catch(function() { });
+				return pack.latest()/*.catch(function() { })*/;
 			})
 			.then(function() {
+				options.version = pack.version;
+
 				return pack.fetch();
 			})
 			.then(function() {
@@ -53,9 +55,7 @@ PlatformAddTask.prototype.install = function install(options) {
 
 PlatformAddTask.prototype.save = function save(options) {
 	var platformData = this.project.get('platform') || {};
-	platformData[options.platform] = {
-		version: options.package.version || 'master'
-	};
+	platformData[options.platform] = options.version || 'master';
 
 	this.project.set('platform', platformData);
 	this.project.save();

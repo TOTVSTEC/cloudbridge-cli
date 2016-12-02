@@ -1,5 +1,18 @@
 'use strict';
 
+class Task {
+
+	constructor() {
+
+	}
+
+	run() {
+
+	}
+
+}
+
+/*
 var Task = function() { };
 
 Task.prototype = {
@@ -7,5 +20,6 @@ Task.prototype = {
 
 	}
 };
+*/
 
 module.exports = Task;
