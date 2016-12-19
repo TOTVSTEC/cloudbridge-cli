@@ -27,7 +27,7 @@ class Adb {
 					return line.replace(/\tdevice/, '').replace('\r', '');
 				});
 			});
-	};
+	}
 
 	static install(target, packagePath, opts) {
 		console.log('Installing apk ' + packagePath + ' on target ' + target + '...\n');
@@ -47,7 +47,7 @@ class Adb {
 				if (output >= 23)
 					args.push('-g');
 
-				let defered = Q.defer(),
+				let deferred = Q.defer(),
 					promise = spawn('adb', args.concat(packagePath), { cwd: os.tmpdir() });
 
 				promise.progress(function(data) {
@@ -62,19 +62,19 @@ class Adb {
 						console.error(data.stderr.toString('utf8'));
 					}
 				}).then(function(output) {
-					defered.resolve(output);
+					deferred.resolve(output);
 				}).catch(function(error) {
 					if (error.code === 3221226356) {
 						//adb install returns this code (heap corruption)
 						//sometimes...
-						defered.resolve(error.stdout);
+						deferred.resolve(error.stdout);
 					}
 					else {
-						defered.reject(error);
+						deferred.reject(error);
 					}
 				});
 
-				return defered.promise;
+				return deferred.promise;
 			})
 			.then(function(output) {
 				// 'adb install' seems to always returns no error, even if installation fails

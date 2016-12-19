@@ -250,7 +250,7 @@ Utils.preprocessCliOptions = function preprocessCliOptions(argv) {
 			options.appName = appNameSplit[appNameSplit.length - 1];
 		}
 
-		// get a packge name, like com.cloudbridge.myapp
+		// get a package name, like com.cloudbridge.myapp
 		options.packageName = argv.id || argv.i;
 
 		if (!options.packageName) {

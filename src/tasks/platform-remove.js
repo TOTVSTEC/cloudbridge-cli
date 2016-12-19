@@ -1,9 +1,7 @@
 'use strict';
 
 var PlatformTask = cb_require('tasks/platform'),
-	utils = cb_require('utils/utils'),
-	path = require('path'),
-	shelljs = require('shelljs'),
+	Package = cb_require('utils/package'),
 	Q = require('q');
 
 var PlatformRemoveTask = function() {
@@ -20,35 +18,39 @@ PlatformRemoveTask.prototype.run = function run(cloudbridge, argv) {
 		throw new Error("Invalid platform!");
 	}
 
+	var projectData = this.project.data();
+
 	return platforms.reduce(function(promise, platform, index) {
 		var options = {
 			platform: platform,
-			package: 'cloudbridge-kit-' + platform,
-			project: {
-				dir: cloudbridge.projectDir,
-				data: _this.project.data()
-			}
+			package: 'cloudbridge-kit-' + platform
 		};
+
+		var pack = new Package(options.package);
 
 		return promise
 			.then(function() {
-				return utils.fetchPackage(options);
+				return pack.latest();
 			})
-			.then(function(packageDir) {
-				options.src = packageDir;
+			.then(function() {
+				options.version = pack.version;
 
-				return _this.remove(options);
+				return pack.fetch();
+			})
+			.then(function() {
+				return pack.remove(_this.projectDir, projectData);
 			})
 			.then(function() {
 				return _this.save(options);
 			});
-
 	}, Q());
 };
 
+/*
 PlatformRemoveTask.prototype.remove = function install(options) {
 	return this.execute('remove', options);
 };
+*/
 
 
 PlatformRemoveTask.prototype.save = function save(options) {

@@ -71,7 +71,7 @@ Package.prototype.fetch = function fetch() {
 
 	shelljs.mkdir('-p', packageDir);
 
-	return utils.fetchArchive(packageDir, url)
+	return utils.fetchArchive(packageDir, url, true)
 		.then(function() {
 			var contentDir = path.join(packageDir, _this.name + '-' + _this.version);
 
@@ -89,6 +89,14 @@ Package.prototype.restore = function restore(targetPath, projectData) {
 	return this.execute('restore', targetPath, projectData);
 };
 
+Package.prototype.update = function update(targetPath, projectData) {
+	return this.execute('update', targetPath, projectData);
+};
+
+Package.prototype.remove = function remove(targetPath, projectData) {
+	return this.execute('remove', targetPath, projectData);
+};
+
 Package.prototype.execute = function execute(action, targetPath, projectData) {
 	var task = null,
 		moduleName = path.join(this.src, action);
@@ -97,11 +105,18 @@ Package.prototype.execute = function execute(action, targetPath, projectData) {
 		task = require(moduleName);
 	}
 	catch (error) {
-		console.error(error);
+		return Q.reject(error);
 	}
 
 	if (task !== null) {
-		return task.run(cli, targetPath, projectData);
+		if (task instanceof Function) {
+			task = new task(cli, targetPath, projectData);
+
+			return task.run();
+		}
+		else {
+			return task.run(cli, targetPath, projectData);
+		}
 	}
 };
 

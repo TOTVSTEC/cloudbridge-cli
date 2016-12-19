@@ -1,10 +1,7 @@
 'use strict';
 
 var PlatformTask = cb_require('tasks/platform'),
-	utils = cb_require('utils/utils'),
 	Package = cb_require('utils/package'),
-	path = require('path'),
-	shelljs = require('shelljs'),
 	Q = require('q');
 
 var PlatformAddTask = function() {
@@ -33,7 +30,7 @@ PlatformAddTask.prototype.run = function run(cloudbridge, argv) {
 
 		return promise
 			.then(function() {
-				return pack.latest()/*.catch(function() { })*/;
+				return pack.latest();
 			})
 			.then(function() {
 				options.version = pack.version;
@@ -49,9 +46,11 @@ PlatformAddTask.prototype.run = function run(cloudbridge, argv) {
 	}, Q());
 };
 
+/*
 PlatformAddTask.prototype.install = function install(options) {
 	return this.execute('install', options);
 };
+*/
 
 PlatformAddTask.prototype.save = function save(options) {
 	var platformData = this.project.get('platform') || {};

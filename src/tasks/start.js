@@ -23,16 +23,16 @@ var utils = cli.utils,
 	logging = cli.logging;
 
 var DEFAULT_APP = {
-		"id": "",
+	"id": "",
+	"name": "",
+	"description": "",
+	"author": {
 		"name": "",
-		"description": "",
-		"author": {
-			"name": "",
-			"email": "",
-			"url": ""
-		},
-		"main": "index.html"
-	};
+		"email": "",
+		"url": ""
+	},
+	"main": "index.html"
+};
 
 var StartTask = function() { };
 StartTask.prototype = new Task();
@@ -103,28 +103,26 @@ StartTask.promptForOverwrite = function promptForOverwrite(targetPath, _argv) {
 	prompt.message = '';
 	prompt.delimiter = '';
 	prompt.start();
-	/*
-		prompt.get({ properties: promptProperties }, function(err, promptResult) {
-			if (err && err.message !== 'canceled') {
-				q.reject(err);
-				return logging.logger.error(err);
-			}
-			else if (err && err.message == 'canceled') {
-				return q.resolve(false);
-			}
 
-			var areYouSure = promptResult.areYouSure.toLowerCase().trim();
-			if (areYouSure == 'yes' || areYouSure == 'y') {
-				*/
-	shelljs.rm('-rf', targetPath);
-	q.resolve(true);
-	/*
-}
-else {
-	q.resolve(false);
-}
-});
-*/
+	prompt.get({ properties: promptProperties }, function(err, promptResult) {
+		if (err && err.message !== 'canceled') {
+			q.reject(err);
+			return logging.logger.error(err);
+		}
+		else if (err && err.message == 'canceled') {
+			return q.resolve(false);
+		}
+
+		var areYouSure = promptResult.areYouSure.toLowerCase().trim();
+		if (areYouSure == 'yes' || areYouSure == 'y') {
+			shelljs.rm('-rf', targetPath);
+			q.resolve(true);
+		}
+		else {
+			q.resolve(false);
+		}
+	});
+
 
 	return q.promise;
 };
@@ -190,26 +188,50 @@ StartTask.printQuickHelp = function(options) {
 };
 
 StartTask.fetchWrapper = function fetchWrapper(options) {
-	var q = Q.defer();
-	var fetchOptions = 'cloudbridge-app-base';
+	var pack = new Package('cloudbridge-app-base');
 
+	return Q()
+		.then(function() {
+			return pack.latest();
+		})
+		.then(function() {
+			options.version = pack.version;
+
+			return pack.fetch();
+		})
+		.then(function() {
+			var deferred = Q.defer();
+			var projectData = require(path.join(options.targetPath, 'cloudbridge.json'));
+
+			pack.install(options.targetPath, projectData)
+				.then(function() {
+					deferred.resolve();
+				})
+				.catch(function() {
+					shelljs.cp('-Rf', path.join(pack.src, 'src'), options.targetPath);
+					shelljs.cp('-Rf', path.join(pack.src, 'build'), options.targetPath);
+
+					shelljs.cd(options.targetPath);
+
+					deferred.resolve();
+				});
+
+			return deferred.promise;
+			//
+			/*
+		})
+		.then(function() {
+			return _this.save(options);
+			*/
+		});
+
+	/*
 	utils.fetchPackage(fetchOptions)
 		.then(function(packageDir) {
 			//options.src = packageDir;
-			shelljs.cp('-Rf', path.join(packageDir, 'src'), options.targetPath);
-			shelljs.cp('-Rf', path.join(packageDir, 'build'), options.targetPath);
+			shelljs.cp('-Rf', path.join(packageDir, 'src'), wrapperOptions.targetPath);
+			shelljs.cp('-Rf', path.join(packageDir, 'build'), wrapperOptions.targetPath);
 
-/*
-			utils.copyTemplate(packageDir, options.targetPath, {
-				appname: options.appName
-			});
-
-			var advplDir = path.join(options.targetPath, 'src', 'advpl');
-
-			shelljs.mv(
-				path.join(advplDir, 'program.prw'),
-				path.join(advplDir, options.appName + '.prw'));
-*/
 			shelljs.cd(options.targetPath);
 			//return _this.install(options);
 
@@ -222,6 +244,7 @@ StartTask.fetchWrapper = function fetchWrapper(options) {
 		});
 
 	return q.promise;
+	*/
 };
 
 
@@ -454,53 +477,53 @@ StartTask.fetchGithubStarter = function(options, packageOptions) {
 		});
 
 
-/*
-	var urlParse = parseUrl(repoUrl);
-	var pathSplit = urlParse.pathname.replace(/\//g, ' ').trim().split(' ');
-	if (!urlParse.hostname || urlParse.hostname.toLowerCase() !== 'github.com' || pathSplit.length !== 2) {
-		logging.logger.error(('Invalid Github URL: ' + repoUrl).error);
-		logging.logger.error(('Example of a valid URL: https://github.com/totvstec/cloudbridge-template-base/').error);
-		utils.fail('');
-		q.reject();
-		return q.promise;
-	}
-	var repoName = pathSplit[1];
-	var repoFolderName = repoName + '-master';
-	var downloadDir = options.targetPath + '/build/download';
-
-	// ensure there's an ending /
-	if (repoUrl.substr(repoUrl.length - 1) !== '/') {
-		repoUrl += '/';
-	}
-	repoUrl += 'archive/master.zip';
-
-	utils.fetchPackage()
-
-	utils.fetchArchive(downloadDir, repoUrl).then(function() {
-
-		try {
-			//shelljs.cp('-Rf', downloadDir + '/' + repoFolderName + '/.', 'src');
-			utils.copyTemplate(downloadDir + '/' + repoFolderName, options.targetPath, {
-				appname: options.appName
-			});
-
-			// Clean up start template folder
-			shelljs.rm('-rf', downloadDir + '/' + repoFolderName + '/');
-
-			q.resolve();
-
+	/*
+		var urlParse = parseUrl(repoUrl);
+		var pathSplit = urlParse.pathname.replace(/\//g, ' ').trim().split(' ');
+		if (!urlParse.hostname || urlParse.hostname.toLowerCase() !== 'github.com' || pathSplit.length !== 2) {
+			logging.logger.error(('Invalid Github URL: ' + repoUrl).error);
+			logging.logger.error(('Example of a valid URL: https://github.com/totvstec/cloudbridge-template-base/').error);
+			utils.fail('');
+			q.reject();
+			return q.promise;
 		}
-		catch (e) {
-			q.reject(e);
-		}
+		var repoName = pathSplit[1];
+		var repoFolderName = repoName + '-master';
+		var downloadDir = options.targetPath + '/build/download';
 
-	}).catch(function(err) {
-		logging.logger.error('Please verify you are using a valid URL or a valid cloudbridge starter.');
-		logging.logger.error('View available starter templates: `cloudbridge start --list`');
-		logging.logger.error('More info available at: \nhttps://github.com/totvstec/cloudbridge-cli');
-		return utils.fail('');
-	});
-*/
+		// ensure there's an ending /
+		if (repoUrl.substr(repoUrl.length - 1) !== '/') {
+			repoUrl += '/';
+		}
+		repoUrl += 'archive/master.zip';
+
+		utils.fetchPackage()
+
+		utils.fetchArchive(downloadDir, repoUrl).then(function() {
+
+			try {
+				//shelljs.cp('-Rf', downloadDir + '/' + repoFolderName + '/.', 'src');
+				utils.copyTemplate(downloadDir + '/' + repoFolderName, options.targetPath, {
+					appname: options.appName
+				});
+
+				// Clean up start template folder
+				shelljs.rm('-rf', downloadDir + '/' + repoFolderName + '/');
+
+				q.resolve();
+
+			}
+			catch (e) {
+				q.reject(e);
+			}
+
+		}).catch(function(err) {
+			logging.logger.error('Please verify you are using a valid URL or a valid cloudbridge starter.');
+			logging.logger.error('View available starter templates: `cloudbridge start --list`');
+			logging.logger.error('More info available at: \nhttps://github.com/totvstec/cloudbridge-cli');
+			return utils.fail('');
+		});
+	*/
 
 	//return q.promise;
 };
