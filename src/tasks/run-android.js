@@ -1,7 +1,7 @@
 'use strict';
 
 var RunTask = cb_require('tasks/run'),
-	android = require(__basedir + '/kits/android'),
+	android = cb_require('kits/android'),
 	adb = android.adb,
 	path = require('path');
 

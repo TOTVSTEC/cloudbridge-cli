@@ -116,7 +116,7 @@ gradle build command line:
 <project_dir>\build\android\gradlew build -p<project_dir>\src\android -PbuildDir="<project_dir>/build/android/build" --project-cache-dir "<project_dir>\build\android\.gradle"
 
 
-	var android = require(__basedir + '/kits/android');
+	var android = cb_require('kits/android');
 
 	android.adb.devices().then(function(data) {
 		console.log(data);

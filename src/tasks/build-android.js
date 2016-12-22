@@ -4,7 +4,7 @@ var BuildTask = cb_require('tasks/build'),
 	path = require('path'),
 	os = require('os'),
 	shelljs = require('shelljs'),
-	android = require(__basedir + '/kits/android'),
+	android = cb_require('kits/android'),
 	Q = require('q');
 
 var BuildAndroidTask = function() { };

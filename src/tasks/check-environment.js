@@ -1,7 +1,7 @@
 'use strict';
 
 var CheckTask = cb_require('tasks/check'),
-	android = require(__basedir + '/kits/android'),
+	android = cb_require('kits/android'),
 	Info = cb_require('utils/info'),
 	Q = require('q'),
 	utils = cli.utils;

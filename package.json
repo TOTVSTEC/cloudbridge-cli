@@ -11,7 +11,8 @@
   "scripts": {
     "___postinstall": "node index.js check environment",
     "___prepublish": "npm version patch",
-    "___postpublish": "git push --tags"
+    "___postpublish": "git push --tags",
+    "report": "node tests/report.js"
   },
   "keywords": [
     "cloudbridge",
@@ -57,5 +58,8 @@
   },
   "engines": {
     "node": ">=6.0.0"
+  },
+  "devDependencies": {
+    "plato": "^1.7.0"
   }
 }
