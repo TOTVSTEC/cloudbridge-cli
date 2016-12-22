@@ -17,29 +17,6 @@ var Utils = module.exports;
 
 Utils.errorHandler = null;
 
-Utils.transformCookies = function transformCookies(jar) {
-	if (!jar) {
-		throw new Error('You parse out cookies if they are null');
-	}
-	return jar.map(function(c) {
-		return c.key + "=" + encodeURIComponent(c.value);
-	}).join("; ");
-};
-
-Utils.retrieveCsrfToken = function retrieveCsrfToken(jar) {
-	if (!jar || typeof jar == 'undefined' || jar.length === 0) {
-		return '';
-	}
-	var csrftoken = '';
-	for (var i = 0; i < jar.length; i++) {
-		if (jar[i].key == 'csrftoken') {
-			csrftoken = jar[i].value;
-			break;
-		}
-	}
-	return csrftoken;
-};
-
 /**
  * Utils.createArchive will zip up a subdirectory in the app directory
  *
@@ -277,21 +254,6 @@ Utils.preprocessCliOptions = function preprocessCliOptions(argv) {
 Utils.getProjectDirectory = function getProjectDirectory(options) {
 	return path.resolve(options.appDirectory);
 };
-
-/*
-Utils.mergeOptions = function mergeOptions(obj1, obj2) {
-	var obj3 = {};
-
-	for (var attrname in obj1) {
-		obj3[attrname] = obj1[attrname];
-	}
-	for (var attrname in obj2) {
-		obj3[attrname] = obj2[attrname];
-	}
-
-	return obj3;
-};
-*/
 
 Utils.fail = function fail(msg, taskHelp) {
 	try {

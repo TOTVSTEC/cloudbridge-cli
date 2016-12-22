@@ -3,7 +3,7 @@
 var Updates = module.exports,
 	request = require('request'),
 	semver = require('semver'),
-	Q  = require('q'),
+	Q = require('q'),
 	Info = cb_require('utils/info'),
 	CloudBridgeStore = cb_require('utils/store').CloudBridgeStore,
 	CloudBridgeConfig = new CloudBridgeStore('cloudbridge.config');
@@ -29,9 +29,9 @@ Updates.checkLatestVersion = function checkLatestVersion() {
 		var proxy = process.env.PROXY || process.env.http_proxy || null;
 
 		request({
-				url: 'http://registry.npmjs.org/cloudbridge/latest',
-				proxy: proxy
-			},
+			url: 'http://registry.npmjs.org/cloudbridge/latest',
+			proxy: proxy
+		},
 			function(err, res, body) {
 				try {
 					cli.npmVersion = JSON.parse(body).version;

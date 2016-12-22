@@ -5,7 +5,7 @@ var utils = cb_require('utils/utils'),
 	shelljs = require('shelljs'),
 	Q = require('q'),
 	semver = require('semver'),
-	npm = require('npm');
+	request = require('request');
 
 var Package = function(name, group, version) {
 	if (typeof name === 'object') {
@@ -24,25 +24,22 @@ var Package = function(name, group, version) {
 
 Package.prototype.latest = function latest() {
 	var deferred = Q.defer(),
+		url = 'http://registry.npmjs.org/' + this.name + '/latest',
 		_this = this;
 
-	npm.load({}, function(error) {
-		if (error) {
-			deferred.reject(error);
+	request.get(url, function(err, res, body) {
+		if (err) {
+			deferred.reject(err);
 		}
 
-		npm.commands.view([_this.name, 'version'], true, function(error, data) {
-			if (error) {
-				deferred.reject(error);
-				return;
-			}
+		try {
+			_this.version = JSON.parse(body).version;
 
-			//console.log('npm show ' + _this.name + ' version: ' + data);
-
-			_this.version = Object.keys(data)[0];
-
-			deferred.resolve();
-		});
+			deferred.resolve(_this.version);
+		}
+		catch (e) {
+			deferred.reject(e);
+		}
 	});
 
 	return deferred.promise;
