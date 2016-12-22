@@ -1,5 +1,7 @@
 # cloudbridge-cli
 
+[![Build Status](https://travis-ci.org/TOTVSTEC/cloudbridge-cli.svg?branch=master)](https://travis-ci.org/TOTVSTEC/cloudbridge-cli)
+
 Ferrramenta para linha de comando CloudBridge
 
 ```bash
