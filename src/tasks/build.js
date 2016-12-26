@@ -3,8 +3,7 @@
 var AppTask = cb_require('tasks/app-task'),
 	path = require('path'),
 	shelljs = require('shelljs'),
-	Q = require('q'),
-	resources = cb_require('utils/resources');
+	Q = require('q');
 
 var utils = cli.utils;
 

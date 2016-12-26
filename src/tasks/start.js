@@ -5,7 +5,7 @@ var fs = require('fs'),
 	request = require('request'),
 	parseUrl = require('url').parse,
 	shelljs = require('shelljs'),
-	prompt = require('prompt'),
+	inquirer = require('inquirer'),
 	Q = require('q'),
 
 	Package = cb_require('utils/package'),
@@ -86,45 +86,47 @@ StartTask.prototype.run = function run(cloudbridge, argv) {
 };
 
 StartTask.promptForOverwrite = function promptForOverwrite(targetPath, _argv) {
-	var q = Q.defer();
+	var deferred = Q.defer(),
+		choiceOverwrite = {
+			name: 'Overwrite',
+			value: 0,
+			short: '\nOverwriting the existing files...'
+		},
+		choiceRename = {
+			name: 'Rename',
+			value: 1,
+			short: '\nRenaming the existing directory and copying the new files...'
+		};
 
-	logging.logger.info('The directory'.error.bold, targetPath, 'already exists.'.error.bold);
-	logging.logger.info('Would you like to overwrite the directory with this new project?');
+	inquirer.prompt([{
+		type: 'list',
+		name: 'action',
+		message: ['The directory'.error.bold, targetPath, 'already exists.\n'.error.bold].join(' '),
+		choices: [choiceOverwrite, choiceRename],
+		default: choiceRename.value
+	}]).then(function(answers) {
+		if (answers.action === choiceRename.value) {
+			var renamedPath = targetPath + '.old';
 
-	var promptProperties = {
-		areYouSure: {
-			name: 'areYouSure',
-			description: '(yes/no):'.yellow.bold,
-			required: true
+			if (fs.existsSync(renamedPath)) {
+				var count = 1;
+				while (fs.existsSync(renamedPath + '.' + count)) {
+					count++;
+				}
+
+				renamedPath += '.' + count;
+			}
+
+			shelljs.mv(targetPath, renamedPath);
 		}
-	};
-
-	prompt.override = _argv;
-	prompt.message = '';
-	prompt.delimiter = '';
-	prompt.start();
-
-	prompt.get({ properties: promptProperties }, function(err, promptResult) {
-		if (err && err.message !== 'canceled') {
-			q.reject(err);
-			return logging.logger.error(err);
-		}
-		else if (err && err.message == 'canceled') {
-			return q.resolve(false);
-		}
-
-		var areYouSure = promptResult.areYouSure.toLowerCase().trim();
-		if (areYouSure == 'yes' || areYouSure == 'y') {
+		else if (answers.action === choiceOverwrite.value) {
 			shelljs.rm('-rf', targetPath);
-			q.resolve(true);
 		}
-		else {
-			q.resolve(false);
-		}
+
+		deferred.resolve(true);
 	});
 
-
-	return q.promise;
+	return deferred.promise;
 };
 
 // Options for startApp:
@@ -310,12 +312,12 @@ StartTask.fetchCodepen = function(options) {
 				html = '<!DOCTYPE html>\n' + html;
 			}
 
-			var resources = '	<link href="css/style.css" rel="stylesheet">\n' +
+			var content = '	<link href="css/style.css" rel="stylesheet">\n' +
 				'	<script src="js/app.js"></script>\n';
 
-			resources += '  </head>';
+			content += '  </head>';
 
-			html = html.replace(/<\/head>/i, '\n' + resources);
+			html = html.replace(/<\/head>/i, '\n' + content);
 
 			html = StartTask.convertTemplates(html);
 
