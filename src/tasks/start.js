@@ -469,65 +469,12 @@ StartTask.fetchCloudBridgeStarter = function(options) {
 
 
 StartTask.fetchGithubStarter = function(options, packageOptions) {
-	//var q = Q.defer();
-
 	var pack = new Package(packageOptions);
 
 	return pack.fetch()
 		.then(function() {
 			return pack.install(options.targetPath, {});
 		});
-
-
-	/*
-		var urlParse = parseUrl(repoUrl);
-		var pathSplit = urlParse.pathname.replace(/\//g, ' ').trim().split(' ');
-		if (!urlParse.hostname || urlParse.hostname.toLowerCase() !== 'github.com' || pathSplit.length !== 2) {
-			logging.logger.error(('Invalid Github URL: ' + repoUrl).error);
-			logging.logger.error(('Example of a valid URL: https://github.com/totvstec/cloudbridge-template-base/').error);
-			utils.fail('');
-			q.reject();
-			return q.promise;
-		}
-		var repoName = pathSplit[1];
-		var repoFolderName = repoName + '-master';
-		var downloadDir = options.targetPath + '/build/download';
-
-		// ensure there's an ending /
-		if (repoUrl.substr(repoUrl.length - 1) !== '/') {
-			repoUrl += '/';
-		}
-		repoUrl += 'archive/master.zip';
-
-		utils.fetchPackage()
-
-		utils.fetchArchive(downloadDir, repoUrl).then(function() {
-
-			try {
-				//shelljs.cp('-Rf', downloadDir + '/' + repoFolderName + '/.', 'src');
-				utils.copyTemplate(downloadDir + '/' + repoFolderName, options.targetPath, {
-					appname: options.appName
-				});
-
-				// Clean up start template folder
-				shelljs.rm('-rf', downloadDir + '/' + repoFolderName + '/');
-
-				q.resolve();
-
-			}
-			catch (e) {
-				q.reject(e);
-			}
-
-		}).catch(function(err) {
-			logging.logger.error('Please verify you are using a valid URL or a valid cloudbridge starter.');
-			logging.logger.error('View available starter templates: `cloudbridge start --list`');
-			logging.logger.error('More info available at: \nhttps://github.com/totvstec/cloudbridge-cli');
-			return utils.fail('');
-		});
-	*/
-
-	//return q.promise;
 };
 
 StartTask.fetchZipStarter = function fetchZipStarter(options) {

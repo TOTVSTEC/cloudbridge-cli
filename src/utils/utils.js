@@ -85,7 +85,7 @@ Utils.fetchPackage = function fetchPackage(options) {
 
 	shelljs.mkdir('-p', packageDir);
 
-	return Utils.fetchArchive(packageDir, url).then(function() {
+	return Utils.fetchArchive(packageDir, url, false).then(function() {
 		var contentDir = path.join(packageDir, options.package + '-' + options.version);
 
 		shelljs.mv(contentDir, outputDir);
@@ -111,7 +111,7 @@ Utils.fetchArchive = function fetchArchive(targetPath, archiveUrl, isGui) {
 	var q = Q.defer();
 
 	// The folder name the project will be downloaded and extracted to
-	var message = ['Downloading:'.bold, archiveUrl].join(' ');
+	var message = ['\nDownloading:'.bold, archiveUrl].join(' ');
 	logging.logger.info(message);
 
 	var tmpFolder = os.tmpdir();
@@ -137,7 +137,7 @@ Utils.fetchArchive = function fetchArchive(targetPath, archiveUrl, isGui) {
 
 	var proxy = process.env.PROXY || process.env.http_proxy || null;
 	var request = require('request');
-	request({ url: archiveUrl, rejectUnauthorized: false, encoding: null, proxy: proxy }, function(err, res, body) {
+	var r = request({ url: archiveUrl, rejectUnauthorized: false, encoding: null, proxy: proxy }, function(err, res, body) {
 		if (err) {
 			// console.error('Error fetching:'.error.bold, archiveUrl, err);
 			q.reject(err);
@@ -167,24 +167,81 @@ Utils.fetchArchive = function fetchArchive(targetPath, archiveUrl, isGui) {
 			logging.logger.debug('fetchArchive request write: ', e);
 			q.reject(e);
 		}
-	}).on('response', function(res) {
-		// Add default flag for CLI - have it attach multibar and upgrade its progress for simultaneous downloading bars (crosswalk).
-		if (!isGui) {
-			var bar = Multibar.newBar('[:bar]  :percent  :etas', {
-				complete: '=',
-				incomplete: ' ',
-				width: 30,
-				total: parseInt(res.headers['content-length'], 10)
+	});
+
+	if (!isGui) {
+		var bar = null,
+			oldPercent = 0,
+			progress = require('request-progress'),
+			p = progress(r, {
+				throttle: 500
 			});
 
-			res.on('data', function(chunk) {
-				try {
-					bar.tick(chunk.length);
-				}
-				catch (e) { }
+		r.on('response', function(res) {
+			bar = Multibar.newBar(':percent\t:bar\t:etas', {
+				complete: String.fromCharCode(9608).blue.bold,
+				incomplete: String.fromCharCode(9608).gray.dim,
+				width: 30,
+				total: 100
 			});
-		}
-	});
+
+			p.on('progress', function(state) {
+				var newPercent = Math.ceil(100 * state.percent);
+				if (newPercent !== oldPercent) {
+					bar.tick(newPercent - oldPercent);
+					oldPercent = newPercent;
+				}
+			}).on('end', function() {
+				bar.tick(100);
+				console.log();
+			});
+		});
+
+
+
+		/*
+				r.once('response', function(res) {
+					var len = parseInt(res.headers['content-length'], 10);
+
+					console.log("len: " + len);
+
+					bar = Multibar.newBar(':percent\t:bar\t:etas', {
+						complete: String.fromCharCode(9608).blue.bold,
+						incomplete: String.fromCharCode(9608).gray.dim,
+						width: 30,
+						total: len
+					});
+
+					r.on('progress', function(state) {
+						bar.tick(state.size.transferred / 10);
+						//console.log("state: " + JSON.stringify(state, null, 2));
+					}).on('end', function() {
+						console.log("END!");
+					});
+				});
+		*/
+
+		r.once('progress', function(state) {
+			bar = Multibar.newBar(':percent\t:bar\t:etas', {
+				complete: String.fromCharCode(9608).blue.bold,
+				incomplete: String.fromCharCode(9608).gray.dim,
+				width: 30,
+				total: 100	//state.size.total
+			});
+
+			r.on('progress', function(state) {
+				var newPercent = Math.ceil(100 * state.percent);
+				if (newPercent !== oldPercent) {
+					bar.tick(newPercent - oldPercent);
+					oldPercent = newPercent;
+				}
+				//console.log(JSON.stringify(state, null, 2));
+
+				//bar.tick(state.size.transferred);
+
+			});
+		});
+	}
 
 	return q.promise;
 };

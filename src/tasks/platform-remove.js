@@ -61,7 +61,7 @@ PlatformRemoveTask.prototype.save = function save(options) {
 	this.project.set('platform', platformData);
 	this.project.save();
 
-	console.log('The platform "' + options.platform + '" has been successfully removed from your project!');
+	console.log('\nThe platform ' + options.platform.bold + ' has been successfully removed from your project!');
 };
 
 module.exports = PlatformRemoveTask;
