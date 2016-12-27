@@ -13,7 +13,11 @@
     "___prepublish": "npm version patch",
     "___postpublish": "git push --tags",
     "report": "node test/report.js",
-    "test": "node ./node_modules/mocha/bin/mocha"
+    "test": "node ./node_modules/mocha/bin/mocha",
+    "test-travis": "istanbul cover jasmine-node --captureExceptions test/ && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+
+    "test-coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "test-mocha": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --bail && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "keywords": [
     "cloudbridge",
@@ -59,7 +63,7 @@
   "devDependencies": {
     "coveralls": "^2.11.15",
     "istanbul": "^0.4.5",
-    "mocha": "^3.2.0",
+    "jasmine-node": "^1.14.5",
     "plato": "^1.7.0"
   }
 }
