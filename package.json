@@ -9,15 +9,9 @@
     "cb": "index.js"
   },
   "scripts": {
-    "___postinstall": "node index.js check environment",
-    "___prepublish": "npm version patch",
-    "___postpublish": "git push --tags",
-    "report": "node test/report.js",
-    "test": "node ./node_modules/mocha/bin/mocha",
-    "test-travis": "istanbul cover jasmine-node --captureExceptions test/ && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-
-    "test-coveralls": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
-    "test-mocha": "istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- --bail && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
+    "report": "node ./test/report.js",
+    "test": "./node_modules/.bin/istanbul cover --dir=./build/coverage ./node_modules/jasmine-node/bin/jasmine-node  --captureExceptions test/",
+    "test-travis": "istanbul cover jasmine-node --captureExceptions test/ && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "keywords": [
     "cloudbridge",

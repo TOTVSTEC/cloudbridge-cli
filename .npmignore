@@ -1,10 +1,15 @@
-node_modules
+node_modules/
+.vscode/
+coverage/
+build/
+test/
+spec/
 .editorconfig
 .gitignore
 .jscsrc
 .jshintrc
 .npmignore
 .vscodeignore
+generate_aar.js
 jsconfig.json
 publish.txt
-generate_aar.js
