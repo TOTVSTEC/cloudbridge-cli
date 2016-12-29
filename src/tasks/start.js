@@ -199,6 +199,11 @@ StartTask.fetchWrapper = function fetchWrapper(options) {
 		.then(function() {
 			options.version = pack.version;
 
+			var project = CloudBridgeProject.load(options.targetPath);
+
+			project.set('cloudbridge-core', pack.version);
+			project.save();
+
 			return pack.fetch();
 		})
 		.then(function() {

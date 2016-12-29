@@ -190,6 +190,8 @@ Cli.printAvailableTasks = function printAvailableTasks(argv) {
 
 	process.stderr.write('\n');
 	Cli.processExit();
+
+	return Q();
 };
 
 Cli.printHelpLines = function printHelpLines() {

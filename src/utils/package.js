@@ -20,6 +20,11 @@ var Package = function(name, group, version) {
 		this.group = group || 'totvstec';
 		this.version = version || 'master';
 	}
+
+	if (typeof this.version !== 'string')
+		this.version = 'master';
+
+	this.version = semver.valid(this.version.replace(/[\^~]/g, '')) || 'master';
 };
 
 Package.prototype.latest = function latest() {
@@ -49,11 +54,17 @@ Package.prototype.fetch = function fetch() {
 	var _this = this,
 		homeDir = process.env.HOME || process.env.USERPROFILE || process.env.HOMEPATH,
 		packageDir = path.join(homeDir, '.cloudbridge', 'packages', this.group, this.name),
-		outputDir = path.join(packageDir, this.version),
 		url = 'https://github.com/' + this.group + '/' + this.name + '/archive/';
+
+	this.version = this.version.replace(/[\^~]/g, '');
+
+	var outputDir = path.join(packageDir, this.version);
 
 	if (semver.valid(this.version)) {
 		url += 'v';
+	}
+	else {
+		this.version = 'master';
 	}
 
 	url += this.version + '.zip';

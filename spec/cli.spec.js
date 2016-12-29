@@ -21,19 +21,17 @@ describe('Cli', function() {
 
 		//assert.notEqual(Cli, undefined);
 	});
-/*
-	describe('#run', function() {
-		describe('#Cli methods', function() {
-			it('should run "printCloudBridge" on run', function(done) {
-				spyOn(Cli, 'printCloudBridge').andReturn(Q(true));
 
-				Cli.run([])
-					.then(function() {
-						expect(Cli.printCloudBridge).toHaveBeenCalled();
-						done();
-					});
-			});
+	describe('#run', function() {
+		it('should run "printCloudBridge" on run', function(done) {
+			spyOn(Cli, 'printCloudBridge').andReturn(Q(true));
+
+			Cli.run(['node.exe', 'index.js'])
+				.then(function() {
+					expect(Cli.printCloudBridge).toHaveBeenCalled();
+					done();
+				});
 		});
 	});
-	*/
+
 });
