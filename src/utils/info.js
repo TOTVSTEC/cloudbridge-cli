@@ -50,7 +50,7 @@ Info.getXcodeInfo = function getXcodeInfo() {
 	if (result.code !== 0) {
 		return 'Not installed';
 	}
-	var version = result.output.replace(/\n/g, ' ');
+	var version = result.stdout.replace(/\n/g, ' ');
 	return version;
 };
 
@@ -59,7 +59,7 @@ Info.getIosSimInfo = function getIosSimInfo() {
 	if (result.code !== 0) {
 		return 'Not installed';
 	}
-	var version = result.output.replace(/\n/g, ' ');
+	var version = result.stdout.replace(/\n/g, ' ');
 	return version;
 };
 
@@ -68,7 +68,7 @@ Info.getIosDeployInfo = function getIosDeployInfo() {
 	if (result.code !== 0) {
 		return 'Not installed';
 	}
-	var version = result.output.replace(/\n/g, ' ');
+	var version = result.stdout.replace(/\n/g, ' ');
 	return version;
 };
 
@@ -154,7 +154,7 @@ Info.getWindowsEnvironmentInfo = function getWindowsEnvironmentInfo() {
 
 Info.getLinuxEnvironmentInfo = function getLinuxEnvironmentInfo() {
 	var result = shelljs.exec('lsb_release -id', { silent: true });
-	return result.output.replace(/\n/g, ' ');
+	return result.stdout.replace(/\n/g, ' ');
 };
 
 //http://stackoverflow.com/questions/6551006/get-my-os-from-the-node-js-shell
@@ -200,7 +200,7 @@ Info.gatherGulpInfo = function gatherGulpInfo(info) {
 	try {
 		if (result.code === 0) {
 			// console.log(result.output);
-			var gulpVersions = result.output.replace(/(\[.*\])/g, '').split('\n');
+			var gulpVersions = result.stdout.replace(/(\[.*\])/g, '').split('\n');
 			if (gulpVersions.length > 0) {
 				info.gulp = gulpVersions[0];
 				info.gulp_local = gulpVersions[1];
