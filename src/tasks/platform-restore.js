@@ -12,6 +12,10 @@ class PlatformRestoreTask extends AppTask {
 			projectData = this.project.data(),
 			platforms = Object.keys(projectData.platform);
 
+		if (platforms.length > 0) {
+			console.log('\nRestoring project platforms...');
+		}
+
 		return platforms.reduce(function(promise, platform, index) {
 			var pack = new Package({
 				name: 'cloudbridge-kit-' + platform,
@@ -23,7 +27,7 @@ class PlatformRestoreTask extends AppTask {
 					return pack.fetch();
 				})
 				.then(function() {
-					console.log('\nRestoring platform ' + platform.bold + '...');
+					console.log('  ' + platform.bold + ' ' + pack.version + '...');
 
 					return pack.restore(_this.projectDir, projectData);
 				});
