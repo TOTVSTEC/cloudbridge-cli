@@ -48,6 +48,7 @@ var TASKS = [
 			'<PLATFORM>': 'One or more of the valid platform {windows|android}'
 		},
 		options: {
+			/*
 			'--noresources|-r': {
 				title: 'Do not add default CloudBridge icons and splash screen resources',
 				boolean: true
@@ -56,6 +57,7 @@ var TASKS = [
 				title: 'Do not save the platform to the package.json file',
 				boolean: true
 			}
+			*/
 		},
 		module: 'platform'
 	},
@@ -145,6 +147,27 @@ var TASKS = [
 			}*/
 		},
 		module: 'check'
+	},
+	{
+		title: 'cache',
+		name: 'cache',
+		summary: 'Manipulates packages cache',
+		args: {
+			'{list|clean}': 'Action to perform. \n' +
+							'list|ls: List the packages in cache.\n' +
+							'clean|rm: Delete the cached packages.'
+		},
+		options: {
+			/*'--noresources|-r': {
+				title: 'Do not add default CloudBridge icons and splash screen resources',
+				boolean: true
+			},
+			'--nosave|-e': {
+				title: 'Do not save the platform to the package.json file',
+				boolean: true
+			}*/
+		},
+		module: 'cache'
 	}
 
 

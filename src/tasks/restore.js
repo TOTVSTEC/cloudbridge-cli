@@ -29,7 +29,7 @@ class RestoreTask extends AppTask {
 			promise,
 			pack = new Package({
 				name: 'cloudbridge-app-base',
-				version: projectData.lib || projectData.bowerComponents['totvs-twebchannel']
+				version: projectData['cloudbridge-core'] || projectData.bowerComponents['totvs-twebchannel']
 			});
 
 		if (pack.version === 'master') {
