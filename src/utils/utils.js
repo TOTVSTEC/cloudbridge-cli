@@ -1,14 +1,19 @@
 'use strict';
 
 var fs = require('fs'),
-	colors = require('colors'),
-	archiver = require('archiver'),
-	ConfigJson = cb_require('project/config-json'),
-	Multibar = cb_require('ui/multibar'),
+	os = require('os'),
 	path = require('path'),
 	Q = require('q'),
 	shelljs = require('shelljs'),
+	colors = require('colors'),
+	unzip = require('unzip'),
+	archiver = require('archiver'),
+	request = require('request'),
+	requestProgress = require('request-progress'),
+	ConfigJson = cb_require('project/config-json'),
+	Multibar = cb_require('ui/multibar'),
 	logging = require('./logging'),
+	usernameSync = require('username').sync,
 	ejs = require('ejs');
 
 var Utils = module.exports;
@@ -63,7 +68,7 @@ Utils.createArchive = function(appDirectory, documentRoot) {
 
 
 Utils.fetchPackage = function fetchPackage(options) {
-	if (typeof options == 'string') {
+	if (typeof options === 'string') {
 		options = {
 			package: options
 		};
@@ -104,10 +109,6 @@ Utils.copyPackage = function copyPackage(options) {
 
 
 Utils.fetchArchive = function fetchArchive(targetPath, archiveUrl, isGui) {
-	var os = require('os');
-	var fs = require('fs');
-	var path = require('path');
-	var unzip = require('unzip');
 	var q = Q.defer();
 
 	// The folder name the project will be downloaded and extracted to
@@ -136,7 +137,6 @@ Utils.fetchArchive = function fetchArchive(targetPath, archiveUrl, isGui) {
 	};
 
 	var proxy = process.env.PROXY || process.env.http_proxy || null;
-	var request = require('request');
 	var r = request({ url: archiveUrl, rejectUnauthorized: false, encoding: null, proxy: proxy }, function(err, res, body) {
 		if (err) {
 			// console.error('Error fetching:'.error.bold, archiveUrl, err);
@@ -172,8 +172,7 @@ Utils.fetchArchive = function fetchArchive(targetPath, archiveUrl, isGui) {
 	if (!isGui) {
 		var bar = null,
 			oldPercent = 0,
-			progress = require('request-progress'),
-			p = progress(r, {
+			p = requestProgress(r, {
 				throttle: 500
 			});
 
@@ -197,30 +196,7 @@ Utils.fetchArchive = function fetchArchive(targetPath, archiveUrl, isGui) {
 			});
 		});
 
-
-
 		/*
-				r.once('response', function(res) {
-					var len = parseInt(res.headers['content-length'], 10);
-
-					console.log("len: " + len);
-
-					bar = Multibar.newBar(':percent\t:bar\t:etas', {
-						complete: String.fromCharCode(9608).blue.bold,
-						incomplete: String.fromCharCode(9608).gray.dim,
-						width: 30,
-						total: len
-					});
-
-					r.on('progress', function(state) {
-						bar.tick(state.size.transferred / 10);
-						//console.log("state: " + JSON.stringify(state, null, 2));
-					}).on('end', function() {
-						console.log("END!");
-					});
-				});
-		*/
-
 		r.once('progress', function(state) {
 			bar = Multibar.newBar(':percent\t:bar\t:etas', {
 				complete: String.fromCharCode(9608).blue.bold,
@@ -241,6 +217,7 @@ Utils.fetchArchive = function fetchArchive(targetPath, archiveUrl, isGui) {
 
 			});
 		});
+		*/
 	}
 
 	return q.promise;
@@ -289,7 +266,7 @@ Utils.preprocessCliOptions = function preprocessCliOptions(argv) {
 
 		if (!options.packageName) {
 			var appname = options.appName.replace(/[\W_]/igm, '').toLowerCase(),
-				username = require('username').sync().toLowerCase();
+				username = usernameSync().toLowerCase();
 
 			options.packageName = 'com.' + username + '.' + appname;
 		}
