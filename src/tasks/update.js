@@ -1,65 +1,73 @@
-/*
 'use strict';
 
-var PlatformTask = cb_require('tasks/platform'),
-	utils = cb_require('utils/utils'),
-	Package = cb_require('utils/package'),
+var AppTask = cb_require('tasks/app-task'),
+	bower = cb_require('utils/bower'),
 	path = require('path'),
-	shelljs = require('shelljs'),
+	inquirer = require('inquirer'),
 	Q = require('q');
 
-class PlatformUpdateTask extends PlatformTask {
+class UpdateTask extends AppTask {
 
 	run(cloudbridge, argv) {
+		var _this = this;
+
+		this.packages = [];
+
+		return _this.bower()
+			.then(function() {
+				return _this.showPrompt();
+			});
+	}
+
+	bower() {
 		var _this = this,
-			projectData = this.project.data(),
-			platforms = _this.getPlatforms(argv);
+			components = ['totvs-twebchannel', 'bootstrap', 'jquery'];
 
-		if (platforms.length === 0) {
-			platforms = Object.keys(this.project.get('platform') || {});
+		return components.reduce(function(promise, pack, index) {
+			return bower.info(pack)
+				.then(function(result) {
+					_this.packages.push({
+						type: 'bower',
+						name: result.name,
+						latest: result.latest.version
+					});
 
-			if (platforms.length === 0) {
-
-			}
-		}
-
-		return platforms.reduce(function(promise, platform, index) {
-			var options = {
-				platform: platform,
-				package: 'cloudbridge-kit-' + platform
-			};
-
-			var pack = new Package(options.package);
-
-			return promise
-				.then(function() {
-					return pack.latest();
+					console.log(result.latest.name + ' ' + result.latest.version);
 				})
-				.then(function() {
-					options.version = pack.version;
-
-					return pack.fetch();
-				})
-				.then(function() {
-					return pack.update(_this.projectDir, projectData);
-				})
-				.then(function() {
-					return _this.save(options);
+				.catch(function(error) {
+					console.log(error);
 				});
 		}, Q());
 	}
 
-	save(options) {
-		var platformData = this.project.get('platform') || {};
-		platformData[options.platform] = options.version || 'master';
+	showPrompt() {
 
-		this.project.set('platform', platformData);
-		this.project.save();
+		var longest = Math.max.apply(Math, this.packages.map(function(el) {
+			return el.name.length;
+		}));
 
-		console.log('\nThe platform ' + options.platform.bold + ' has been updated to version ' + options.version + '!');
+		/*
+		var longest = this.packages.reduce(function(a, b) {
+			return a.name.length > b.name.length ? a.name.length : b.name.length;
+		});
+		*/
+
+		var choices = this.packages.map(function(value, index) {
+			return {
+				name: ' ' + value.name + Array(longest + 2 - value.name.length).join(' ') + ' 1.0.0  ->  ' + value.latest
+			};
+		});
+
+		return inquirer.prompt([{
+			type: 'checkbox',
+			name: 'updates',
+			message: 'Select the updates',
+			choices: choices
+		}]).then(function(answers) {
+
+		});
 	}
+
 }
 
-module.exports = PlatformUpdateTask;
-
-*/
+module.exports = UpdateTask;

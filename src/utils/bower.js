@@ -66,6 +66,22 @@ Bower.list = function list(userOptions, userConfig) {
 	return deferred.promise;
 };
 
+Bower.info = function info(packageName, userOptions, userConfig) {
+	var deferred = Q.defer(),
+		config = Bower.getConfig(userConfig);
+
+	bower.commands.info(packageName, null, config)
+		.on('end', function(result) {
+			deferred.resolve(result);
+		})
+		.on('error', function(error) {
+			deferred.reject(error);
+		});
+
+	return deferred.promise;
+};
+
+
 Bower.getConfig = function getConfig(userConfig) {
 	var config = {};
 

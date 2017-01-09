@@ -109,6 +109,26 @@ var TASKS = [
 		module: 'bower'
 	},
 	{
+		title: 'update',
+		name: 'update',
+		summary: 'Update you project dependencies.',
+		args: {
+			//'{environment|project}': '',
+			//'[options]': ''
+		},
+		options: {
+			/*'--noresources|-r': {
+				title: 'Do not add default CloudBridge icons and splash screen resources',
+				boolean: true
+			},
+			'--nosave|-e': {
+				title: 'Do not save the platform to the package.json file',
+				boolean: true
+			}*/
+		},
+		module: 'update'
+	},
+	{
 		title: 'restore',
 		name: 'restore',
 		summary: 'Restore you project dependencies.',

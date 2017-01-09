@@ -180,7 +180,7 @@ Utils.fetchArchive = function fetchArchive(targetPath, archiveUrl, isGui) {
 		r.on('response', function(res) {
 			bar = Multibar.newBar(':percent\t:bar\t:etas', {
 				complete: String.fromCharCode(9608).blue.bold,
-				incomplete: String.fromCharCode(9608).gray.dim,
+				incomplete: String.fromCharCode(9617).gray.dim,
 				width: 30,
 				total: 100
 			});
