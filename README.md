@@ -71,3 +71,7 @@ $ cb bower add jquery
 $ cb bower add angular#1.2.0
 $ cb bower remove jquery
 ```
+
+### **Documentação**
+
+[Consulte a documentação do CloudBridge no TDN](http://tdn.totvs.com.br/display/tec/CloudBridge)
