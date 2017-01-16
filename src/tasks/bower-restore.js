@@ -15,8 +15,9 @@ class BowerRestoreTask extends BowerAddTask {
 
 	run(cloudbridge, argv) {
 		var components = this.project.get('bowerComponents') || {},
+			bowerComponents = components.bower || {},
 			config = { directory: path.join(this.projectDir, 'build', 'bower') },
-			packages = Object.keys(components);
+			packages = Object.keys(bowerComponents);
 
 		if (packages.length > 0) {
 			console.log('\nRestoring bower components...');

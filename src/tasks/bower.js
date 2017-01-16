@@ -57,7 +57,8 @@ BowerTask.prototype.getPackages = function getPackages(argv) {
 
 BowerTask.prototype.updateMain = function updateMain() {
 	var main = this.project.get('main'),
-		bowerComponents = this.project.get('bowerComponents') || {},
+		components = this.project.get('components') || {},
+		bowerComponents = components.bower || {},
 		bowerOverrides = this.project.get('bowerOverrides') || {},
 		options;
 

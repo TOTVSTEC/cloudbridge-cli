@@ -190,7 +190,7 @@ StartTask.printQuickHelp = function(options) {
 };
 
 StartTask.fetchWrapper = function fetchWrapper(options) {
-	var pack = new Package('cloudbridge-app-base');
+	var pack = new Package('cloudbridge-core-advpl');
 
 	return Q()
 		.then(function() {
@@ -199,9 +199,13 @@ StartTask.fetchWrapper = function fetchWrapper(options) {
 		.then(function() {
 			options.version = pack.version;
 
-			var project = CloudBridgeProject.load(options.targetPath);
+			var project = CloudBridgeProject.load(options.targetPath),
+				components = project.get('components') || {};
 
-			project.set('cloudbridge-core', pack.version);
+			components.advpl = components.advpl || {};
+			components.advpl[pack.name] = pack.version;
+
+			project.set('components', components);
 			project.save();
 
 			return pack.fetch();

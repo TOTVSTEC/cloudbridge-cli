@@ -27,37 +27,26 @@ class RestoreTask extends AppTask {
 		var _this = this,
 			projectData = this.project.data(),
 			promise,
-			pack = new Package({
-				name: 'cloudbridge-app-base',
-				version: projectData['cloudbridge-core'] || projectData.bowerComponents['totvs-twebchannel']
-			});
+			components = projectData.components.advpl,
+			keys = Object.keys(components);
 
-		if (pack.version === 'master') {
-			promise = pack.latest();
-		}
-		else {
-			promise = Q();
+		if (keys.length > 0) {
+			console.log('\nRestoring AdvPL components...');
 		}
 
-		if (!projectData.lib) {
-			promise.then(function() {
-				projectData.lib = pack.version;
+		return keys.reduce(function(promise, item, index) {
+			var pack = new Package(item, null, components[item]);
 
-				_this.project.set('cloudbridge-core', pack.version);
-				_this.project.save();
-			});
-		}
+			return promise
+				.then(function() {
+					return pack.fetch();
+				})
+				.then(function() {
+					console.log('  ' + pack.name.bold + ' ' + pack.version);
 
-		return promise
-			.then(function() {
-				return pack.fetch();
-			})
-			.then(function() {
-				console.log('\nRestoring AdvPL Core...');
-				console.log('  ' + 'cloudbridge-core'.bold + ' ' + pack.version);
-
-				return pack.restore(_this.projectDir, projectData);
-			});
+					return pack.restore(_this.projectDir, projectData);
+				});
+		}, Q());
 	}
 }
 

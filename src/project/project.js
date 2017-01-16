@@ -106,5 +106,5 @@ Project.remove = function remove(data, key) {
 	if (!data) {
 		data = Project.PROJECT_DEFAULT;
 	}
-	data[key] = '';
+	delete data[key];
 };

@@ -12,6 +12,34 @@ class AppTask extends Task {
 
 		this.projectDir = process.cwd();
 		this.__project = null;
+
+		this.fixProject();
+	}
+
+	fixProject() {
+		var project = this.project.data(),
+			components = project.components || {};
+
+		if ((project.bowerComponents === undefined) && (Object.keys(components) > 0)) {
+			return;
+		}
+
+		components.bower = Object.assign({}, project.bowerComponents || {}, components.bower || {});
+		components.advpl = components.advpl || {};
+
+		//if (project.bowerComponents) {
+		this.project.remove('bowerComponents');
+		//}
+
+		if (!components.advpl['cloudbridge-core-advpl']) {
+			if (components.bower['totvs-twebchannel'])
+				components.advpl['cloudbridge-core-advpl'] = components.bower['totvs-twebchannel'];
+			else
+				components.advpl['cloudbridge-core-advpl'] = '0.0.0';
+		}
+
+		this.project.set('components', components);
+		this.project.save();
 	}
 
 	get project() {

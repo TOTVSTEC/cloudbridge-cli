@@ -97,3 +97,22 @@ Bower.getOptions = function getOptions(userOptions) {
 
 	return options;
 };
+
+Bower.update = function update(packages, userOptions, userConfig) {
+	var deferred = Q.defer(),
+		config = Bower.getConfig(userConfig),
+		options = Bower.getOptions(userOptions);
+
+	options.save = false;
+
+	bower.commands
+		.update(packages, options, config)
+		.on('end', function(result) {
+			deferred.resolve(result);
+		})
+		.on('error', function(error) {
+			deferred.reject(error);
+		});
+
+	return deferred.promise;
+};

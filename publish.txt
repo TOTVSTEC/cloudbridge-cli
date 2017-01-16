@@ -18,5 +18,5 @@ git push origin master --tags
 
 - Publicar tags ja marcadas:
 
-git checkout tags/v0.0.15
+git checkout tags/v0.0.999
 npm publish

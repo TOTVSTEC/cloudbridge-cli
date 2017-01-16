@@ -29,16 +29,26 @@ var Package = function(name, group, version) {
 
 Package.prototype.latest = function latest() {
 	var deferred = Q.defer(),
-		url = 'http://registry.npmjs.org/' + this.name + '/latest',
-		_this = this;
+		//url = 'http://registry.npmjs.org/' + this.name + '/latest',
+		url = 'https://api.github.com/repos/' + this.group + '/' + this.name + '/tags',
+		_this = this,
+		options = {
+			url: url,
+			json: true,
+			headers: {
+				'User-Agent': 'https://github.com/TOTVSTEC/cloudbridge-cli'
+			}
+		};
 
-	request.get(url, function(err, res, body) {
+	//
+
+	request.get(options, function(err, res, data) {
 		if (err) {
 			deferred.reject(err);
 		}
 
 		try {
-			_this.version = JSON.parse(body).version;
+			_this.version = data[0].name.replace(/^[\^~v=\s]+/ig, '');
 
 			deferred.resolve(_this.version);
 		}

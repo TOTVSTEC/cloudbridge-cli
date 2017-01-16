@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/TOTVSTEC/cloudbridge-cli.svg?branch=master)](https://travis-ci.org/TOTVSTEC/cloudbridge-cli)
 [![Coverage Status](https://coveralls.io/repos/github/TOTVSTEC/cloudbridge-cli/badge.svg?branch=master)](https://coveralls.io/github/TOTVSTEC/cloudbridge-cli?branch=master)
+[![Code Climate](https://codeclimate.com/github/TOTVSTEC/cloudbridge-cli/badges/gpa.svg)](https://codeclimate.com/github/TOTVSTEC/cloudbridge-cli)
 
 Ferrramenta para linha de comando CloudBridge
 

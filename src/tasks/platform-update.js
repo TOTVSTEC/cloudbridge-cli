@@ -10,9 +10,14 @@ var PlatformTask = cb_require('tasks/platform'),
 class PlatformUpdateTask extends PlatformTask {
 
 	run(cloudbridge, argv) {
+		var platforms = this.getPlatforms(argv);
+
+		return this.update(platforms);
+	}
+
+	update(platforms) {
 		var _this = this,
-			projectData = this.project.data(),
-			platforms = _this.getPlatforms(argv);
+			projectData = this.project.data();
 
 		if (platforms.length === 0) {
 			platforms = Object.keys(this.project.get('platform') || {});
