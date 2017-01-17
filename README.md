@@ -76,3 +76,13 @@ $ cb bower remove jquery
 ### **Documentação**
 
 [Consulte a documentação do CloudBridge no TDN](http://tdn.totvs.com.br/display/tec/CloudBridge)
+
+### **Assinar o aplicativo**
+
+O Android exige que todos os APKs sejam assinados digitalmente com um certificado antes de serem instalados ou publicados no Google Play. [Este guia do desenvolvedor Android](https://developer.android.com/studio/publish/app-signing.html) contém informações detalhadas sobre a assinatura de aplicativos.
+
+Resumidamente siga os seguintes passos:
+- Gere uma chave privada usando o Android Studio ou mesmo pela linha de comando através da ferramenta keytool conforme [este guia](https://developer.android.com/studio/publish/app-signing.html#signing-manually).
+- Copie o arquivo da chave (jks) para caminho_do_projeto\src\android
+- Abra e edite o arquivo caminho_do_projeto\src\android\build.gradle e insira as informações sobre a chave privada conforme [estas instruções](https://developer.android.com/studio/publish/app-signing.html#gradle-sign).
+- Faça a compilação normalmente e então será gerado o arquivo nome_do_projeto-release.apk em caminho_do_projeto\build
