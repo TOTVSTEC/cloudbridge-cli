@@ -14,7 +14,7 @@ class BowerRestoreTask extends BowerAddTask {
 	}
 
 	run(cloudbridge, argv) {
-		var components = this.project.get('bowerComponents') || {},
+		var components = this.project.get('components') || {},
 			bowerComponents = components.bower || {},
 			config = { directory: path.join(this.projectDir, 'build', 'bower') },
 			packages = Object.keys(bowerComponents);
@@ -24,7 +24,7 @@ class BowerRestoreTask extends BowerAddTask {
 		}
 
 		return packages.reduce(function(promise, name, index) {
-			var version = components[name];
+			var version = bowerComponents[name].trim().replace(/^[\^~v=\s]+/ig, '');
 
 			console.log('  ' + name.bold + ' ' + version);
 

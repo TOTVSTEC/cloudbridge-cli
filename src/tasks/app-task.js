@@ -20,7 +20,7 @@ class AppTask extends Task {
 		var project = this.project.data(),
 			components = project.components || {};
 
-		if ((project.bowerComponents === undefined) && (Object.keys(components) > 0)) {
+		if ((project.bowerComponents === undefined) && (Object.keys(components).length > 0)) {
 			return;
 		}
 

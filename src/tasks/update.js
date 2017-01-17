@@ -9,19 +9,10 @@ var AppTask = cb_require('tasks/app-task'),
 	_s = require('underscore.string'),
 	Q = require('q');
 
-var BowerAddTask = cb_require('tasks/bower-add'),
-	BowerRemoveTask = cb_require('tasks/bower-remove'),
+var BowerUpdateTask = cb_require('tasks/bower-update'),
 	PlatformUpdateTask = cb_require('tasks/platform-update');
 
 class UpdateTask extends AppTask {
-
-	constructor() {
-		super();
-
-		this.fixProject();
-	}
-
-
 
 	run(cloudbridge, argv) {
 		var _this = this,
@@ -181,26 +172,44 @@ class UpdateTask extends AppTask {
 			});
 	}
 
+
 	updateBower(components) {
-		var removeTask = new BowerRemoveTask({ silent: true }),
-			addTask = new BowerAddTask({ silent: true }),
-			list = components.map(function(pack) {
-				return pack.name;
-			});
+		var task = new BowerUpdateTask({ silent: true }),
+			list = {};
 
-		return removeTask.uninstall(list)
-			.then(function(result) {
-				list = components.map(function(pack) {
-					return pack.name + "@" + pack.latest;
-				});
+		for (var i = 0; i < components.length; i++) {
+			var pack = components[i];
 
-				return addTask.install(list);
-			})
+			list[pack.name] = pack.latest;
+		}
+
+		return task.update(list)
 			.then(function(result) {
 				console.log('Bower Components updated!');
 			});
 	}
 
+	/*
+		updateBower(components) {
+			var removeTask = new BowerRemoveTask({ silent: true }),
+				addTask = new BowerAddTask({ silent: true }),
+				list = components.map(function(pack) {
+					return pack.name;
+				});
+
+			return removeTask.uninstall(list)
+				.then(function(result) {
+					list = components.map(function(pack) {
+						return pack.name + "@" + pack.latest;
+					});
+
+					return addTask.install(list);
+				})
+				.then(function(result) {
+					console.log('Bower Components updated!');
+				});
+		}
+	*/
 	updatePlatform(components) {
 		var task = new PlatformUpdateTask({ silent: true }),
 			list = components.map(function(pack) {
