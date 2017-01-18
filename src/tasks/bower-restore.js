@@ -1,11 +1,11 @@
 'use strict';
 
-var BowerAddTask = cb_require('tasks/bower'),
+var BowerTask = cb_require('tasks/bower'),
 	path = require('path'),
 	bower = cb_require('utils/bower'),
 	Q = require('q');
 
-class BowerRestoreTask extends BowerAddTask {
+class BowerRestoreTask extends BowerTask {
 
 	constructor(options) {
 		super(options);

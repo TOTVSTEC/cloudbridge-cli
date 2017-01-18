@@ -4,64 +4,55 @@ var PlatformTask = cb_require('tasks/platform'),
 	Package = cb_require('utils/package'),
 	Q = require('q');
 
-var PlatformRemoveTask = function() {
+class PlatformRemoveTask extends PlatformTask {
 
-};
+	run(cloudbridge, argv) {
+		var _this = this,
+			platforms = _this.getPlatforms(argv);
 
-PlatformRemoveTask.prototype = new PlatformTask();
+		if (platforms.length === 0) {
+			throw new Error("Invalid platform!");
+		}
 
-PlatformRemoveTask.prototype.run = function run(cloudbridge, argv) {
-	var _this = this,
-		platforms = _this.getPlatforms(argv);
+		var projectData = this.project.data();
 
-	if (platforms.length === 0) {
-		throw new Error("Invalid platform!");
+		return platforms.reduce(function(promise, platform, index) {
+			var options = {
+				platform: platform,
+				package: 'cloudbridge-kit-' + platform
+			};
+
+			var pack = new Package(options.package);
+
+			return promise
+				.then(function() {
+					return pack.latest();
+				})
+				.then(function() {
+					options.version = pack.version;
+
+					return pack.fetch();
+				})
+				.then(function() {
+					return pack.remove(_this.projectDir, projectData);
+				})
+				.then(function() {
+					return _this.save(options);
+				});
+		}, Q());
 	}
 
-	var projectData = this.project.data();
+	save(options) {
+		var platformData = this.project.get('platform') || {};
 
-	return platforms.reduce(function(promise, platform, index) {
-		var options = {
-			platform: platform,
-			package: 'cloudbridge-kit-' + platform
-		};
+		delete platformData[options.platform];
 
-		var pack = new Package(options.package);
+		this.project.set('platform', platformData);
+		this.project.save();
 
-		return promise
-			.then(function() {
-				return pack.latest();
-			})
-			.then(function() {
-				options.version = pack.version;
+		console.log('\nThe platform ' + options.platform.bold + ' has been successfully removed from your project!');
+	}
 
-				return pack.fetch();
-			})
-			.then(function() {
-				return pack.remove(_this.projectDir, projectData);
-			})
-			.then(function() {
-				return _this.save(options);
-			});
-	}, Q());
-};
-
-/*
-PlatformRemoveTask.prototype.remove = function install(options) {
-	return this.execute('remove', options);
-};
-*/
-
-
-PlatformRemoveTask.prototype.save = function save(options) {
-	var platformData = this.project.get('platform') || {};
-
-	delete platformData[options.platform];
-
-	this.project.set('platform', platformData);
-	this.project.save();
-
-	console.log('\nThe platform ' + options.platform.bold + ' has been successfully removed from your project!');
-};
+}
 
 module.exports = PlatformRemoveTask;

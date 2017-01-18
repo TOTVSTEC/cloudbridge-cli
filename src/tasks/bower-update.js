@@ -2,22 +2,11 @@
 
 var BowerTask = cb_require('tasks/bower'),
 	path = require('path'),
-	bower = cb_require('utils/bower');
-
-var BowerAddTask = cb_require('tasks/bower-add'),
+	bower = cb_require('utils/bower'),
+	BowerAddTask = cb_require('tasks/bower-add'),
 	BowerRemoveTask = cb_require('tasks/bower-remove');
 
 class BowerUpdateTask extends BowerTask {
-
-	constructor(options) {
-		super();
-
-		options = options || {};
-
-		this.silent = options.silent || false;
-		this.projectDir = options.target || process.cwd();
-	}
-
 
 	run(cloudbridge, argv) {
 		var packages = this.getPackages(argv);

@@ -11,10 +11,12 @@ var fs = require('fs'),
 	request = require('request'),
 	requestProgress = require('request-progress'),
 	ConfigJson = cb_require('project/config-json'),
-	Multibar = cb_require('ui/multibar'),
+	//Multibar = cb_require('ui/multibar'),
 	logging = require('./logging'),
 	usernameSync = require('username').sync,
 	ejs = require('ejs');
+
+var ProgressBar = require('progress');
 
 var Utils = module.exports;
 
@@ -177,7 +179,8 @@ Utils.fetchArchive = function fetchArchive(targetPath, archiveUrl, isGui) {
 			});
 
 		r.on('response', function(res) {
-			bar = Multibar.newBar(':percent\t:bar\t:etas', {
+			//bar = Multibar.newBar(
+			bar = new ProgressBar(':percent\t:bar\t:etas', {
 				complete: String.fromCharCode(9608).blue.bold,
 				incomplete: String.fromCharCode(9617).gray.dim,
 				width: 30,
@@ -198,7 +201,8 @@ Utils.fetchArchive = function fetchArchive(targetPath, archiveUrl, isGui) {
 
 		/*
 		r.once('progress', function(state) {
-			bar = Multibar.newBar(':percent\t:bar\t:etas', {
+			//bar = Multibar.newBar(
+			bar = new ProgressBar(':percent\t:bar\t:etas', {
 				complete: String.fromCharCode(9608).blue.bold,
 				incomplete: String.fromCharCode(9608).gray.dim,
 				width: 30,

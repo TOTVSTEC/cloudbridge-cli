@@ -6,30 +6,28 @@ var Task = cb_require('tasks/task'),
 	fs = require('fs'),
 	utils = cli.utils;
 
-var CheckTask = function() {
+class CheckTask extends Task {
 
-};
+	run(cloudbridge, argv) {
+		cloudbridge.projectDir = process.cwd();
 
-CheckTask.prototype = new Task();
+		try {
+			var isEnvironmentCmd = argv._.indexOf('environment') != -1;
+			var task = null;
 
-CheckTask.prototype.run = function(cloudbridge, argv) {
-	cloudbridge.projectDir = process.cwd();
+			//if (isEnvironmentCmd) {
+			var CheckEnvironmentTask = require('./check-environment');
 
-	try {
-		var isEnvironmentCmd = argv._.indexOf('environment') != -1;
-		var task = null;
+			task = new CheckEnvironmentTask();
+			//}
 
-		//if (isEnvironmentCmd) {
-		var CheckEnvironmentTask = require('./check-environment');
-
-		task = new CheckEnvironmentTask();
-		//}
-
-		return task.run(cloudbridge, argv);
+			return task.run(cloudbridge, argv);
+		}
+		catch (ex) {
+			utils.fail('An error occurred on check task:' + ex);
+		}
 	}
-	catch (ex) {
-		utils.fail('An error occurred on check task:' + ex);
-	}
-};
+
+}
 
 module.exports = CheckTask;

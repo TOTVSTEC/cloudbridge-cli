@@ -11,68 +11,65 @@ const AppServer = require('totvs-platform-helper/appserver');
 const APPSERVER_DIR = path.join('build', 'windows', 'bin', 'appserver');
 const SMARTCLIENT_DIR = path.join('build', 'windows', 'bin', 'smartclient');
 
-var RunWindowsTask = function() {
+class RunWindowsTask extends AppTask {
 
-};
+	run(cloudbridge, argv) {
+		var _this = this,
+			appserver = new AppServer(path.join(this.projectDir, APPSERVER_DIR)),
+			smartclient = new SmartClient(path.join(this.projectDir, SMARTCLIENT_DIR)),
+			program = this.project.get('name') + '.Cloud';
 
-RunWindowsTask.prototype = new AppTask();
+		//49152 to 65535
 
-RunWindowsTask.prototype.run = function run(cloudbridge, argv) {
-	var _this = this,
-		appserver = new AppServer(path.join(this.projectDir, APPSERVER_DIR)),
-		smartclient = new SmartClient(path.join(this.projectDir, SMARTCLIENT_DIR)),
-		program = this.project.get('name') + '.Cloud';
+		console.log(argv);
 
-	//49152 to 65535
+		return appserver.start()
+			.then(function() {
+				var args = [];
 
-	console.log(argv);
+				var port = argv.d || argv.debug;
 
-	return appserver.start()
-		.then(function() {
-			var args = [];
+				if (port) {
+					port = (typeof port === 'number') ? port : 65000;
 
-			var port = argv.d || argv.debug;
+					args.push('--remote-debugging-port=' + port);
 
-			if (port) {
-				port = (typeof port === 'number') ? port : 65000;
+					setTimeout(function() {
+						_this.openDevTools(port);
+					}, 2500);
+				}
 
-				args.push('--remote-debugging-port=' + port);
+				return smartclient.run({
+					program: program,
+					communication: {
+						address: "localhost",
+						port: appserver.tcpPort
+					}
+				}, args);
+			})
+			.then(function() {
+				return appserver.stop();
+			});
+	}
 
-				setTimeout(function() {
-					_this.openDevTools(port);
-				}, 2500);
+	openDevTools(port) {
+		var command = 'start chrome --app="http://localhost:' + port + '"';
+
+		exec(command, function(error, stdout, stderr) {
+			if (error) {
+				console.error('exec error: ' + error + '\n');
+				console.error(stderr);
+
+				return;
 			}
 
-			return smartclient.run({
-				program: program,
-				communication: {
-					address: "localhost",
-					port: appserver.tcpPort
-				}
-			}, args);
-		})
-		.then(function() {
-			return appserver.stop();
+			if (stdout)
+				console.log('stdout: ' + stdout + '\n');
 		});
-};
 
-RunWindowsTask.prototype.openDevTools = function openDevTools(port) {
-	var command = 'start chrome --app="http://localhost:' + port + '"';
+	}
 
-	exec(command, function(error, stdout, stderr) {
-		if (error) {
-			console.error('exec error: ' + error + '\n');
-			console.error(stderr);
-
-			return;
-		}
-
-		if (stdout)
-			console.log('stdout: ' + stdout + '\n');
-	});
-
-};
-
+/*
 var portrange = 45032;
 function getFreePort(cb) {
 	var port = portrange;
@@ -88,6 +85,9 @@ function getFreePort(cb) {
 	server.on('error', function(err) {
 		getFreePort(cb);
 	});
+}
+*/
+
 }
 
 module.exports = RunWindowsTask;

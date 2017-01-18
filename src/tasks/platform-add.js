@@ -4,62 +4,54 @@ var PlatformTask = cb_require('tasks/platform'),
 	Package = cb_require('utils/package'),
 	Q = require('q');
 
-var PlatformAddTask = function() {
+class PlatformAddTask extends PlatformTask {
 
-};
+	run(cloudbridge, argv) {
+		var _this = this,
+			platforms = _this.getPlatforms(argv);
 
-PlatformAddTask.prototype = new PlatformTask();
+		if (platforms.length === 0) {
+			throw new Error("Invalid platform!");
+		}
 
-PlatformAddTask.prototype.run = function run(cloudbridge, argv) {
-	var _this = this,
-		platforms = _this.getPlatforms(argv);
+		var projectData = this.project.data();
 
-	if (platforms.length === 0) {
-		throw new Error("Invalid platform!");
+		return platforms.reduce(function(promise, platform, index) {
+			var options = {
+				platform: platform,
+				package: 'cloudbridge-kit-' + platform
+			};
+
+			var pack = new Package(options.package);
+
+			return promise
+				.then(function() {
+					return pack.latest();
+				})
+				.then(function() {
+					options.version = pack.version;
+
+					return pack.fetch();
+				})
+				.then(function() {
+					return pack.install(_this.projectDir, projectData);
+				})
+				.then(function() {
+					return _this.save(options);
+				});
+		}, Q());
 	}
 
-	var projectData = this.project.data();
+	save(options) {
+		var platformData = this.project.get('platform') || {};
+		platformData[options.platform] = options.version || 'master';
 
-	return platforms.reduce(function(promise, platform, index) {
-		var options = {
-			platform: platform,
-			package: 'cloudbridge-kit-' + platform
-		};
+		this.project.set('platform', platformData);
+		this.project.save();
 
-		var pack = new Package(options.package);
+		console.log('\nThe platform ' + options.platform.bold + ' has been successfully added to your project!');
+	}
 
-		return promise
-			.then(function() {
-				return pack.latest();
-			})
-			.then(function() {
-				options.version = pack.version;
-
-				return pack.fetch();
-			})
-			.then(function() {
-				return pack.install(_this.projectDir, projectData);
-			})
-			.then(function() {
-				return _this.save(options);
-			});
-	}, Q());
-};
-
-/*
-PlatformAddTask.prototype.install = function install(options) {
-	return this.execute('install', options);
-};
-*/
-
-PlatformAddTask.prototype.save = function save(options) {
-	var platformData = this.project.get('platform') || {};
-	platformData[options.platform] = options.version || 'master';
-
-	this.project.set('platform', platformData);
-	this.project.save();
-
-	console.log('\nThe platform ' + options.platform.bold + ' has been successfully added to your project!');
-};
+}
 
 module.exports = PlatformAddTask;

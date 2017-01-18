@@ -7,43 +7,40 @@ var RunTask = cb_require('tasks/run'),
 
 var utils = cli.utils;
 
-var RunAndroidTask = function() {
+class RunAndroidTask extends RunTask {
 
-};
+	run(cloudbridge, argv) {
+		var project = this.project.data(),
+			packagePath = path.join(this.projectDir, 'build', project.name + '-debug.apk'),
+			opts = {
+				replace: true
+			},
+			target = null,
+			activity = project.id + '/.' + project.name + 'Activity';
 
-RunAndroidTask.prototype = new RunTask();
+		return adb.devices()
+			.then(function(targetDevice) {
+				console.log('\n');
+				console.log('targetDevice', targetDevice);
+				console.log('\n');
 
-RunAndroidTask.prototype.run = function run(cloudbridge, argv) {
-	//var packagePath = path.join(this.projectDir, 'build', 'android', 'build', 'outputs', 'apk', 'android-debug.apk'),
-	var project = this.project.data(),
-		packagePath = path.join(this.projectDir, 'build', project.name + '-debug.apk'),
-		opts = {
-			replace: true
-		},
-		target = null,
-		activity = project.id + '/.' + project.name + 'Activity';
+				if (targetDevice.length === 0) {
+					throw new Error("No devices found.");
+				}
 
-	return adb.devices()
-		.then(function(targetDevice) {
-			console.log('\n');
-			console.log('targetDevice', targetDevice);
-			console.log('\n');
+				target = targetDevice[0];
 
-			if (targetDevice.length === 0) {
-				throw new Error("No devices found.");
-			}
+				return adb.install(target, packagePath, opts);
+			})
+			.then(function() {
+				//var activityName = 'org.helloworld.app';
+				//activityName += '/.';
+				//activityName += 'HelloWorldActivity';
 
-			target = targetDevice[0];
+				return adb.start(target, activity);
+			});
+	}
 
-			return adb.install(target, packagePath, opts);
-		})
-		.then(function() {
-			//var activityName = 'org.helloworld.app';
-			//activityName += '/.';
-			//activityName += 'HelloWorldActivity';
-
-			return adb.start(target, activity);
-		});
-};
+}
 
 module.exports = RunAndroidTask;

@@ -7,10 +7,14 @@ var Task = cb_require('tasks/task'),
 
 class AppTask extends Task {
 
-	constructor() {
-		super();
+	constructor(options) {
+		super(options);
 
-		this.projectDir = process.cwd();
+		options = options || {};
+
+		this.projectDir = options.target || process.cwd();
+		this.silent = options.silent || false;
+
 		this.__project = null;
 
 		this.fixProject();
@@ -51,25 +55,5 @@ class AppTask extends Task {
 	}
 
 }
-
-/*
-var AppTask = function() {
-	this.projectDir = process.cwd();
-};
-
-AppTask.prototype = new Task();
-
-AppTask.__project = null;
-
-AppTask.prototype.__defineGetter__('project', function() {
-	//return require(path.join(this.projectDir, 'cloudbridge.json'));
-
-	if (AppTask.__project == null) {
-		AppTask.__project = project.load(this.projectDir);
-	}
-
-	return AppTask.__project;
-});
-*/
 
 module.exports = AppTask;
