@@ -4,13 +4,23 @@ var AppTask = cb_require('tasks/app-task'),
 	path = require('path'),
 	utils = cli.utils;
 
-var VALID_PLATFORMS = [
+const VALID_PLATFORMS = [
 	'windows',
 	'android',
 	'ios'
 ];
 
+const DEFAULT_OPTIONS = {
+	save: true,
+	silent: false
+};
+
+
 class PlatformTask extends AppTask {
+
+	constructor(options) {
+		super(Object.assign({}, DEFAULT_OPTIONS, options || {}));
+	}
 
 	run(cloudbridge, argv) {
 		cloudbridge.projectDir = process.cwd();

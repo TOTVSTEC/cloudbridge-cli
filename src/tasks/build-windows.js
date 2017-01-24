@@ -6,7 +6,8 @@ let AppTask = cb_require('tasks/app-task'),
 	AppServer = require('totvs-platform-helper/appserver'),
 	DevStudio = require('totvs-platform-helper/tdscli');
 
-const APPSERVER_DIR = path.join('build', 'windows', 'bin', 'appserver');
+const APPSERVER_DIR = path.join('build', 'windows', 'bin', 'appserver'),
+	APPSERVER_EXE = 'appserver.exe';
 
 class BuildWindowsTask extends AppTask {
 
@@ -30,12 +31,15 @@ class BuildWindowsTask extends AppTask {
 				]
 			};
 
-		var appserver = new AppServer(path.join(projectDir, APPSERVER_DIR)),
+		var appserver = new AppServer({
+				target: path.join(projectDir, APPSERVER_DIR, APPSERVER_EXE)
+			}),
 			tds = new DevStudio();
 
 		return appserver.start()
 			.then(function() {
 				tdsOptions.port = appserver.tcpPort;
+				tdsOptions.build = appserver.build;
 
 				return tds.compile(tdsOptions);
 			})

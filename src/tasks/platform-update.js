@@ -29,26 +29,27 @@ class PlatformUpdateTask extends PlatformTask {
 
 		return platforms.reduce(function(promise, platform, index) {
 			var options = {
-				platform: platform,
-				package: 'cloudbridge-kit-' + platform
+				platform: platform.name,
+				version: platform.version,
+				package: 'cloudbridge-kit-' + platform.name
 			};
 
-			var pack = new Package(options.package);
+			var pack = new Package(options.package, null, options.version);
 
 			return promise
 				.then(function() {
-					return pack.latest();
-				})
-				.then(function() {
-					options.version = pack.version;
-
 					return pack.fetch();
 				})
 				.then(function() {
 					return pack.update(_this.projectDir, projectData);
 				})
 				.then(function() {
-					return _this.save(options);
+					if (_this.options.save)
+						return _this.save(options);
+				})
+				.then(function() {
+					if (!_this.options.silent)
+						console.log('\nThe platform ' + options.platform.bold + ' has been updated to version ' + options.version.bold + '!');
 				});
 		}, Q());
 	}
@@ -59,8 +60,6 @@ class PlatformUpdateTask extends PlatformTask {
 
 		this.project.set('platform', platformData);
 		this.project.save();
-
-		console.log('\nThe platform ' + options.platform.bold + ' has been updated to version ' + options.version + '!');
 	}
 }
 

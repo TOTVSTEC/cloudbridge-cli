@@ -8,8 +8,16 @@ var AppTask = cb_require('tasks/app-task'),
 	wiredep = require('wiredep'),
 	utils = cli.utils;
 
+const DEFAULT_OPTIONS = {
+	save: true,
+	silent: false
+};
 
 class BowerTask extends AppTask {
+
+	constructor(options) {
+		super(Object.assign({}, DEFAULT_OPTIONS, options || {}));
+	}
 
 	run(cloudbridge, argv) {
 		cloudbridge.projectDir = process.cwd();

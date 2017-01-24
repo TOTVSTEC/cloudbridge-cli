@@ -10,7 +10,7 @@ class BowerRestoreTask extends BowerTask {
 	constructor(options) {
 		super(options);
 
-		this.silent = true;
+		this.options.silent = true;
 	}
 
 	run(cloudbridge, argv) {

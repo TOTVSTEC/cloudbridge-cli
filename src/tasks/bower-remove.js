@@ -19,7 +19,8 @@ class BowerRemoveTask extends BowerTask {
 
 		return bower.uninstall(packages)
 			.then(function(result) {
-				_this.save(packages, result);
+				if (_this.options.save)
+					return _this.save(packages, result);
 
 				//TODO: delete component from main html
 			});
@@ -36,7 +37,7 @@ class BowerRemoveTask extends BowerTask {
 			if (bowerComponents[name]) {
 				delete bowerComponents[name];
 
-				if (!this.silent)
+				if (!this.options.silent)
 					message += 'The bower package ' + name.bold + ' has been removed from your project!\n';
 			}
 		}

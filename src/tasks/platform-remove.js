@@ -37,7 +37,8 @@ class PlatformRemoveTask extends PlatformTask {
 					return pack.remove(_this.projectDir, projectData);
 				})
 				.then(function() {
-					return _this.save(options);
+					if (_this.options.save)
+						return _this.save(options);
 				});
 		}, Q());
 	}

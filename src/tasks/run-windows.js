@@ -1,6 +1,7 @@
 'use strict';
 
 var AppTask = cb_require('tasks/run'),
+	os = require('os'),
 	path = require('path'),
 	exec = require('child_process').exec,
 	utils = cb_require('utils/utils');
@@ -8,18 +9,22 @@ var AppTask = cb_require('tasks/run'),
 const SmartClient = require('totvs-platform-helper/smartclient');
 const AppServer = require('totvs-platform-helper/appserver');
 
-const APPSERVER_DIR = path.join('build', 'windows', 'bin', 'appserver');
-const SMARTCLIENT_DIR = path.join('build', 'windows', 'bin', 'smartclient');
+const APPSERVER_DIR = path.join('build', 'windows', 'bin', 'appserver'),
+	APPSERVER_EXE = os.platform() === 'win32' ? 'appserver.exe' : 'appserver',
+	SMARTCLIENT_DIR = path.join('build', 'windows', 'bin', 'smartclient'),
+	SMARTCLIENT_EXE = os.platform() === 'win32' ? 'smartclient.exe' : 'smartclient';
 
 class RunWindowsTask extends AppTask {
 
 	run(cloudbridge, argv) {
 		var _this = this,
-			appserver = new AppServer(path.join(this.projectDir, APPSERVER_DIR)),
-			smartclient = new SmartClient(path.join(this.projectDir, SMARTCLIENT_DIR)),
+			appserver = new AppServer({
+				target: path.join(this.projectDir, APPSERVER_DIR, APPSERVER_EXE)
+			}),
+			smartclient = new SmartClient({
+				target: path.join(this.projectDir, SMARTCLIENT_DIR, SMARTCLIENT_EXE)
+			}),
 			program = this.project.get('name') + '.Cloud';
-
-		//49152 to 65535
 
 		console.log(argv);
 
@@ -69,24 +74,24 @@ class RunWindowsTask extends AppTask {
 
 	}
 
-/*
-var portrange = 45032;
-function getFreePort(cb) {
-	var port = portrange;
-	portrange += 1;
+	/*
+	var portrange = 45032;
+	function getFreePort(cb) {
+		var port = portrange;
+		portrange += 1;
 
-	var server = net.createServer();
-	server.listen(port, function(err) {
-		server.once('close', function() {
-			cb(port);
+		var server = net.createServer();
+		server.listen(port, function(err) {
+			server.once('close', function() {
+				cb(port);
+			});
+			server.close();
 		});
-		server.close();
-	});
-	server.on('error', function(err) {
-		getFreePort(cb);
-	});
-}
-*/
+		server.on('error', function(err) {
+			getFreePort(cb);
+		});
+	}
+	*/
 
 }
 

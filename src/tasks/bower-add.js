@@ -18,9 +18,8 @@ class BowerAddTask extends BowerTask {
 
 		return bower.install(packages, null, config)
 			.then(function(result) {
-				//console.log(result);
-
-				return _this.save(packages, result);
+				if (_this.options.save)
+					return _this.save(packages, result);
 			})
 			.then(function(result) {
 				return _this.updateMain();
@@ -28,15 +27,26 @@ class BowerAddTask extends BowerTask {
 	}
 
 	save(packages, bowerResult) {
-		var silent = this.silent,
+		var silent = this.options.silent,
 			components = this.project.get('components') || {},
 			bowerComponents = components.bower || {},
+			originalData = this.objectify(packages),
 			message = '';
 
 		Object.keys(bowerResult).forEach(function(value, index) {
-			var version = bowerResult[value].pkgMeta.version;
+			var source = bowerResult[value].endpoint.source || value,
+				version = bowerResult[value].pkgMeta.version,
+				modifier = '^';
 
-			bowerComponents[value] = '^' + version;
+			if (originalData[source] !== '') {
+				var m = originalData[source][0];
+				if ((m === '^') || (m === '~'))
+					modifier = m;
+				else
+					modifier = '';
+			}
+
+			bowerComponents[value] = modifier + version;
 
 			if (!silent)
 				message += 'The bower package ' + value.bold + '#' + version.bold + ' has been successfully added to your project!\n';
@@ -50,6 +60,36 @@ class BowerAddTask extends BowerTask {
 		if (message !== '') {
 			console.log('\n' + message);
 		}
+	}
+
+	objectify(packages) {
+		var result = {};
+
+		for (var i = 0; i < packages.length; i++) {
+			var element = this.split(packages[i]);
+
+			result[element.name] = element.version;
+		}
+
+		return result;
+	}
+
+	split(data) {
+		var splitter = data.indexOf('#') !== -1 ? '#' : data.indexOf('@')  !== -1 ? '@' : '',
+			result = {};
+
+		if (splitter !== '') {
+			var parts = data.split(splitter);
+
+			result.name = parts[0];
+			result.version = parts[1];
+		}
+		else {
+			result.name = data;
+			result.version = '';
+		}
+
+		return result;
 	}
 }
 

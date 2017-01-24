@@ -2,37 +2,26 @@
 
 const semver = require('semver');
 
-var semverClean = semver.clean,
-	semverGt = semver.gt;
-
-
-semver.clean = function(version) {
-	if (typeof version !== 'string')
-		return null;
-
-	return semverClean(version.trim().replace(/^[\^~v=\s]+/ig, ''));
-};
-
-semver.gt = function(v1, v2, loose) {
-	return semverGt(this.clean(v1), this.clean(v2), loose);
-};
-
-/*
 class SemVer {
 
-	static clean(version) {
+	static removeModifier(version) {
 		if (typeof version !== 'string')
 			return null;
 
-		return version.trim().replace(/^[\^~v=]+/ig, '');
+		return version.replace(/^[\^~v= ]+/ig, '');
 	}
 
-	static gt(v1, v2, loose) {
-		return semver.gt(SemVer.clean(v1), SemVer.clean(v2), loose);
-	}
+	static modifier(range) {
+		if (typeof range === 'string') {
+			var modifier = range.trim();
 
-	static satisfies(version, range, loose) {
-		return semver.satisfies(SemVer.clean(version), range, loose);
+			if (modifier.length > 0) {
+				if ((modifier[0] === '^') || (modifier[0] === '~'))
+					return modifier[0];
+			}
+		}
+
+		return '';
 	}
 
 	static get semver() {
@@ -40,7 +29,7 @@ class SemVer {
 	}
 
 }
-*/
 
-module.exports = semver;
+module.exports = SemVer;
+
 

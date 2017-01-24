@@ -4,6 +4,7 @@
 
 	"eqeqeq": false,
 	"eqnull": true,
+	"sub": true,
 
 	"globals": {
 		"cb_require": true,

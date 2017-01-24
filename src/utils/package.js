@@ -2,10 +2,13 @@
 
 var utils = cb_require('utils/utils'),
 	path = require('path'),
+	fs = require('fs'),
 	shelljs = require('shelljs'),
 	Q = require('q'),
 	semver = require('semver'),
 	request = require('request');
+
+const CLOUDBRIDGE_HOME = path.join(process.env.HOME || process.env.USERPROFILE || process.env.HOMEPATH, '.cloudbridge');
 
 class Package {
 
@@ -26,11 +29,16 @@ class Package {
 		if (typeof this.version !== 'string')
 			this.version = 'master';
 
+		if (Package.data === undefined) {
+			Package.loadData();
+		}
+
 		this.version = semver.valid(this.version.replace(/[\^~]/g, '')) || 'master';
 	}
 
 	latest() {
 		var deferred = Q.defer(),
+			etag = this.getEtag(),
 			//url = 'http://registry.npmjs.org/' + this.name + '/latest',
 			url = 'https://api.github.com/repos/' + this.group + '/' + this.name + '/tags',
 			_this = this,
@@ -42,24 +50,101 @@ class Package {
 				}
 			};
 
-		//
+		if (etag)
+			options.headers['If-None-Match'] = etag;
 
 		request.get(options, function(err, res, data) {
 			if (err) {
 				deferred.reject(err);
 			}
 
-			try {
-				_this.version = data[0].name.replace(/^[\^~v=\s]+/ig, '');
+			_this.saveEtag(res.headers.etag);
+
+			if (res.statusCode === 304) {
+				_this.version = _this.getVersion();
 
 				deferred.resolve(_this.version);
 			}
-			catch (e) {
-				deferred.reject(e);
+			else {
+				try {
+					_this.version = data[0].name.replace(/^[\^~v=\s]+/ig, '');
+
+					_this.saveVersion();
+
+					deferred.resolve(_this.version);
+				}
+				catch (e) {
+					deferred.reject(e);
+				}
 			}
 		});
 
 		return deferred.promise;
+	}
+
+	getEtag() {
+		var data = Package.data,
+			id = this.group + '/' + this.name;
+
+		if (data[id]) {
+			return data[id].etag || "";
+		}
+
+		return "";
+	}
+
+	getVersion() {
+		var data = Package.data,
+			id = this.group + '/' + this.name;
+
+		if (data[id]) {
+			return data[id].version || "master";
+		}
+
+		return "master";
+	}
+
+	saveEtag(etag) {
+		if (typeof etag !== 'string')
+			return;
+
+		var id = this.group + '/' + this.name;
+
+		Package.data[id] = Package.data[id] || {};
+
+		if (Package.data[id].etag !== etag) {
+			Package.data[id].etag = etag;
+			Package.saveData();
+		}
+	}
+
+	saveVersion() {
+		var id = this.group + '/' + this.name;
+
+		Package.data[id] = Package.data[id] || {};
+
+		if (Package.data[id].version !== this.version) {
+			Package.data[id].version = this.version;
+			Package.saveData();
+		}
+	}
+
+	static loadData() {
+		var file = path.join(CLOUDBRIDGE_HOME, 'packages.json');
+
+		if (fs.existsSync(file)) {
+			Package.data = JSON.parse(fs.readFileSync(file));
+		}
+		else {
+			Package.data = {};
+		}
+	}
+
+	static saveData() {
+		var file = path.join(CLOUDBRIDGE_HOME, 'packages.json'),
+			dataString = JSON.stringify(Package.data, null, 2);
+
+		fs.writeFileSync(file, dataString);
 	}
 
 	fetch() {

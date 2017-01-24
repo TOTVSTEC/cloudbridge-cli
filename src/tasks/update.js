@@ -4,13 +4,14 @@ var AppTask = cb_require('tasks/app-task'),
 	Package = cb_require('utils/package'),
 	bower = cb_require('utils/bower'),
 	path = require('path'),
-	semver = cb_require('utils/semver'),
+	svu = cb_require('utils/semver'),
 	inquirer = require('inquirer'),
 	_s = require('underscore.string'),
 	Q = require('q');
 
 var BowerUpdateTask = cb_require('tasks/bower-update'),
-	PlatformUpdateTask = cb_require('tasks/platform-update');
+	PlatformUpdateTask = cb_require('tasks/platform-update'),
+	AdvplUpdateTask = cb_require('tasks/advpl-update');
 
 class UpdateTask extends AppTask {
 
@@ -19,17 +20,18 @@ class UpdateTask extends AppTask {
 			project = this.project.data(),
 			components = project.components || {};
 
-		this.packages = {};
-		this.packages.bower = this.getPackages(components.bower || {});
-		this.packages.platform = this.getPackages(project.platform || {});
-		this.packages.core = this.getPackages(components.advpl || {});
+		this.packages = {
+			platform: this.getPackages(project.platform || {}),
+			bower: this.getPackages(components.bower || {}),
+			advpl: this.getPackages(components.advpl || {})
+		};
 
-		return _this.bower()
+		return _this.checkBower()
 			.then(function() {
-				return _this.platforms();
+				return _this.checkPlatforms();
 			})
 			.then(function() {
-				return _this.core();
+				return _this.checkAdvpl();
 			})
 			.then(function() {
 				return _this.showPrompt();
@@ -37,18 +39,16 @@ class UpdateTask extends AppTask {
 	}
 
 	getPackages(components) {
-		var _this = this;
-
 		return Object.keys(components).map(function(name) {
 			return {
 				name: name,
-				current: _this.semverClean(components[name])
+				current: svu.removeModifier(components[name]),
+				modifier: svu.modifier(components[name])
 			};
 		});
-
 	}
 
-	bower() {
+	checkBower() {
 		var _this = this;
 
 		return this.packages.bower.reduce(function(promise, pack, index) {
@@ -57,7 +57,7 @@ class UpdateTask extends AppTask {
 					return bower.info(pack.name);
 				})
 				.then(function(result) {
-					_this.packages.bower[index].latest = _this.semverClean(result.latest.version);
+					_this.packages.bower[index].latest = svu.removeModifier(result.latest.version);
 				})
 				.catch(function(error) {
 					console.log(error);
@@ -65,7 +65,7 @@ class UpdateTask extends AppTask {
 		}, Q());
 	}
 
-	platforms() {
+	checkPlatforms() {
 		var _this = this;
 
 		return this.packages.platform.reduce(function(promise, platform, index) {
@@ -76,7 +76,7 @@ class UpdateTask extends AppTask {
 					return pack.latest();
 				})
 				.then(function(latest) {
-					_this.packages.platform[index].latest = _this.semverClean(latest);
+					_this.packages.platform[index].latest = svu.removeModifier(latest);
 				})
 				.catch(function(error) {
 					console.log(error);
@@ -84,10 +84,10 @@ class UpdateTask extends AppTask {
 		}, Q());
 	}
 
-	core() {
+	checkAdvpl() {
 		var _this = this;
 
-		return this.packages.core.reduce(function(promise, item, index) {
+		return this.packages.advpl.reduce(function(promise, item, index) {
 			var pack = new Package(item.name);
 
 			return promise
@@ -95,7 +95,7 @@ class UpdateTask extends AppTask {
 					return pack.latest();
 				})
 				.then(function(latest) {
-					_this.packages.core[index].latest = _this.semverClean(latest);
+					_this.packages.advpl[index].latest = svu.removeModifier(latest);
 				})
 				.catch(function(error) {
 					console.log(error);
@@ -108,33 +108,36 @@ class UpdateTask extends AppTask {
 			choices = [],
 			bowerChoices,
 			platformChoices,
-			coreChoices,
+			advplChoices,
 			line,
 			_this = this;
 
-		bowerChoices = this.createChoices('bower', longest);
 		platformChoices = this.createChoices('platform', longest);
-		coreChoices = this.createChoices('core', longest);
+		bowerChoices = this.createChoices('bower', longest);
+		advplChoices = this.createChoices('advpl', longest);
 
-		line = Math.max.apply(Math, bowerChoices.concat(platformChoices).map(function(item) {
+		line = Math.max.apply(Math, bowerChoices.concat(platformChoices).concat(advplChoices).map(function(item) {
 			return item.name.stripColors.length;
 		}));
-
-		console.log(line);
-
-		if (bowerChoices.length > 0) {
-			choices.push(this.createSeparator('Bower Components', line));
-			choices = choices.concat(bowerChoices);
-		}
 
 		if (platformChoices.length > 0) {
 			choices.push(this.createSeparator('Platforms', line));
 			choices = choices.concat(platformChoices);
 		}
 
-		if (coreChoices.length > 0) {
-			choices.push(this.createSeparator('Core', line));
-			choices = choices.concat(coreChoices);
+		if (bowerChoices.length > 0) {
+			choices.push(this.createSeparator('Bower Components', line));
+			choices = choices.concat(bowerChoices);
+		}
+
+		if (advplChoices.length > 0) {
+			choices.push(this.createSeparator('AdvPL Components', line));
+			choices = choices.concat(advplChoices);
+		}
+
+		if (choices.length === 0) {
+			console.log('\nAll dependencies match the latest package versions!');
+			return Q();
 		}
 
 		return inquirer.prompt([{
@@ -159,70 +162,61 @@ class UpdateTask extends AppTask {
 
 		return Q()
 			.then(function() {
+				if (components.platform.length > 0)
+					return _this.updatePlatform(components.platform);
+			})
+			.then(function() {
 				if (components.bower.length > 0)
 					return _this.updateBower(components.bower);
 			})
 			.then(function() {
-				if (components.platform.length > 0)
-					return _this.updatePlatform(components.platform);
+				if (components.advpl.length > 0)
+					return _this.updateAdvpl(components.advpl);
 			})
-			.then(function(answers) {
-				if (components.core.length > 0)
-					return _this.updateCore(components.core);
+			.then(function() {
+				_this.save(components);
 			});
 	}
 
+	updatePlatform(components) {
+		var task = new PlatformUpdateTask({ silent: false, save: false }),
+			list = components.map(function(pack) {
+				return {
+					name: pack.name,
+					version: pack.modifier + pack.latest
+				};
+			});
+
+		return task.update(list);
+	}
 
 	updateBower(components) {
-		var task = new BowerUpdateTask({ silent: true }),
+		var task = new BowerUpdateTask({ silent: false, save: false }),
 			list = {};
 
 		for (var i = 0; i < components.length; i++) {
 			var pack = components[i];
 
-			list[pack.name] = pack.latest;
+			list[pack.name] = pack.modifier + pack.latest;
 		}
 
-		return task.update(list)
-			.then(function(result) {
-				console.log('Bower Components updated!');
-			});
+		return task.update(list);
 	}
 
-	/*
-		updateBower(components) {
-			var removeTask = new BowerRemoveTask({ silent: true }),
-				addTask = new BowerAddTask({ silent: true }),
-				list = components.map(function(pack) {
-					return pack.name;
-				});
+	updateAdvpl(components) {
+		var task = new AdvplUpdateTask({ silent: false, save: false }),
+			list = {};
 
-			return removeTask.uninstall(list)
-				.then(function(result) {
-					list = components.map(function(pack) {
-						return pack.name + "@" + pack.latest;
-					});
+		for (var i = 0; i < components.length; i++) {
+			var pack = components[i];
 
-					return addTask.install(list);
-				})
-				.then(function(result) {
-					console.log('Bower Components updated!');
-				});
+			list[pack.name] = pack.modifier + pack.latest;
 		}
-	*/
-	updatePlatform(components) {
-		var task = new PlatformUpdateTask({ silent: true }),
-			list = components.map(function(pack) {
-				return pack.name;
-			});
 
-		return task.update(list)
-			.then(function(result) {
-				//console.log('Platforms updated!');
-			});
+		return task.update(list);
 	}
 
-	updateCore(components) {
+	updateAdvplOld(components) {
 		var _this = this;
 
 		return components.reduce(function(promise, update, index) {
@@ -236,29 +230,37 @@ class UpdateTask extends AppTask {
 					return pack.update(_this.projectDir, _this.project.data());
 				})
 				.then(function() {
-					var components = _this.project.data().components || {};
+					var version = update.modifier + update.latest;
 
-					if (!components.advpl)
-						components.advpl = {};
-
-					components.advpl[update.name] = update.latest;
-
-					_this.project.set('components', components);
-					_this.project.save();
-
-					console.log('\nThe component ' + update.name.bold + ' has been updated to version ' + update.latest.bold + '!');
+					console.log('\nThe advpl component ' + update.name.bold + ' has been updated to version ' + version.bold + '!');
 				});
 		}, Q());
+	}
+
+	save(updates) {
+		var components = this.project.get('components') || {},
+			platforms = this.project.get('platform') || {};
+
+		Object.keys(updates).forEach(function(type, index) {
+			updates[type].forEach(function(update, index) {
+				if (type === 'platform') {
+					platforms[update.name] = update.modifier + update.latest;
+				}
+				else {
+					components[type][update.name] = update.modifier + update.latest;
+				}
+			});
+		});
+
+		this.project.set('components', components);
+		this.project.set('platform', platforms);
+		this.project.save();
 	}
 
 	createSeparator(name, size) {
 		var text = _s.lrpad(' ' + name + ' ', size + 4, '─');
 
 		return new inquirer.Separator(text);
-	}
-
-	semverClean(version) {
-		return version.trim().replace(/^[\^~v=\s]+/ig, '');
 	}
 
 	createChoices(packageType, longest) {
@@ -273,21 +275,22 @@ class UpdateTask extends AppTask {
 			var pack = packages[i];
 
 			if (pack.current === pack.latest) {
-				//continue;
+				continue;
 			}
 
+			var majorZero = (svu.semver.major(pack.current) === 0),
+				satisfies = (svu.semver.satisfies(pack.latest, pack.modifier + pack.current, true));
+
 			var name = _s.rpad(pack.name, longest.name),
-				current = _s.lpad(pack.current, longest.current),
-				latest = _s.lpad(pack.latest, longest.latest);
+				current = _s.lpad(pack.modifier + pack.current, longest.current),
+				latest = _s.lpad(pack.modifier + pack.latest, longest.latest);
 
 			var choice = {
 				name: name + '  ' + current + '  ->  ' + latest,
 				value: Object.assign({ type: packageType }, pack)
 			};
 
-			//choice.value.type = packageType;
-
-			if (!semver.satisfies(pack.latest, pack.current, true)) {
+			if (majorZero || !satisfies) {
 				choice.name = choice.name.yellow.bold;
 			}
 
@@ -315,12 +318,11 @@ class UpdateTask extends AppTask {
 		}));
 
 		result.current = Math.max.apply(Math, items.map(function(item) {
-			return item.current.length;
+			return item.current.length + item.modifier.length;
 		}));
 
 		result.latest = Math.max.apply(Math, items.map(function(item) {
-			//return (item.latest || "1.0.0").length;
-			return item.latest.length;
+			return item.latest.length + item.modifier.length;
 		}));
 
 		return result;

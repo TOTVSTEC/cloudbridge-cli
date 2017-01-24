@@ -2,7 +2,8 @@
 
 var Task = cb_require('tasks/task'),
 	project = cb_require('project/project'),
-	path = require('path');
+	path = require('path'),
+	svu = cb_require('utils/semver');
 
 
 class AppTask extends Task {
@@ -10,19 +11,19 @@ class AppTask extends Task {
 	constructor(options) {
 		super(options);
 
-		options = options || {};
+		this.options = options || {};
 
-		this.projectDir = options.target || process.cwd();
-		this.silent = options.silent || false;
+		this.projectDir = this.options.target || process.cwd();
 
 		this.__project = null;
 
-		this.fixProject();
+		this.fixProjectV1();
 	}
 
-	fixProject() {
+	fixProjectV1() {
 		var project = this.project.data(),
-			components = project.components || {};
+			components = project.components || {},
+			platform = project.platform || {};
 
 		if ((project.bowerComponents === undefined) && (Object.keys(components).length > 0)) {
 			return;
@@ -31,9 +32,7 @@ class AppTask extends Task {
 		components.bower = Object.assign({}, project.bowerComponents || {}, components.bower || {});
 		components.advpl = components.advpl || {};
 
-		//if (project.bowerComponents) {
 		this.project.remove('bowerComponents');
-		//}
 
 		if (!components.advpl['cloudbridge-core-advpl']) {
 			if (components.bower['totvs-twebchannel'])
@@ -42,7 +41,21 @@ class AppTask extends Task {
 				components.advpl['cloudbridge-core-advpl'] = '0.0.0';
 		}
 
+		Object.keys(components).forEach(function(category) {
+			Object.keys(components[category]).forEach(function(name) {
+				var modifier = svu.modifier(components[category][name]) || '^';
+
+				components[category][name] = modifier + svu.removeModifier(components[category][name]);
+			});
+		});
+
+		Object.keys(platform).forEach(function(name) {
+			var modifier = svu.modifier(platform[name]) || '^';
+			platform[name] = modifier + svu.removeModifier(platform[name]);
+		});
+
 		this.project.set('components', components);
+		this.project.set('platform', platform);
 		this.project.save();
 	}
 

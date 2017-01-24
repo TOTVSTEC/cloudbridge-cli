@@ -15,23 +15,27 @@ class BowerUpdateTask extends BowerTask {
 	}
 
 	update(packages) {
-		var _this = this,
-			config = { directory: path.join(this.projectDir, 'build', 'bower') };
-
 		var removeTask = new BowerRemoveTask({ silent: true }),
 			addTask = new BowerAddTask({ silent: true }),
 			list = Object.keys(packages);
 
 		return removeTask.uninstall(list)
-			.then(function(result) {
-				list = Object.keys(packages).map(function(name) {
-					return name + "@" + packages[name];
+			.then((result) => {
+				var installList = list.map((name) => {
+					return name + "#" + packages[name];
 				});
 
-				return addTask.install(list);
+				return addTask.install(installList);
+			}).then((result) => {
+				for (var i = 0; i < list.length; i++) {
+					var name = list[i],
+						version = packages[name];
+
+					if (!this.options.silent)
+						console.log('\nThe bower package ' + name.bold + ' has been updated to version ' + version.bold + '!');
+				}
 			});
 	}
-
 
 }
 

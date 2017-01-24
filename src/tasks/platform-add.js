@@ -29,7 +29,7 @@ class PlatformAddTask extends PlatformTask {
 					return pack.latest();
 				})
 				.then(function() {
-					options.version = pack.version;
+					options.version = '^' + pack.version;
 
 					return pack.fetch();
 				})

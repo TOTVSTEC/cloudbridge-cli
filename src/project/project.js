@@ -26,6 +26,9 @@ Project.wrap = function wrap(appDirectory, _data) {
 		save: function save() {
 			return Project.save(appDirectory, _data);
 		},
+		reload: function reload() {
+			_data = JSON.parse(fs.readFileSync(path.join(appDirectory, Project.PROJECT_FILE)));
+		},
 		toString: function toString() {
 			return JSON.stringify(_data);
 		},

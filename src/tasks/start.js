@@ -15,10 +15,6 @@ var fs = require('fs'),
 	Task = cb_require('tasks/task');
 
 
-//	shellConfig = require('shelljs').config,
-//	shellConfig.silent = true;
-//	argv = require('optimist').boolean(['no-cordova', 'sass', 'list']).argv,
-
 var utils = cli.utils,
 	logging = cli.logging;
 
@@ -202,7 +198,7 @@ class StartTask extends Task {
 					components = project.get('components') || {};
 
 				components.advpl = components.advpl || {};
-				components.advpl[pack.name] = pack.version;
+				components.advpl[pack.name] = '^' + pack.version;
 
 				project.set('components', components);
 				project.save();
