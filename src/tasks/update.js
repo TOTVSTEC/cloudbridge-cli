@@ -144,7 +144,8 @@ class UpdateTask extends AppTask {
 			type: 'checkbox',
 			name: 'updates',
 			message: 'Select the updates',
-			choices: choices
+			choices: choices,
+			pageSize: 20
 		}]).then(function(answers) {
 			return _this.update(answers.updates);
 		});
