@@ -1,6 +1,6 @@
 {
   "name": "cloudbridge",
-  "version": "0.1.0",
+  "version": "0.1.1-SNAPSHOT",
   "preferGlobal": true,
   "description": "A tool for creating and developing CloudBridge mobile apps.",
   "homepage": "http://www.totvs.com/",
