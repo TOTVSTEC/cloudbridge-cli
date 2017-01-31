@@ -14,12 +14,12 @@ android.build = function(targetDir) {
 		cmd = '',
 		args = null;
 
-	if (os.type() === 'Windows_NT') {
+	if (process.platform === 'win32') {
 		cmd = 'cmd.exe';
 		args = ['/c', 'gradlew.bat', 'build'];
 	}
 	else {
-		cmd = 'gradlew';
+		cmd = './gradlew';
 		args = ['build'];
 	}
 

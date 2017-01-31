@@ -159,17 +159,17 @@ Info.getLinuxEnvironmentInfo = function getLinuxEnvironmentInfo() {
 
 //http://stackoverflow.com/questions/6551006/get-my-os-from-the-node-js-shell
 Info.getOsEnvironment = function getOsEnvironment(info) {
-	switch (os.type()) {
-		case 'Darwin':
+	switch (process.platform) {
+		case 'darwin':
 			info.os = Info.getMacInfo();
 			info.xcode = Info.getXcodeInfo();
 			info.ios_sim = Info.getIosSimInfo();
 			info.ios_deploy = Info.getIosDeployInfo();
 			break;
-		case 'Windows_NT':
+		case 'win32':
 			info.os = Info.getWindowsEnvironmentInfo();
 			break;
-		case 'Linux':
+		case 'linux':
 			info.os = Info.getLinuxEnvironmentInfo();
 			break;
 	}

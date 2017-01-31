@@ -13,18 +13,18 @@ class BuildAndroidTask extends BuildTask {
 		var _this = this,
 			promise;
 
-		switch (os.type()) {
-			case 'Windows_NT':
+		switch (process.platform) {
+			case 'win32':
 				var BuildWindowsTask = require('./build-windows'),
 					task = new BuildWindowsTask();
 
 				promise = task.run(cloudbridge, argv);
 				break;
-			case 'Linux':
+			case 'linux':
 				promise = Q();
 				//TODO: compile on linux
 				break;
-			case 'Darwin':
+			case 'darwin':
 				promise = Q();
 				//TODO: compile on osx
 

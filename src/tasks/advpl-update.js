@@ -4,12 +4,10 @@ var AppTask = cb_require('tasks/app-task'),
 	Package = cb_require('utils/package'),
 	Q = require('q'),
 	path = require('path'),
+	paths = cb_require('utils/paths'),
 	shelljs = require('shelljs'),
 	AppServer = require('totvs-platform-helper/appserver'),
 	DevStudio = require('totvs-platform-helper/tdscli');
-
-const APPSERVER_DIR = path.join('build', 'windows', 'bin', 'appserver'),
-	APPSERVER_EXE = 'appserver.exe';
 
 class AdvplUpdateTask extends AppTask {
 
@@ -36,7 +34,7 @@ class AdvplUpdateTask extends AppTask {
 
 	update(components) {
 		var appserver = new AppServer({
-			target: path.join(this.projectDir, APPSERVER_DIR, APPSERVER_EXE),
+			target: paths.get("APPSERVER", this.projectDir),
 			silent: true
 		});
 
@@ -96,7 +94,10 @@ class AdvplUpdateTask extends AppTask {
 						patchFile: filename
 					});
 
-					return tds.applyPatch(options);
+					return tds.applyPatch(options)
+						.then(() => {
+							shelljs.rm('-rf', target);
+						});
 				});
 		}, Q());
 	}

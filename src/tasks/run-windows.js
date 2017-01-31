@@ -3,26 +3,22 @@
 var AppTask = cb_require('tasks/run'),
 	os = require('os'),
 	path = require('path'),
+	paths = cb_require('utils/paths'),
 	exec = require('child_process').exec,
 	utils = cb_require('utils/utils');
 
 const SmartClient = require('totvs-platform-helper/smartclient');
 const AppServer = require('totvs-platform-helper/appserver');
 
-const APPSERVER_DIR = path.join('build', 'windows', 'bin', 'appserver'),
-	APPSERVER_EXE = os.platform() === 'win32' ? 'appserver.exe' : 'appserver',
-	SMARTCLIENT_DIR = path.join('build', 'windows', 'bin', 'smartclient'),
-	SMARTCLIENT_EXE = os.platform() === 'win32' ? 'smartclient.exe' : 'smartclient';
-
 class RunWindowsTask extends AppTask {
 
 	run(cloudbridge, argv) {
 		var _this = this,
 			appserver = new AppServer({
-				target: path.join(this.projectDir, APPSERVER_DIR, APPSERVER_EXE)
+				target: paths.get("APPSERVER", this.projectDir)
 			}),
 			smartclient = new SmartClient({
-				target: path.join(this.projectDir, SMARTCLIENT_DIR, SMARTCLIENT_EXE)
+				target: paths.get("SMARTCLIENT", this.projectDir)
 			}),
 			program = this.project.get('name') + '.Cloud';
 
