@@ -1,6 +1,5 @@
 [
   {
-    "title": "start",
     "name": "start",
     "summary": "Starts a new CloudBridge project in the specified PATH",
     "args": {
@@ -28,17 +27,14 @@
     "args": {
       "{add|remove}": "Action to perform",
       "<PLATFORM>": "One or more of the valid platform {windows|android}"
-    },
-    "options": {}
+    }
   },
   {
     "name": "build",
     "summary": "Locally build an CloudBridge project for a given platform",
     "args": {
-      "[options]": "",
       "<PLATFORM>": ""
-    },
-    "options": {}
+    }
   },
   {
     "name": "run",
@@ -57,20 +53,15 @@
     "args": {
       "{add|remove}": "",
       "<PACKAGE>": ""
-    },
-    "options": {}
+    }
   },
   {
     "name": "update",
-    "summary": "Update you project dependencies.",
-    "args": {},
-    "options": {}
+    "summary": "Update you project dependencies."
   },
   {
     "name": "restore",
-    "summary": "Restore you project dependencies.",
-    "args": {},
-    "options": {}
+    "summary": "Restore you project dependencies."
   },
   {
     "name": "check",
@@ -78,8 +69,7 @@
     "args": {
       "{environment|project}": "",
       "[options]": ""
-    },
-    "options": {}
+    }
   },
   {
     "name": "cache",
