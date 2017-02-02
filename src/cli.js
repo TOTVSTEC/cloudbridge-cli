@@ -1,15 +1,14 @@
 'use strict';
 
 var Cli = module.exports,
+	CliHelp = cb_require('help'),
 	path = require('path'),
 	optimist = require('optimist'),
 	Q = require('q'),
 	Info = cb_require('utils/info'),
 	settings = require(__basedir + '/package.json'),
-	Tasks = cb_require('tasks/task-list'),
+	TASKS = cb_require('tasks/task-list'),
 	Updates = cb_require('utils/updates');
-
-//Cli.Tasks = TASKS = Tasks;
 
 Cli.utils = cb_require('utils/utils');
 Cli.logging = cb_require('utils/logging');
@@ -50,19 +49,19 @@ Cli.run = function run(processArgv) {
 		}
 
 		if (argv.help || argv.h) {
-			return Cli.printHelpLines();
+			return CliHelp.printHelpLines();
 		}
 
 		var taskSetting = Cli.tryBuildingTask(argv);
 		if (!taskSetting) {
-			return Cli.printAvailableTasks();
+			return CliHelp.printAvailableTasks();
 		}
 
 		var booleanOptions = Cli.getBooleanOptionsForTask(taskSetting);
 
 		argv = optimist(processArgv.slice(2)).boolean(booleanOptions).argv;
 
-		var TaskModule = Cli.lookupTask(taskSetting.module);
+		var TaskModule = Cli.lookupTask(taskSetting.name);
 		var taskInstance = new TaskModule();
 		var promise = taskInstance.run(Cli, argv);
 
@@ -146,14 +145,14 @@ Cli.tryBuildingTask = function tryBuildingTask(argv) {
 	}
 	var taskName = argv._[0];
 
-	return Tasks.getTaskWithName(taskName);
+	return TASKS.getTaskWithName(taskName);
 };
 
 
 
 Cli.printCloudBridge = function printCloudBridge() {
 	var w = function(s) {
-		process.stdout.write(s);
+		process.stdout.write(s.bold);
 	};
 
 	w("   ________                ______       _     __\n");
@@ -176,8 +175,8 @@ Cli.printAvailableTasks = function printAvailableTasks(argv) {
 	process.stderr.write('Available tasks: '.bold);
 	process.stderr.write('(use --help or -h for more info)\n\n');
 
-	for (var i = 0; i < Tasks.length; i++) {
-		var task = Tasks[i];
+	for (var i = 0; i < TASKS.length; i++) {
+		var task = TASKS[i];
 		if (task.summary) {
 			var name = '   ' + task.name + '  ';
 			var dots = '';
@@ -192,126 +191,6 @@ Cli.printAvailableTasks = function printAvailableTasks(argv) {
 	Cli.processExit();
 
 	return Q();
-};
-
-Cli.printHelpLines = function printHelpLines() {
-	Cli.printCloudBridge();
-	process.stderr.write('\n=======================\n');
-
-	for (var i = 0; i < Tasks.length; i++) {
-		var task = Tasks[i];
-		if (task.summary) {
-			Cli.printUsage(task);
-		}
-	}
-
-	process.stderr.write('\n');
-	Cli.processExit();
-};
-
-Cli.printUsage = function printUsage(d) {
-	var w = function(s) {
-		process.stdout.write(s);
-	};
-
-	w('\n');
-
-	var rightColumn = 45;
-	var dots = '';
-	var indent = '';
-	var x, arg;
-
-	var taskArgs = d.title;
-
-	for (arg in d.args) {
-		taskArgs += ' ' + arg;
-	}
-
-	w(taskArgs.green.bold);
-
-	while ((taskArgs + dots).length < rightColumn + 1) {
-		dots += '.';
-	}
-
-	w(' ' + dots.grey + '  ');
-
-	if (d.summary) {
-		w(d.summary.bold);
-	}
-
-	for (arg in d.args) {
-		if (!d.args[arg]) continue;
-
-		indent = '';
-		w('\n');
-		while (indent.length < rightColumn) {
-			indent += ' ';
-		}
-		w((indent + '	' + arg + ' ').bold);
-
-		var argDescs = d.args[arg].split('\n');
-		var argIndent = indent + '	';
-
-		for (x = 0; x < arg.length + 1; x++) {
-			argIndent += ' ';
-		}
-
-		for (x = 0; x < argDescs.length; x++) {
-			if (x === 0) {
-				w(argDescs[x].bold);
-			}
-			else {
-				w('\n' + argIndent + argDescs[x].bold);
-			}
-		}
-	}
-
-	indent = '';
-	while (indent.length < d.name.length + 1) {
-		indent += ' ';
-	}
-
-	var optIndent = indent;
-	while (optIndent.length < rightColumn + 4) {
-		optIndent += ' ';
-	}
-
-	for (var opt in d.options) {
-		w('\n');
-		dots = '';
-
-		var optLine = indent + '[' + opt + ']  ';
-
-		w(optLine.yellow.bold);
-
-		if (d.options[opt]) {
-			while ((dots.length + optLine.length - 2) < rightColumn) {
-				dots += '.';
-			}
-			w(dots.grey + '  ');
-
-			var taskOpt = d.options[opt],
-				optDescs;
-
-			if (typeof taskOpt == 'string') {
-				optDescs = taskOpt.split('\n');
-			}
-			else {
-				optDescs = taskOpt.title.split('\n');
-			}
-
-			for (x = 0; x < optDescs.length; x++) {
-				if (x === 0) {
-					w(optDescs[x].bold);
-				}
-				else {
-					w('\n' + optIndent + optDescs[x].bold);
-				}
-			}
-		}
-	}
-
-	w('\n');
 };
 
 Cli.processExit = function processExit(code) {

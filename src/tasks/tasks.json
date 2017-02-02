@@ -1,0 +1,92 @@
+[
+  {
+    "title": "start",
+    "name": "start",
+    "summary": "Starts a new CloudBridge project in the specified PATH",
+    "args": {
+      "<PATH>": "directory for the new project",
+      "[template]": "Starter templates can either come from a named template, \n(ex: tabs, sidemenu, blank),\na Github repo, a Codepen url, or a local directory.\nCodepen url, ex: http://codepen.io/cloudbridge/pen/odqCz\nDefaults to CloudBridge \"showcase\" starter template",
+      "[options]": "any flags for the command"
+    },
+    "options": {
+      "--appname|-a": "Human readable name for the app (Use quotes around the name)",
+      "--id|-i": "Package name for the app config, ex: com.mycompany.myapp",
+      "--list|-l": {
+        "summary": "List starter templates available",
+        "boolean": true
+      },
+      "--template|-t": "Project starter template",
+      "--zip-file|-z": "URL to download zipfile for starter template"
+    }
+  },
+  {
+    "name": "platform",
+    "alt": [
+      "platforms"
+    ],
+    "summary": "Add platform target for building an CloudBridge app",
+    "args": {
+      "{add|remove}": "Action to perform",
+      "<PLATFORM>": "One or more of the valid platform {windows|android}"
+    },
+    "options": {}
+  },
+  {
+    "name": "build",
+    "summary": "Locally build an CloudBridge project for a given platform",
+    "args": {
+      "[options]": "",
+      "<PLATFORM>": ""
+    },
+    "options": {}
+  },
+  {
+    "name": "run",
+    "summary": "Run an CloudBridge project on a connected device",
+    "args": {
+      "[options]": "",
+      "<PLATFORM>": ""
+    },
+    "options": {
+      "--debug|-d": "Enable Chromium DevTools in the given port."
+    }
+  },
+  {
+    "name": "bower",
+    "summary": "Add or remove bower packages to you CloudBridge app",
+    "args": {
+      "{add|remove}": "",
+      "<PACKAGE>": ""
+    },
+    "options": {}
+  },
+  {
+    "name": "update",
+    "summary": "Update you project dependencies.",
+    "args": {},
+    "options": {}
+  },
+  {
+    "name": "restore",
+    "summary": "Restore you project dependencies.",
+    "args": {},
+    "options": {}
+  },
+  {
+    "name": "check",
+    "summary": "Check environment or project prerequisites.",
+    "args": {
+      "{environment|project}": "",
+      "[options]": ""
+    },
+    "options": {}
+  },
+  {
+    "name": "cache",
+    "summary": "Manipulates packages cache",
+    "args": {
+      "{list|clean}": "Action to perform. \nlist|ls: List the packages in cache.\nclean|rm: Delete the cached packages."
+    },
+    "options": {}
+  }
+]
