@@ -5,6 +5,8 @@
     "value": "\t",
     "allExcept": ["comments", "emptyLines"]
   },
+  "requireUseStrict": true,
+  "disallowUnusedVariables": true,
   "disallowKeywords": ["with"],
   "disallowMixedSpacesAndTabs": true,
   "disallowMultipleLineStrings": true,
@@ -32,6 +34,7 @@
   "requireSpaceBeforeBinaryOperators": ["?", ":", "+", "-", "/", "*", "%", "==", "===", "!=", "!==", ">", ">=", "<", "<=", "&&", "||"],
   "requireSpaceAfterKeywords": ["if", "else", "for", "while", "do", "switch", "return", "try", "catch", "finally"],
   "requireKeywordsOnNewLine": ["else", "catch", "finally"],
+  "disallowSpaceAfterKeywords": ["function"],
   "requireSpaceBeforeBlockStatements": true,
   "requireSpacesInConditionalExpression": {
     "afterTest": true,

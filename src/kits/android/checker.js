@@ -4,8 +4,8 @@ var shelljs = require('shelljs'),
 	child_process = require('child_process'),
 	Q = require('q'),
 	path = require('path'),
-	fs = require('fs'),
-	ROOT = path.join(__dirname, '..', '..');
+	fs = require('fs');
+	//ROOT = path.join(__dirname, '..', '..');
 
 var Checker = module.exports;
 var isWindows = process.platform == 'win32';

@@ -9,6 +9,9 @@
     "cb": "index.js"
   },
   "scripts": {
+    "release": "totvstec release --npm-publish",
+    "release:minor": "totvstec release minor --npm-publish",
+    "release:major": "totvstec release major --npm-publish",
     "test": "npm run test-local && npm run report",
     "report": "node ./spec/report.js",
     "test-local": "./node_modules/.bin/istanbul cover --dir=./build/coverage ./node_modules/jasmine-node/bin/jasmine-node --captureExceptions spec/",
@@ -59,6 +62,7 @@
     "coveralls": "^2.11.15",
     "istanbul": "^0.4.5",
     "jasmine-node": "^1.14.5",
-    "plato": "^1.7.0"
+    "plato": "^1.7.0",
+    "totvstec-tools": "^1.0.1"
   }
 }

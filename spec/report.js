@@ -1,3 +1,5 @@
+'use strict';
+
 var plato = require('plato'),
 	path = require('path'),
 	fs = require('fs');

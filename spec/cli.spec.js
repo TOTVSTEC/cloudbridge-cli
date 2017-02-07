@@ -1,4 +1,6 @@
-var assert = require('assert');
+'use strict';
+
+//var assert = require('assert');
 
 describe('Array', function() {
 
@@ -22,6 +24,7 @@ describe('Cli', function() {
 		//assert.notEqual(Cli, undefined);
 	});
 
+/*
 	describe('#run', function() {
 		it('should run "printCloudBridge" on run', function(done) {
 			spyOn(Cli, 'printCloudBridge').andReturn(Q(true));
@@ -33,5 +36,5 @@ describe('Cli', function() {
 				});
 		});
 	});
-
+*/
 });

@@ -5,6 +5,7 @@
 	"eqeqeq": false,
 	"eqnull": true,
 	"sub": true,
+	"jasmine": true,
 
 	"globals": {
 		"cb_require": true,
