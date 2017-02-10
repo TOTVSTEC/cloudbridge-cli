@@ -2,7 +2,7 @@
 
 let AppTask = cb_require('tasks/app-task'),
 	fileUtils = cb_require('utils/file'),
-	paths = cb_require('utils/paths'),
+	pathUtils = cb_require('utils/paths'),
 	path = require('path'),
 	Q = require('q'),
 	AppServer = require('totvs-platform-helper/appserver'),
@@ -17,9 +17,9 @@ class AdvplCompileTask extends AppTask {
 	constructor(options) {
 		super(options);
 
-		ADVPL_SRC_RELATIVE = paths.get('ADVPL_SRC');
-		ADVPL_SRC = paths.get('ADVPL_SRC', this.projectDir);
-		ADVPL_INCLUDES = paths.get('ADVPL_INCLUDES', this.projectDir);
+		ADVPL_SRC_RELATIVE = pathUtils.get('ADVPL_SRC');
+		ADVPL_SRC = pathUtils.get('ADVPL_SRC', this.projectDir);
+		ADVPL_INCLUDES = pathUtils.get('ADVPL_INCLUDES', this.projectDir);
 
 		this.tdsOptions = {
 			serverType: "Logix",
@@ -45,7 +45,7 @@ class AdvplCompileTask extends AppTask {
 
 		var tds = new DevStudio(),
 			appserver = new AppServer({
-				target: paths.get("APPSERVER", this.projectDir)
+				target: pathUtils.get("APPSERVER", this.projectDir)
 			});
 
 		return appserver.start()

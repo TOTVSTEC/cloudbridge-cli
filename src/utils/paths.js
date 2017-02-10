@@ -37,6 +37,12 @@ module.exports = {
 				return path.join(basedir, 'build', 'advpl', 'includes');
 			case 'ANDROID_SRC':
 				return path.join(basedir, 'src', 'android');
+			case 'ANDROID_BUILD':
+				return path.join(basedir, 'build', 'android');
+			case 'RPO_SRC':
+				return path.join(basedir, 'src', 'apo');
+			case 'WEB_SRC':
+				return path.join(basedir, 'src', 'web');
 			default:
 				break;
 		}
