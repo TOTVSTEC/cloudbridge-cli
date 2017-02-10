@@ -2,9 +2,7 @@
 
 var Task = cb_require('tasks/task'),
 	project = cb_require('project/project'),
-	path = require('path'),
 	svu = cb_require('utils/semver');
-
 
 class AppTask extends Task {
 

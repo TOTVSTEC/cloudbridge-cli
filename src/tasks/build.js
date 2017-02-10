@@ -1,18 +1,13 @@
 'use strict';
 
-var AppTask = cb_require('tasks/app-task'),
-	path = require('path'),
-	shelljs = require('shelljs'),
-	Q = require('q');
-
-var utils = cli.utils;
+var AppTask = cb_require('tasks/app-task');
 
 class BuildTask extends AppTask {
 
 	run(cloudbridge, argv) {
 		cloudbridge.projectDir = process.cwd();
 
-		var isWindows = argv._.indexOf('windows') != -1;
+		//var isWindows = argv._.indexOf('windows') != -1;
 		var isAndroid = argv._.indexOf('android') != -1;
 		var task = null;
 

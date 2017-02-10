@@ -4,7 +4,6 @@ let AppTask = cb_require('tasks/app-task'),
 	fileUtils = cb_require('utils/file'),
 	paths = cb_require('utils/paths'),
 	path = require('path'),
-	shelljs = require('shelljs'),
 	Q = require('q'),
 	AppServer = require('totvs-platform-helper/appserver'),
 	DevStudio = require('totvs-platform-helper/tdscli');

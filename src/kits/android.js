@@ -2,8 +2,6 @@
 
 var android = module.exports,
 	spawn = require('child_process').spawn,
-	path = require('path'),
-	os = require('os'),
 	Q = require('q');
 
 android.checker = require('./android/checker');

@@ -15,7 +15,7 @@ describe('Array', function() {
 
 require('../globals');
 var Cli = require('../src/cli');
-var Q = require('q');
+//var Q = require('q');
 
 describe('Cli', function() {
 	it('should have cli defined', function() {

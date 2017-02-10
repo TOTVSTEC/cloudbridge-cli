@@ -1,12 +1,11 @@
 'use strict';
 
-var AppTask = cb_require('tasks/app-task'),
-	utils = cli.utils;
+var AppTask = cb_require('tasks/app-task');
 
 class RunTask extends AppTask {
 
 	run(cloudbridge, argv) {
-		var isWindows = argv._.indexOf('windows') != -1;
+		//var isWindows = argv._.indexOf('windows') != -1;
 		var isAndroid = argv._.indexOf('android') != -1;
 
 		if (isAndroid) {

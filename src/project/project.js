@@ -61,7 +61,6 @@ Project.load = function load(appDirectory) {
 };
 
 Project.create = function create(appDirectory, name) {
-	var file = path.join(appDirectory, Project.PROJECT_FILE);
 	var data = Project.PROJECT_DEFAULT;
 	if (name) {
 		Project.set(data, 'name', name);

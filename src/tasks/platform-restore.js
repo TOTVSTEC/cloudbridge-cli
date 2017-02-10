@@ -2,7 +2,6 @@
 
 var AppTask = cb_require('tasks/app-task'),
 	Package = cb_require('utils/package'),
-	path = require('path'),
 	Q = require('q');
 
 class PlatformRestoreTask extends AppTask {

@@ -1,11 +1,8 @@
 'use strict';
 
 var AppTask = cb_require('tasks/run'),
-	os = require('os'),
-	path = require('path'),
 	paths = cb_require('utils/paths'),
-	exec = require('child_process').exec,
-	utils = cb_require('utils/utils');
+	exec = require('child_process').exec;
 
 const SmartClient = require('totvs-platform-helper/smartclient');
 const AppServer = require('totvs-platform-helper/appserver');

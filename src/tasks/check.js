@@ -1,9 +1,6 @@
 'use strict';
 
 var Task = cb_require('tasks/task'),
-	shelljs = require('shelljs'),
-	path = require('path'),
-	fs = require('fs'),
 	utils = cli.utils;
 
 class CheckTask extends Task {
@@ -12,7 +9,7 @@ class CheckTask extends Task {
 		cloudbridge.projectDir = process.cwd();
 
 		try {
-			var isEnvironmentCmd = argv._.indexOf('environment') != -1;
+			//var isEnvironmentCmd = argv._.indexOf('environment') != -1;
 			var task = null;
 
 			//if (isEnvironmentCmd) {

@@ -1,10 +1,8 @@
 'use strict';
 
-var fs = require('fs'),
-	path = require('path'),
+var path = require('path'),
 	shelljs = require('shelljs'),
 	os = require('os'),
-	argv = require('optimist').argv,
 	semver = require('semver'),
 	logging = require('./logging');
 

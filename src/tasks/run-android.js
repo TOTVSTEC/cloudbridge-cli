@@ -5,8 +5,6 @@ var RunTask = cb_require('tasks/run'),
 	adb = android.adb,
 	path = require('path');
 
-var utils = cli.utils;
-
 class RunAndroidTask extends RunTask {
 
 	run(cloudbridge, argv) {

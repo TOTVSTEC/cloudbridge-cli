@@ -1,6 +1,6 @@
 'use strict';
 
-var path = require('path'),
+var //path = require('path'),
 	request = require('request'),
 	_ = require('underscore'),
 	Q = require('q'),
@@ -9,11 +9,9 @@ var path = require('path'),
 class StartListTask extends Task {
 
 	fetchStarterTemplates() {
-		var self = this;
-
 		// console.log('About to fetch template');
 		var downloadUrl = 'http://code.cloudbridgeframework.com/content/starter-templates.json';
-		var starterTemplateJsonPath = path.resolve(__dirname, 'starter-templates.json');
+		//var starterTemplateJsonPath = path.resolve(__dirname, 'starter-templates.json');
 
 		// console.log('\nDownloading Starter Templates'.bold, downloadUrl, starterTemplateJsonPath);
 		console.log('\nDownloading Starter Templates'.bold, '-', downloadUrl);
@@ -52,7 +50,7 @@ class StartListTask extends Task {
 			while ((shortName + dots).length < rightColumn + 1) {
 				dots += '.';
 			}
-			var outStr = [];
+
 			console.log(shortName.green, dots, template.description);
 		});
 	}

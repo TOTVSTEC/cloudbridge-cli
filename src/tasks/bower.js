@@ -1,10 +1,7 @@
 'use strict';
 
 var AppTask = cb_require('tasks/app-task'),
-	bower = cb_require('utils/bower'),
-	shelljs = require('shelljs'),
 	path = require('path'),
-	fs = require('fs'),
 	wiredep = require('wiredep'),
 	utils = cli.utils;
 

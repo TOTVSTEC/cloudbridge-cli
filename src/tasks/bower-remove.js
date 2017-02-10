@@ -1,10 +1,7 @@
 'use strict';
 
 var BowerTask = cb_require('tasks/bower'),
-	path = require('path'),
 	bower = cb_require('utils/bower');
-
-
 
 class BowerRemoveTask extends BowerTask {
 

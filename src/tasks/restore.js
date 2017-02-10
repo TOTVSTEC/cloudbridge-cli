@@ -4,7 +4,6 @@ var AppTask = cb_require('tasks/app-task'),
 	Package = cb_require('utils/package'),
 	PlatformRestoreTask = cb_require('tasks/platform-restore'),
 	BowerRestoreTask = cb_require('tasks/bower-restore'),
-	path = require('path'),
 	Q = require('q');
 
 class RestoreTask extends AppTask {

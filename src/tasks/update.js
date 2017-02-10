@@ -3,7 +3,6 @@
 var AppTask = cb_require('tasks/app-task'),
 	Package = cb_require('utils/package'),
 	bower = cb_require('utils/bower'),
-	path = require('path'),
 	svu = cb_require('utils/semver'),
 	inquirer = require('inquirer'),
 	_s = require('underscore.string'),

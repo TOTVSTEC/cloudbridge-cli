@@ -3,32 +3,18 @@
 var fs = require('fs'),
 	path = require('path'),
 	request = require('request'),
-	parseUrl = require('url').parse,
 	shelljs = require('shelljs'),
 	inquirer = require('inquirer'),
 	Q = require('q'),
 
 	Package = cb_require('utils/package'),
 	StartListTask = cb_require('tasks/start-list'),
-	CloudBridgeStore = cb_require('utils/store').CloudBridgeStore,
 	CloudBridgeProject = cb_require('project/project'),
 	Task = cb_require('tasks/task');
 
 
 var utils = cli.utils,
 	logging = cli.logging;
-
-var DEFAULT_APP = {
-	"id": "",
-	"name": "",
-	"description": "",
-	"author": {
-		"name": "",
-		"email": "",
-		"url": ""
-	},
-	"main": "index.html"
-};
 
 class StartTask extends Task {
 

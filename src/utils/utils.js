@@ -5,7 +5,6 @@ var fs = require('fs'),
 	path = require('path'),
 	Q = require('q'),
 	shelljs = require('shelljs'),
-	colors = require('colors'),
 	unzip = require('unzip'),
 	archiver = require('archiver'),
 	request = require('request'),
@@ -14,6 +13,8 @@ var fs = require('fs'),
 	logging = require('./logging'),
 	usernameSync = require('username').sync,
 	ejs = require('ejs');
+
+require('colors');
 
 var ProgressBar = require('progress');
 

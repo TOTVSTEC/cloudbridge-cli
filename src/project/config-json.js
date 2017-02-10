@@ -3,7 +3,6 @@
 var fs = require('fs'),
 	path = require('path'),
 	Q = require('q'),
-	Utils = cb_require('utils/utils'),
 	logging = cb_require('utils/logging');
 
 var SETTINGS_FILE = 'cloudbridge.json';
@@ -21,10 +20,9 @@ ConfigJson.loadToJson = function(appDirectory, options) {
 		appDirectory = process.cwd();
 	}
 
-	var configXmlPath = path.join(appDirectory, SETTINGS_FILE);
 	var file = path.join(appDirectory, SETTINGS_FILE);
 
-	fs.readFile(configXmlPath, { encoding: 'utf8' }, function(err, data) {
+	fs.readFile(file, { encoding: 'utf8' }, function(err, data) {
 		if (err)
 			return d.reject(err);
 

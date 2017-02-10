@@ -1,10 +1,7 @@
 'use strict';
 
 var PlatformTask = cb_require('tasks/platform'),
-	utils = cb_require('utils/utils'),
 	Package = cb_require('utils/package'),
-	path = require('path'),
-	shelljs = require('shelljs'),
 	Q = require('q');
 
 class PlatformUpdateTask extends PlatformTask {
