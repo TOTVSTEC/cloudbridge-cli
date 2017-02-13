@@ -16,8 +16,11 @@ class RunAndroidTask extends RunTask {
 			target = null,
 			activity = project.id + '/.' + project.name + 'Activity';
 
-		return adb.devices()
-			.then(function(targetDevice) {
+		return this.build(argv)
+			.then(() => {
+				return adb.devices();
+			})
+			.then((targetDevice) => {
 				console.log('\n');
 				console.log('targetDevice', targetDevice);
 				console.log('\n');
@@ -37,6 +40,13 @@ class RunAndroidTask extends RunTask {
 
 				return adb.start(target, activity);
 			});
+	}
+
+	build(argv) {
+		let BuildAndroidTask = require('./build-android'),
+			task = new BuildAndroidTask();
+
+		return task.run(cli, argv);
 	}
 
 }

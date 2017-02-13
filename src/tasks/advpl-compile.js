@@ -39,7 +39,7 @@ class AdvplCompileTask extends AppTask {
 
 		if ((compileFiles.length === 0) &&
 			(removeFiles.length === 0)) {
-			console.log("Nothing to compile.");
+			//console.log("Nothing to compile.");
 			return Q();
 		}
 

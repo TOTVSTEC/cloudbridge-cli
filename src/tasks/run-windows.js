@@ -10,31 +10,32 @@ const AppServer = require('totvs-platform-helper/appserver');
 class RunWindowsTask extends AppTask {
 
 	run(cloudbridge, argv) {
-		var _this = this,
-			appserver = new AppServer({
-				target: paths.get("APPSERVER", this.projectDir)
-			}),
+		var appserver = new AppServer({
+			target: paths.get("APPSERVER", this.projectDir)
+		}),
 			smartclient = new SmartClient({
 				target: paths.get("SMARTCLIENT", this.projectDir)
 			}),
-			program = this.project.get('name') + '.Cloud';
+			program = this.project.get('name') + '.Cloud',
+			debugPort = (argv.d || argv.debug || false);
 
-		console.log(argv);
+		if (debugPort) {
+			debugPort = (typeof debugPort === 'number') ? debugPort : 65000;
+		}
 
-		return appserver.start()
-			.then(function() {
+		return this.build(argv)
+			.then(() => {
+				return appserver.start();
+			})
+			.then(() => {
 				var args = [];
 
-				var port = argv.d || argv.debug;
+				if (debugPort) {
+					args.push('--remote-debugging-port=' + debugPort);
 
-				if (port) {
-					port = (typeof port === 'number') ? port : 65000;
-
-					args.push('--remote-debugging-port=' + port);
-
-					setTimeout(function() {
-						_this.openDevTools(port);
-					}, 2500);
+					process.nextTick(() => {
+						this.openDevTools(debugPort);
+					});
 				}
 
 				return smartclient.run({
@@ -45,15 +46,22 @@ class RunWindowsTask extends AppTask {
 					}
 				}, args);
 			})
-			.then(function() {
+			.then(() => {
 				return appserver.stop();
 			});
+	}
+
+	build(argv) {
+		let BuildWindowsTask = require('./build-windows'),
+			task = new BuildWindowsTask();
+
+		return task.run(cli, argv);
 	}
 
 	openDevTools(port) {
 		var command = 'start chrome --app="http://localhost:' + port + '"';
 
-		exec(command, function(error, stdout, stderr) {
+		exec(command, (error, stdout, stderr) => {
 			if (error) {
 				console.error('exec error: ' + error + '\n');
 				console.error(stderr);
