@@ -27,6 +27,9 @@ Cli.run = function run(processArgv) {
 		//execute, grab those options, and reparse the arguments.
 		var argv = optimist(processArgv.slice(2)).argv;
 
+		if (argv.chronometer)
+			Cli.startChronometer();
+
 		this.logging.setUpConsoleLoggingHelpers();
 		Cli.attachErrorHandling();
 
@@ -69,6 +72,9 @@ Cli.run = function run(processArgv) {
 			console.error(ex);
 		})
 			.done(function onFulfilled() {
+				if (argv.chronometer)
+					Cli.endChronometer();
+
 				Cli.processExit();
 			},
 			function onRejected() {
@@ -91,6 +97,17 @@ Cli.run = function run(processArgv) {
 		this.logging.logger.debug('Cli.Run - Error', ex);
 		return this.utils.fail(ex);
 	}
+};
+
+Cli.startChronometer = function startChronometer() {
+	Cli.chronometer = process.hrtime();
+};
+
+Cli.endChronometer = function endChronometer() {
+	let diff = process.hrtime(Cli.chronometer),
+		elapsed = (diff[0] + (diff[1] / 1e9));
+
+	console.log('Chronometer: ' + elapsed.toFixed(3) + 'secs');
 };
 
 Cli.getBooleanOptionsForTask = function getBooleanOptionsForTask(task) {

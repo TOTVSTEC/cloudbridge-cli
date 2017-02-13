@@ -11,6 +11,7 @@ var BuildTask = cb_require('tasks/build'),
 let ANDROID_KEY = pathUtils.get('ANDROID_SRC'),
 	RPO_KEY = pathUtils.get('RPO_SRC'),
 	WEB_KEY = pathUtils.get('WEB_SRC'),
+	BOWER_KEY = path.join('build', 'bower'),
 	ANDROID_SRC,
 	RPO_SRC,
 	WEB_SRC;
@@ -58,11 +59,14 @@ class BuildAndroidTask extends BuildTask {
 			.then(() => {
 				return this.assemble();
 			})
-			.then(() => {
-				return this.build();
-			})
-			.then(() => {
-				return this.finish();
+			.then((modified) => {
+				if (!modified)
+					return;
+
+				return this.build()
+					.then(() => {
+						return this.finish();
+					});
 			});
 	}
 
@@ -76,6 +80,7 @@ class BuildAndroidTask extends BuildTask {
 		fileUtils.saveModifiedTime(this.projectDir, ANDROID_KEY, {});
 		fileUtils.saveModifiedTime(this.projectDir, WEB_KEY, {});
 		fileUtils.saveModifiedTime(this.projectDir, RPO_KEY, {});
+		fileUtils.saveModifiedTime(this.projectDir, BOWER_KEY, {});
 	}
 
 	prepare() {
@@ -100,27 +105,46 @@ class BuildAndroidTask extends BuildTask {
 			bowerDir = path.join(this.projectDir, 'build', 'bower'),
 			stagingDir = path.join(androidBuild, 'staging'),
 			assetsDir = path.join(stagingDir, 'assets'),
-			webDir = path.join(assetsDir, 'web');
+			webDir = path.join(assetsDir, 'web'),
+			modified = false;
 
-		this.copyModifiedFiles(ANDROID_SRC, stagingDir, ANDROID_KEY);
-		this.copyModifiedFiles(WEB_SRC, webDir, WEB_KEY);
-		this.copyModifiedFiles(RPO_SRC, assetsDir, RPO_KEY);
+		modified |= this.copyModifiedFiles(ANDROID_SRC, stagingDir, ANDROID_KEY);
+		modified |= this.copyModifiedFiles(WEB_SRC, webDir, WEB_KEY);
+		modified |= this.copyModifiedFiles(RPO_SRC, assetsDir, RPO_KEY);
 
 		//shelljs.cp('-Rf', path.join(ANDROID_SRC, '*'), stagingDir);
 		//shelljs.cp('-Rf', path.join(RPO_SRC, '*.rpo'), assetsDir);
 		//shelljs.cp('-Rf', WEB_SRC, assetsDir);
 
 		//TODO: verificar bower
-		shelljs.cp('-Rf', bowerDir, webDir);
+		modified |= this.copyModifiedDirs(bowerDir, webDir, BOWER_KEY);
+		//shelljs.cp('-Rf', bowerDir, webDir);
+
+		return modified;
 	}
 
+	copyModifiedDirs(from, to, key) {
+		return this.copyModified(from, to, key, {
+			file: false,
+			dir: true,
+			recurse: false
+		});
+	}
 
 	copyModifiedFiles(from, to, key) {
-		let currentFiles = fileUtils.readModifiedTime(from),
+		return this.copyModified(from, to, key);
+	}
+
+	copyModified(from, to, key, options) {
+		let currentFiles = fileUtils.readModifiedTime(from, options),
 			previousFiles = fileUtils.loadModifiedTime(this.projectDir, key),
 			result = fileUtils.diff(previousFiles, currentFiles),
 			copyFiles = result.modified.concat(result.added),
 			removeFiles = result.removed;
+
+		if ((copyFiles.length + removeFiles.length) === 0) {
+			return false;
+		}
 
 		//console.log('\n - modified files');
 		copyFiles.forEach((file, index, array) => {
@@ -130,48 +154,21 @@ class BuildAndroidTask extends BuildTask {
 			shelljs.mkdir('-p', path.dirname(target));
 			shelljs.cp('-Rf', origin, target);
 
-			console.log('coping ' + origin + ' to ' + target);
+			//console.log('coping ' + origin + ' to ' + target);
 		});
 
 		//console.log('\n - deleted files');
 		removeFiles.forEach((file, index, array) => {
 			shelljs.rm('-rf', path.join(to, file));
 
-			console.log('deleting ' + path.join(to, file));
+			//console.log('deleting ' + path.join(to, file));
 		});
 
-
 		fileUtils.saveModifiedTime(this.projectDir, key, currentFiles);
+
+		return true;
 	}
 
-	/*
-		copyModifiedFiles(from, to, key) {
-			let currentFiles = fileUtils.readModifiedTime(ANDROID_SRC),
-				previousFiles = fileUtils.loadModifiedTime(this.projectDir, ANDROID_KEY),
-				result = fileUtils.diff(previousFiles, currentFiles),
-				copyFiles = result.modified.concat(result.added),
-				removeFiles = result.removed;
-
-			var androidBuild = path.join(this.projectDir, 'build', 'android'),
-				stagingDir = path.join(androidBuild, 'staging'),
-				assetsDir = path.join(stagingDir, 'assets');
-
-			//console.log('\n - modified files');
-			copyFiles.forEach((file, index, array) => {
-				shelljs.cp('-Rf', path.join(ANDROID_SRC, file), path.join(stagingDir, file));
-			});
-
-			//console.log('\n - deleted files');
-			removeFiles.forEach((file, index, array) => {
-				shelljs.rm('-rf', path.join(stagingDir, file));
-
-				//console.log(value);
-			});
-
-
-			fileUtils.saveModifiedTime(this.projectDir, ANDROID_KEY, currentFiles);
-		}
-	*/
 	build() {
 		var stagingDir = path.join(this.projectDir, 'build', 'android', 'staging');
 

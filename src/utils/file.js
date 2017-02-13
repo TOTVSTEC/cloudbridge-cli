@@ -3,10 +3,28 @@
 let path = require('path'),
 	shelljs = require('shelljs');
 
-function readModifiedTime(target) {
-	return shelljs.ls('-RAl', target)
+function readModifiedTime(target, options) {
+	options = Object.assign({}, {
+		file: true,
+		dir: false,
+		recurse: true
+	}, options);
+
+	let flags = '-l';
+
+	if (options.recurse)
+		flags += 'R';
+
+	if (options.file)
+		flags += 'A';
+
+	//= recurseFiles ? '-RAl' : '-l';
+
+	return shelljs.ls(flags, target)
 		.reduce((files, item, index) => {
-			if (item.isFile()) {
+
+			if ((options.file && item.isFile()) ||
+				(options.dir && item.isDirectory())) {
 				var name = item.name.replace(/[\/\\]+/g, path.sep);
 
 				files[name] = item.mtime.getTime();
