@@ -28,14 +28,31 @@ class AdvplCompileTask extends AppTask {
 			port: 5056,
 			environment: "ENVIRONMENT"
 		};
+
+		this.tds = new DevStudio();
+
+		this.appserver = new AppServer({
+			target: pathUtils.get("APPSERVER", this.projectDir)
+		});
 	}
 
 	run(cloudbridge, argv) {
+		let cleanFiles = [];
+
+		if (argv.clean || argv.c) {
+			cleanFiles = Object.keys(fileUtils.loadModifiedTime(this.projectDir, ADVPL_SRC_RELATIVE));
+			this.saveBuildInfo({});
+		}
+
 		let currentFiles = fileUtils.readModifiedTime(ADVPL_SRC),
 			previousFiles = fileUtils.loadModifiedTime(this.projectDir, ADVPL_SRC_RELATIVE),
 			result = fileUtils.diff(previousFiles, currentFiles),
 			compileFiles = result.modified.concat(result.added),
 			removeFiles = result.removed;
+
+		if (argv.clean || argv.c) {
+			removeFiles = Array.from(new Set(compileFiles.concat(removeFiles).concat(cleanFiles)));
+		}
 
 		if ((compileFiles.length === 0) &&
 			(removeFiles.length === 0)) {
@@ -43,49 +60,53 @@ class AdvplCompileTask extends AppTask {
 			return Q();
 		}
 
-		var tds = new DevStudio(),
-			appserver = new AppServer({
-				target: pathUtils.get("APPSERVER", this.projectDir)
-			});
 
-		return appserver.start()
+		return this.appserver.start()
 			.then(() => {
-				this.tdsOptions.port = appserver.tcpPort;
-				this.tdsOptions.build = appserver.build;
+				this.tdsOptions.port = this.appserver.tcpPort;
+				this.tdsOptions.build = this.appserver.build;
 			})
 			.then(() => {
-				if (removeFiles.length > 0) {
-					let options = Object.assign({}, this.tdsOptions, {
-						program: removeFiles.map(f => path.join(ADVPL_SRC, f)),
-						authorization: ''
-					});
-
-					//console.log("REMOVING FILES: " + JSON.stringify(removeFiles, null, 2));
-
-					return tds.remove(options);
-				}
+				if (removeFiles.length > 0)
+					return this.remove(removeFiles);
 			})
 			.then(() => {
-				if (compileFiles.length > 0) {
-					let options = Object.assign({}, this.tdsOptions, {
-						recompile: true,
-						program: compileFiles.map(f => path.join(ADVPL_SRC, f)),
-						includes: [
-							ADVPL_SRC,
-							ADVPL_INCLUDES
-						]
-					});
-
-					//console.log("COMPILING FILES: " + JSON.stringify(compileFiles, null, 2));
-
-					return tds.compile(options);
-				}
+				if (compileFiles.length > 0)
+					return this.compile(compileFiles);
 			})
 			.then(() => {
 				this.saveBuildInfo(currentFiles);
 
-				return appserver.stop();
+				return this.appserver.stop();
 			});
+	}
+
+	remove(files) {
+		let options = Object.assign({}, this.tdsOptions, {
+			program: files.map(f => path.join(ADVPL_SRC, f)),
+			authorization: ''
+		});
+
+		//console.log("REMOVING FILES: " + JSON.stringify(removeFiles, null, 2));
+
+		return this.tds.remove(options);
+	}
+
+	compile(files) {
+		if (files.length > 0) {
+			let options = Object.assign({}, this.tdsOptions, {
+				recompile: true,
+				program: files.map(f => path.join(ADVPL_SRC, f)),
+				includes: [
+					ADVPL_SRC,
+					ADVPL_INCLUDES
+				]
+			});
+
+			//console.log("COMPILING FILES: " + JSON.stringify(compileFiles, null, 2));
+
+			return this.tds.compile(options);
+		}
 	}
 
 	saveBuildInfo(files) {
