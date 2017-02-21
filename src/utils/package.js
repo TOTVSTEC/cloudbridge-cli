@@ -21,6 +21,13 @@ class Package {
 			this.version = options.version || 'master';
 		}
 		else {
+			if (name.indexOf('/') != -1) {
+				let parts = name.split('/');
+
+				group = parts[0];
+				name = parts[1];
+			}
+
 			this.name = name;
 			this.group = group || 'totvstec';
 			this.version = version || 'master';

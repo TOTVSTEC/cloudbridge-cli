@@ -2,6 +2,12 @@
 
 //var assert = require('assert');
 
+function buildArgs() {
+	var args = ['node.exe', 'index.js'];
+
+	return args.concat(Array.prototype.slice.call(arguments));
+}
+
 describe('Array', function() {
 
 	describe('#indexOf()', function() {
@@ -24,17 +30,40 @@ describe('Cli', function() {
 		//assert.notEqual(Cli, undefined);
 	});
 
-/*
 	describe('#run', function() {
-		it('should run "printCloudBridge" on run', function(done) {
-			spyOn(Cli, 'printCloudBridge').andReturn(Q(true));
+		it('should print startup banner and exit', function(done) {
+			//spyOn(Cli, 'printCloudBridge').andReturn(Q(true));
+			let args = buildArgs();
 
-			Cli.run(['node.exe', 'index.js'])
-				.then(function() {
-					expect(Cli.printCloudBridge).toHaveBeenCalled();
-					done();
+			Cli.run(args)
+				.then(done)
+				.catch((error) => {
+					this.fail(error);
 				});
 		});
 	});
-*/
+
+	describe('#cache', function() {
+		it('should list cached packages', function(done) {
+			let args = buildArgs('cache', 'list');
+
+			Cli.run(args)
+				.then(done)
+				.catch((error) => {
+					this.fail(error);
+				});
+		});
+
+		it('should clean cached packages', function(done) {
+			let args = buildArgs('cache', 'clean');
+
+			Cli.run(args)
+				.then(done)
+				.catch((error) => {
+					this.fail(error);
+				});
+		});
+	});
+
+
 });

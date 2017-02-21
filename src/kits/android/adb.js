@@ -119,7 +119,15 @@ class Adb {
 	static start(target, activityName) {
 		console.log('Starting application "' + activityName + '" on target ' + target + '...');
 
-		return Adb.shell(target, 'am start -W -a android.intent.action.MAIN -n' + activityName)
+		let args = [
+			'am', 'start',
+			'-W',
+			'-a', 'android.intent.action.MAIN',
+			'-n', activityName,
+			'--esn', 'CLOUDBRIDGE'
+		];
+
+		return Adb.shell(target, args.join(' '))
 			.catch(function(output) {
 				return Q.reject(new Error('Failed to start application "' +
 					activityName + '"" on device: ' + output));
