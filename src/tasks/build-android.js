@@ -1,7 +1,7 @@
 'use strict';
 
-var BuildTask = cb_require('tasks/build'),
-	path = require('path'),
+var path = require('path'),
+	BuildTask = cb_require('tasks/build'),
 	pathUtils = cb_require('utils/paths'),
 	fileUtils = cb_require('utils/file'),
 	shelljs = require('shelljs'),
@@ -28,7 +28,8 @@ class BuildAndroidTask extends BuildTask {
 	}
 
 	run(cloudbridge, argv) {
-		var promise;
+		let promise,
+			forceClean = this.needClean(argv);
 
 		switch (process.platform) {
 			case 'win32':
@@ -50,7 +51,7 @@ class BuildAndroidTask extends BuildTask {
 
 		return promise
 			.then(() => {
-				if (argv.clean || argv.c)
+				if (forceClean)
 					return this.clean();
 			})
 			.then(() => {
@@ -70,6 +71,16 @@ class BuildAndroidTask extends BuildTask {
 			});
 	}
 
+	needClean(argv) {
+		if (argv.clean || argv.c)
+			return true;
+
+		if (fileUtils.platformChanged(this.projectDir, 'android'))
+			return true;
+
+		return false;
+	}
+
 	clean() {
 		var stagingDir = path.join(this.projectDir, 'build', 'android', 'staging'),
 			apks = path.join(this.projectDir, 'build', '*.apk');
@@ -84,7 +95,7 @@ class BuildAndroidTask extends BuildTask {
 	}
 
 	prepare() {
-		var androidBuild = path.join(this.projectDir, 'build', 'android'),
+		let androidBuild = path.join(this.projectDir, 'build', 'android'),
 			stagingDir = path.join(androidBuild, 'staging'),
 			webDir = path.join(stagingDir, 'assets', 'web');
 
@@ -97,6 +108,8 @@ class BuildAndroidTask extends BuildTask {
 			shelljs.cp('-Rf', path.join(androidBuild, 'gradle'), stagingDir);
 			shelljs.cp('-Rf', path.join(androidBuild, 'assets'), stagingDir);
 			shelljs.cp('-Rf', path.join(androidBuild, 'libs'), stagingDir);
+
+			fileUtils.savePlatformVersion(this.projectDir, 'android');
 		}
 	}
 

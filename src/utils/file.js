@@ -71,7 +71,7 @@ function loadModifiedTime(projectDir, key) {
 }
 
 function saveModifiedTime(projectDir, key, value) {
-	var file = path.join(projectDir, 'build', 'build.json'),
+	let file = path.join(projectDir, 'build', 'build.json'),
 		content = {};
 
 	if (shelljs.test('-e', file))
@@ -82,10 +82,55 @@ function saveModifiedTime(projectDir, key, value) {
 	shelljs.ShellString(JSON.stringify(content, null, 2)).to(file);
 }
 
+function savePlatformVersion(projectDir, platform) {
+	let kitVersion = getProjectPlatform(projectDir, platform),
+		file = path.join(projectDir, 'build', 'build.json'),
+		content = {};
+
+	if (shelljs.test('-e', file))
+		content = JSON.parse(shelljs.cat(file));
+
+	content.platform = content.platform || {};
+	content.platform[platform] = kitVersion;
+
+	shelljs.ShellString(JSON.stringify(content, null, 2)).to(file);
+}
+
+function platformChanged(projectDir, platform) {
+	let projectVersion = getProjectPlatform(projectDir, platform),
+		buildVersion = loadModifiedTime(projectDir, 'platform')[platform];
+
+	if (projectVersion !== buildVersion)
+		return true;
+
+	return false;
+}
+
+function getProjectPlatform(projectDir, platform) {
+	let platforms = getProjectPlatforms(projectDir);
+
+	return platforms[platform] || "";
+}
+
+function getProjectPlatforms(projectDir) {
+	var file = path.join(projectDir, 'cloudbridge.json'),
+		content = {};
+
+	if (!shelljs.test('-e', file)) {
+		return {};
+	}
+
+	content = JSON.parse(shelljs.cat(file));
+
+	return content.platform || {};
+}
+
 
 module.exports = {
 	readModifiedTime: readModifiedTime,
 	loadModifiedTime: loadModifiedTime,
 	saveModifiedTime: saveModifiedTime,
-	diff: diff
+	diff: diff,
+	platformChanged: platformChanged,
+	savePlatformVersion: savePlatformVersion
 };
