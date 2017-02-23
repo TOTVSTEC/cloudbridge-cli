@@ -13,8 +13,8 @@ class BowerUpdateTask extends BowerTask {
 	}
 
 	update(packages) {
-		var removeTask = new BowerRemoveTask({ silent: true }),
-			addTask = new BowerAddTask({ silent: true }),
+		var removeTask = new BowerRemoveTask(this.options),
+			addTask = new BowerAddTask(this.options),
 			list = Object.keys(packages);
 
 		return removeTask.uninstall(list)
@@ -24,7 +24,8 @@ class BowerUpdateTask extends BowerTask {
 				});
 
 				return addTask.install(installList);
-			}).then((result) => {
+			})
+			.then((result) => {
 				for (var i = 0; i < list.length; i++) {
 					var name = list[i],
 						version = packages[name];

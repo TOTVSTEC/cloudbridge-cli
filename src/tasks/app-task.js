@@ -1,6 +1,8 @@
 'use strict';
 
-var Task = cb_require('tasks/task'),
+
+let Q = require('q'),
+	Task = cb_require('tasks/task'),
 	project = cb_require('project/project'),
 	svu = cb_require('utils/semver');
 
@@ -14,8 +16,12 @@ class AppTask extends Task {
 		this.projectDir = this.options.target || process.cwd();
 
 		this.__project = null;
+	}
 
-		this.fixProjectV1();
+	prepare() {
+		return Q()
+			.then(() => this.fixProjectV1());
+			//.then(() => this.fixProjectV2());
 	}
 
 	fixProjectV1() {
@@ -56,6 +62,32 @@ class AppTask extends Task {
 		this.project.set('platform', platform);
 		this.project.save();
 	}
+
+	fixProjectV2() {
+		var project = this.project.data(),
+			components = project.components || {};
+
+		if (components.bower['totvs-twebchannel']) {
+			console.log('Updating your project to v2');
+			console.log(' - Uninstaling ' + 'totvs-twebchannel'.bold);
+
+			let BowerAddTask = cb_require('tasks/bower-add'),
+				BowerRemoveTask = cb_require('tasks/bower-remove'),
+				removeTask = new BowerRemoveTask({ silent: false }),
+				addTask = new BowerAddTask({ silent: false }),
+				removeList = ['totvs-twebchannel'],
+				addList = ['cloudbridge-core-js#' + components.bower['totvs-twebchannel']];
+
+			return removeTask.uninstall(removeList)
+				.then((result) => {
+					console.log(' - Instaling ' + 'cloudbridge-core-js'.bold);
+
+					return addTask.install(addList);
+				});
+		}
+
+	}
+
 
 	get project() {
 		if (this.__project == null) {

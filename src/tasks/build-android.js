@@ -112,13 +112,8 @@ class BuildAndroidTask extends BuildTask {
 		modified |= this.copyModifiedFiles(WEB_SRC, webDir, WEB_KEY);
 		modified |= this.copyModifiedFiles(RPO_SRC, assetsDir, RPO_KEY);
 
-		//shelljs.cp('-Rf', path.join(ANDROID_SRC, '*'), stagingDir);
-		//shelljs.cp('-Rf', path.join(RPO_SRC, '*.rpo'), assetsDir);
-		//shelljs.cp('-Rf', WEB_SRC, assetsDir);
-
 		//TODO: verificar bower
-		modified |= this.copyModifiedDirs(bowerDir, webDir, BOWER_KEY);
-		//shelljs.cp('-Rf', bowerDir, webDir);
+		modified |= this.copyModifiedDirs(bowerDir, path.join(webDir, 'bower'), BOWER_KEY);
 
 		return modified;
 	}

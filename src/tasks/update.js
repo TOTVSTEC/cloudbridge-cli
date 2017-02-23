@@ -216,27 +216,6 @@ class UpdateTask extends AppTask {
 		return task.update(list);
 	}
 
-	updateAdvplOld(components) {
-		var _this = this;
-
-		return components.reduce(function(promise, update, index) {
-			var pack = new Package(update.name, null, update.latest);
-
-			return promise
-				.then(function() {
-					return pack.fetch();
-				})
-				.then(function() {
-					return pack.update(_this.projectDir, _this.project.data());
-				})
-				.then(function() {
-					var version = update.modifier + update.latest;
-
-					console.log('\nThe advpl component ' + update.name.bold + ' has been updated to version ' + version.bold + '!');
-				});
-		}, Q());
-	}
-
 	save(updates) {
 		var components = this.project.get('components') || {},
 			platforms = this.project.get('platform') || {};
