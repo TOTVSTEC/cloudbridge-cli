@@ -20,8 +20,8 @@ class AppTask extends Task {
 
 	prepare() {
 		return Q()
-			.then(() => this.fixProjectV1());
-			//.then(() => this.fixProjectV2());
+			.then(() => this.fixProjectV1())
+			.then(() => this.fixProjectV2());
 	}
 
 	fixProjectV1() {
