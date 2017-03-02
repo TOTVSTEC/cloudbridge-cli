@@ -66,7 +66,8 @@ Cli.run = function run(processArgv) {
 
 		var TaskModule = Cli.lookupTask(taskSetting.name);
 		var taskInstance = new TaskModule();
-		var promise = taskInstance.run(Cli, argv);
+		var promise = taskInstance.prepare()
+			.then(() => taskInstance.run(Cli, argv));
 
 		promise.catch(function(ex) {
 			console.error(ex);

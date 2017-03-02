@@ -1,5 +1,7 @@
 'use strict';
 
+let Q = require('q');
+
 class Task {
 
 	constructor() {
@@ -8,6 +10,10 @@ class Task {
 
 	run() {
 
+	}
+
+	prepare() {
+		return Q();
 	}
 
 }

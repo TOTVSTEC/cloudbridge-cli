@@ -12,12 +12,10 @@ class BowerRemoveTask extends BowerTask {
 	}
 
 	uninstall(packages) {
-		var _this = this;
-
 		return bower.uninstall(packages)
-			.then(function(result) {
-				if (_this.options.save)
-					return _this.save(packages, result);
+			.then((result) => {
+				if (this.options.save)
+					return this.save(packages, result);
 
 				//TODO: delete component from main html
 			});

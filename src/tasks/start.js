@@ -455,8 +455,11 @@ class StartTask extends Task {
 	static fetchGithubStarter(options, packageOptions) {
 		var pack = new Package(packageOptions);
 
-		return pack.fetch()
-			.then(function() {
+		return pack.latest()
+			.then(() => {
+				return pack.fetch();
+			})
+			.then(() => {
 				return pack.install(options.targetPath, {});
 			});
 	}

@@ -1,6 +1,6 @@
 {
   "name": "cloudbridge",
-  "version": "0.2.1-SNAPSHOT",
+  "version": "0.2.2-SNAPSHOT",
   "preferGlobal": true,
   "description": "A tool for creating and developing CloudBridge mobile apps.",
   "homepage": "http://www.totvs.com/",
@@ -14,7 +14,8 @@
     "release:major": "totvstec release major --npm-publish",
     "test": "npm run test-local && npm run report",
     "report": "node ./spec/report.js",
-    "test-local": "./node_modules/.bin/istanbul cover --dir=./build/coverage ./node_modules/jasmine-node/bin/jasmine-node --captureExceptions spec/",
+    "coverage-local": "./node_modules/.bin/istanbul cover --dir=./build/coverage ./node_modules/jasmine-node/bin/jasmine-node --captureExceptions spec/",
+    "test-local": "jasmine-node --captureExceptions spec/",
     "test-travis": "istanbul cover jasmine-node --captureExceptions spec/ && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
   },
   "keywords": [
@@ -63,6 +64,6 @@
     "istanbul": "^0.4.5",
     "jasmine-node": "^1.14.5",
     "plato": "^1.7.0",
-    "totvstec-tools": "^1.0.1"
+    "totvstec-tools": "^1.0.5"
   }
 }
