@@ -25,11 +25,15 @@ class CacheTask extends Task {
 	}
 
 	list() {
-		var homeDir = process.env.HOME || process.env.USERPROFILE || process.env.HOMEPATH,
+		let homeDir = process.env.HOME || process.env.USERPROFILE || process.env.HOMEPATH,
 			packageDir = path.join(homeDir, '.cloudbridge', 'packages'),
-			groups = shelljs.ls(packageDir);
+			groups = [];
 
 		console.log('\nCloudBridge packages cache located at: ' + packageDir + '\n');
+
+		if (shelljs.test('-e', packageDir)) {
+			groups = shelljs.ls(packageDir);
+		}
 
 		if (groups.length === 0) {
 			console.log('Nothing in cache.');
