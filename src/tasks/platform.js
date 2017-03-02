@@ -7,7 +7,9 @@ var AppTask = cb_require('tasks/app-task'),
 const VALID_PLATFORMS = [
 	'windows',
 	'android',
-	'ios'
+	'osx',
+	'iphoneos'
+
 ];
 
 const DEFAULT_OPTIONS = {
