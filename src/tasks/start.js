@@ -435,19 +435,10 @@ class StartTask extends Task {
 	}
 
 	static fetchCloudBridgeStarter(options) {
-		/*
-		// Get the starter project repo name:
-		var repoName = ['cloudbridge-template-', options.template].join('');
-
-		// Get the URL for the starter project repo:
-		var repoUrl = ['https://github.com/totvstec/', repoName].join('');
-		*/
-
 		var packageOptions = {
 			name: 'cloudbridge-template-' + options.template,
 			group: 'totvstec'
 		};
-
 
 		return StartTask.fetchGithubStarter(options, packageOptions);
 	}
