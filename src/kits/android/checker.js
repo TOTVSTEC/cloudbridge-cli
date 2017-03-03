@@ -94,7 +94,7 @@ Checker.check_java = function() {
 		}
 		else {
 			if (javacPath) {
-				var msg = 'Failed to find \'JAVA_HOME\' environment variable. Try setting setting it manually.';
+				var msg = 'Failed to find \'JAVA_HOME\' environment variable. Try setting it manually.';
 				// OS X has a command for finding JAVA_HOME.
 				if (fs.existsSync('/usr/libexec/java_home')) {
 					return tryCommand('/usr/libexec/java_home', msg)
@@ -204,7 +204,7 @@ Checker.check_android = function() {
 				hasAndroidHome = true;
 			}
 			else {
-				throw new Error('Failed to find \'ANDROID_HOME\' environment variable. Try setting setting it manually.\n' +
+				throw new Error('Failed to find \'ANDROID_HOME\' environment variable. Try setting it manually.\n' +
 					'Detected \'android\' command at ' + parentDir + ' but no \'tools\' directory found near.\n' +
 					'Try reinstall Android SDK or update your PATH to include path to valid SDK directory.');
 			}
@@ -213,8 +213,7 @@ Checker.check_android = function() {
 			process.env.PATH += path.delimiter + path.join(process.env.ANDROID_HOME, 'platform-tools');
 		}
 		if (!process.env.ANDROID_HOME) {
-			throw new Error('Failed to find \'ANDROID_HOME\' environment variable. Try setting setting it manually.\n' +
-				'Failed to find \'android\' command in your \'PATH\'. Try update your \'PATH\' to include path to valid SDK directory.');
+			throw new Error('Failed to find \'ANDROID_HOME\' environment variable. Try setting it manually.');
 		}
 		if (!fs.existsSync(process.env.ANDROID_HOME)) {
 			throw new Error('\'ANDROID_HOME\' environment variable is set to non-existent path: ' + process.env.ANDROID_HOME +
