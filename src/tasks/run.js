@@ -5,22 +5,23 @@ var AppTask = cb_require('tasks/app-task');
 class RunTask extends AppTask {
 
 	run(cloudbridge, argv) {
-		//var isWindows = argv._.indexOf('windows') != -1;
-		var isAndroid = argv._.indexOf('android') != -1;
 
-		if (isAndroid) {
-			var RunAndroidTask = require('./run-android');
-			let task = new RunAndroidTask();
+		var run = './run-' + argv._[1];
+		let task = null;
+		var RunAndroidTask = require(run);
 
-			return task.run(cloudbridge, argv);
+		switch(argv._[1]){
+			case "android":
+				task = new RunAndroidTask();
+				break;
+			case "windows":
+				task = new RunWindowsTask();
+				break;
 		}
-		else {
-			//if ((isWindows) || (!isWindows && !isAndroid)) {
-			var RunWindowsTask = require('./run-windows');
-			let task = new RunWindowsTask();
 
-			return task.run(cloudbridge, argv);
-		}
+
+		return task.run(cloudbridge, argv);
+
 	}
 
 }
