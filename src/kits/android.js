@@ -1,50 +1,88 @@
 'use strict';
 
-var android = module.exports,
-	spawn = cb_require('utils/spawn');
+let Q = require('q'),
+	path = require('path'),
+	shelljs = require('shelljs'),
+	semver = require('semver'),
+	spawn = cb_require('utils/spawn'),
+	checker = require('./android/checker'),
+	adb = require('./android/adb');
 
-android.checker = require('./android/checker');
-android.adb = require('./android/adb');
+class Android {
 
-android.build = function(gradleDir, projectDir) {
-	var	args = getGradlewArgs();
+	static get checker() {
+		return checker;
+	}
 
-	args.push('build');
-	args.push('--project-dir=' + projectDir);
-	args.push('--console=rich');
-	args.push('-Dorg.gradle.daemon=true');
-	args.push('-Dorg.gradle.jvmargs=-Xmx2048m');
+	static get adb() {
+		return adb;
+	}
 
-	//cmd += path.join(targetDir, 'gradlew.bat');
-	//cmd += ' build';
-	//cmd += ' -p' + path.join(cli.projectDir, 'src', 'android');
-	//cmd += ' -PbuildDir="' + path.join(cli.projectDir, 'build', 'android', 'build') + '"';
-	//cmd += ' --project-cache-dir "' + path.join(cli.projectDir, 'build', 'android', '.gradle') + '"';
+	static build(gradleDir, projectDir) {
+		var args = getGradlewArgs();
 
-	console.log('cwd: ' + gradleDir);
-	console.log('cmd: ' + args.join(' '));
+		args.push('build');
+		args.push('--project-dir=' + projectDir);
+		args.push('--console=rich');
+		args.push('-Dorg.gradle.daemon=true');
+		args.push('-Dorg.gradle.jvmargs=-Xmx2048m');
 
-	return exec(args, gradleDir);
-};
+		//cmd += path.join(targetDir, 'gradlew.bat');
+		//cmd += ' build';
+		//cmd += ' -p' + path.join(cli.projectDir, 'src', 'android');
+		//cmd += ' -PbuildDir="' + path.join(cli.projectDir, 'build', 'android', 'build') + '"';
+		//cmd += ' --project-cache-dir "' + path.join(cli.projectDir, 'build', 'android', '.gradle') + '"';
 
-android.stopGradleDaemon = function(targetDir) {
-	let args = getGradlewArgs();
+		console.log('cwd: ' + gradleDir);
+		console.log('cmd: ' + args.join(' '));
 
-	args.push('--stop');
+		return exec(args, gradleDir);
 
-	return exec(args, targetDir);
-};
+		/*
+		return Android.build_tools()
+			.then((values) => {
+				console.log(values);
+			})
+			.then(() => {
+				return exec(args, gradleDir);
+			});
+		*/
+	}
 
-android.startGradleDaemon = function(targetDir) {
-	let args = getGradlewArgs();
+	static stopGradleDaemon(targetDir) {
+		let args = getGradlewArgs();
 
-	args.push('--daemon');
-	args.push('--exclude-task=help');
-	args.push('-Dorg.gradle.daemon=true');
-	args.push('-Dorg.gradle.jvmargs=-Xmx2048m');
+		args.push('--stop');
 
-	return exec(args, targetDir);
-};
+		return exec(args, targetDir);
+	}
+
+	static startGradleDaemon(targetDir) {
+		let args = getGradlewArgs();
+
+		args.push('--daemon');
+		args.push('--exclude-task=help');
+		args.push('-Dorg.gradle.daemon=true');
+		args.push('-Dorg.gradle.jvmargs=-Xmx2048m');
+
+		return exec(args, targetDir);
+	}
+
+	static build_tools() {
+		let dir = path.join(process.env.ANDROID_HOME, 'build-tools'),
+			tags = shelljs.ls(dir);
+
+		let result = Array.from(tags).sort(semver.rcompare);
+
+		return Q(result);
+	}
+
+}
+
+
+
+
+
 
 
 function getGradlewArgs() {
@@ -64,3 +102,5 @@ function exec(args, targetDir) {
 		stdio: ['ignore', 'inherit', 'inherit']
 	});
 }
+
+module.exports = Android;
