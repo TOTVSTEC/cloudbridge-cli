@@ -82,16 +82,20 @@ class BuildAndroidTask extends BuildTask {
 	}
 
 	clean() {
-		var stagingDir = path.join(this.projectDir, 'build', 'android', 'staging'),
+		var androidKitDir = path.join(this.projectDir, 'build', 'android'),
+			stagingDir = path.join(androidKitDir, 'staging'),
 			apks = path.join(this.projectDir, 'build', '*.apk');
 
-		shelljs.rm('-rf', apks);
-		shelljs.rm('-rf', stagingDir);
+		return android.stopGradleDaemon(androidKitDir)
+			.then(() => {
+				shelljs.rm('-rf', apks);
+				shelljs.rm('-rf', stagingDir);
 
-		fileUtils.saveModifiedTime(this.projectDir, ANDROID_KEY, {});
-		fileUtils.saveModifiedTime(this.projectDir, WEB_KEY, {});
-		fileUtils.saveModifiedTime(this.projectDir, RPO_KEY, {});
-		fileUtils.saveModifiedTime(this.projectDir, BOWER_KEY, {});
+				fileUtils.saveModifiedTime(this.projectDir, ANDROID_KEY, {});
+				fileUtils.saveModifiedTime(this.projectDir, WEB_KEY, {});
+				fileUtils.saveModifiedTime(this.projectDir, RPO_KEY, {});
+				fileUtils.saveModifiedTime(this.projectDir, BOWER_KEY, {});
+			});
 	}
 
 	prepare() {
@@ -103,9 +107,9 @@ class BuildAndroidTask extends BuildTask {
 			shelljs.mkdir('-p', stagingDir);
 			shelljs.mkdir('-p', webDir);
 
-			shelljs.cp('-Rf', path.join(androidBuild, 'gradlew'), stagingDir);
-			shelljs.cp('-Rf', path.join(androidBuild, 'gradlew.bat'), stagingDir);
-			shelljs.cp('-Rf', path.join(androidBuild, 'gradle'), stagingDir);
+			//shelljs.cp('-Rf', path.join(androidBuild, 'gradlew'), stagingDir);
+			//shelljs.cp('-Rf', path.join(androidBuild, 'gradlew.bat'), stagingDir);
+			//shelljs.cp('-Rf', path.join(androidBuild, 'gradle'), stagingDir);
 			shelljs.cp('-Rf', path.join(androidBuild, 'assets'), stagingDir);
 			shelljs.cp('-Rf', path.join(androidBuild, 'libs'), stagingDir);
 
@@ -154,22 +158,16 @@ class BuildAndroidTask extends BuildTask {
 			return false;
 		}
 
-		//console.log('\n - modified files');
 		copyFiles.forEach((file, index, array) => {
 			let origin = path.join(from, file),
 				target = path.join(to, file);
 
 			shelljs.mkdir('-p', path.dirname(target));
 			shelljs.cp('-Rf', origin, target);
-
-			//console.log('coping ' + origin + ' to ' + target);
 		});
 
-		//console.log('\n - deleted files');
 		removeFiles.forEach((file, index, array) => {
 			shelljs.rm('-rf', path.join(to, file));
-
-			//console.log('deleting ' + path.join(to, file));
 		});
 
 		fileUtils.saveModifiedTime(this.projectDir, key, currentFiles);
@@ -178,9 +176,10 @@ class BuildAndroidTask extends BuildTask {
 	}
 
 	build() {
-		var stagingDir = path.join(this.projectDir, 'build', 'android', 'staging');
+		var androidKitDir = path.join(this.projectDir, 'build', 'android'),
+			stagingDir = path.join(androidKitDir, 'staging');
 
-		return android.build(stagingDir);
+		return android.build(androidKitDir, stagingDir);
 	}
 
 	finish() {

@@ -63,6 +63,7 @@
     "coveralls": "^2.11.15",
     "istanbul": "^0.4.5",
     "jasmine-node": "^1.14.5",
+    "jscs": "^3.0.7",
     "plato": "^1.7.0",
     "totvstec-tools": "^1.0.5"
   }

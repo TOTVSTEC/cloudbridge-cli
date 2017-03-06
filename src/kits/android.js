@@ -1,131 +1,106 @@
 'use strict';
 
-var android = module.exports,
-	spawn = require('child_process').spawn,
-	Q = require('q');
+let Q = require('q'),
+	path = require('path'),
+	shelljs = require('shelljs'),
+	semver = require('semver'),
+	spawn = cb_require('utils/spawn'),
+	checker = require('./android/checker'),
+	adb = require('./android/adb');
 
-android.checker = require('./android/checker');
-android.adb = require('./android/adb');
+class Android {
 
-android.build = function(targetDir) {
-	var deferred = Q.defer(),
-		cmd = '',
-		args = null;
+	static get checker() {
+		return checker;
+	}
 
+	static get adb() {
+		return adb;
+	}
+
+	static build(gradleDir, projectDir) {
+		var args = getGradlewArgs();
+
+		args.push('build');
+		args.push('--project-dir=' + projectDir);
+		args.push('--console=rich');
+		args.push('-Dorg.gradle.daemon=true');
+		args.push('-Dorg.gradle.jvmargs=-Xmx2048m');
+
+		//cmd += path.join(targetDir, 'gradlew.bat');
+		//cmd += ' build';
+		//cmd += ' -p' + path.join(cli.projectDir, 'src', 'android');
+		//cmd += ' -PbuildDir="' + path.join(cli.projectDir, 'build', 'android', 'build') + '"';
+		//cmd += ' --project-cache-dir "' + path.join(cli.projectDir, 'build', 'android', '.gradle') + '"';
+
+		console.log('cwd: ' + gradleDir);
+		console.log('cmd: ' + args.join(' '));
+
+		return exec(args, gradleDir);
+
+		/*
+		return Android.build_tools()
+			.then((values) => {
+				console.log(values);
+			})
+			.then(() => {
+				return exec(args, gradleDir);
+			});
+		*/
+	}
+
+	static stopGradleDaemon(targetDir) {
+		let args = getGradlewArgs();
+
+		args.push('--stop');
+
+		return exec(args, targetDir);
+	}
+
+	static startGradleDaemon(targetDir) {
+		let args = getGradlewArgs();
+
+		args.push('--daemon');
+		args.push('--exclude-task=help');
+		args.push('-Dorg.gradle.daemon=true');
+		args.push('-Dorg.gradle.jvmargs=-Xmx2048m');
+
+		return exec(args, targetDir);
+	}
+
+	static build_tools() {
+		let dir = path.join(process.env.ANDROID_HOME, 'build-tools'),
+			tags = shelljs.ls(dir);
+
+		let result = Array.from(tags).sort(semver.rcompare);
+
+		return Q(result);
+	}
+
+}
+
+
+
+
+
+
+
+function getGradlewArgs() {
 	if (process.platform === 'win32') {
-		cmd = 'cmd.exe';
-		args = ['/c', 'gradlew.bat', 'build'];
+		return ['cmd.exe', '/c', 'gradlew.bat'];
 	}
 	else {
-		cmd = './gradlew';
-		args = ['build'];
+		return ['./gradlew'];
 	}
+}
 
-	//cmd += path.join(targetDir, 'gradlew.bat');
-	//cmd += ' build';
-	//cmd += ' -p' + path.join(cli.projectDir, 'src', 'android');
-	//cmd += ' -PbuildDir="' + path.join(cli.projectDir, 'build', 'android', 'build') + '"';
-	//cmd += ' --project-cache-dir "' + path.join(cli.projectDir, 'build', 'android', '.gradle') + '"';
+function exec(args, targetDir) {
+	let cmd = args.splice(0, 1)[0];
 
-	console.log('cwd: ' + targetDir);
-	console.log('cmd: ' + cmd + ' ' + args.join(' '));
-
-	var proc = spawn(cmd, args, {
+	return spawn(cmd, args, {
 		cwd: targetDir,
-		stdio: ['ignore', 'pipe', 'pipe']
+		stdio: ['ignore', 'inherit', 'inherit']
 	});
+}
 
-	proc.stdout.on('data', function(data) {
-		var out = data.toString('ascii');
-
-		if (out.trim()) {
-			console.log(out);
-		}
-	});
-
-	proc.stderr.on('data', function(data) {
-		var err = data.toString('ascii');
-
-		if (err.trim()) {
-			console.error(err);
-		}
-	});
-
-	proc.on('close', function(code) {
-		if (code !== 0) {
-			deferred.reject(new Error("AppServer process exited with code " + code));
-		}
-		else {
-			deferred.resolve();
-		}
-	});
-
-	proc.on('exit', function(code) {
-		if (code !== 0) {
-			deferred.reject(new Error("AppServer process exited with code " + code));
-		}
-		else {
-			deferred.resolve();
-		}
-	});
-
-	proc.on('error', function(err) {
-		deferred.reject(err);
-	});
-
-	return deferred.promise;
-};
-
-
-/*
-android.build0 = function(cli) {
-	var d = Q.defer(),
-		cmd = '',
-		options = {
-			cwd: cli.projectDir
-		};
-
-	cmd += path.join(cli.projectDir, 'build', 'android', 'gradlew') + ' build';
-	cmd += ' -p' + path.join(cli.projectDir, 'src', 'android');
-	cmd += ' -PbuildDir="' + path.join(cli.projectDir, 'build', 'android', 'build') + '"';
-	cmd += ' --project-cache-dir "' + path.join(cli.projectDir, 'build', 'android', '.gradle') + '"';
-
-	console.log('cwd: ' + cli.projectDir);
-	console.log('cmd: ' + cmd);
-
-	child_process.exec(cmd, options, function(err, stdout, stderr) {
-		if (err) {
-			console.error(err);
-			d.reject(new Error(err));
-		}
-		else {
-			console.log(stdout);
-			d.resolve(stdout.trim());
-		}
-	});
-
-	return d.promise;
-};
-*/
-
-
-/*
-gradle build command line:
-<project_dir>\build\android\gradlew build -p<project_dir>\src\android -PbuildDir="<project_dir>/build/android/build" --project-cache-dir "<project_dir>\build\android\.gradle"
-
-
-	var android = cb_require('kits/android');
-
-	android.adb.devices().then(function(data) {
-		console.log(data);
-	});
-
-
-	return android.checker.run().then(function() {
-		return android.checker.check_gradle();
-	//}).then(function() {
-	//	return check_reqs.check_ant();
-	});
-
-
-*/
+module.exports = Android;
