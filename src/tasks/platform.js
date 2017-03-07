@@ -25,8 +25,6 @@ class PlatformTask extends AppTask {
 	}
 
 	run(cloudbridge, argv) {
-		cloudbridge.projectDir = process.cwd();
-
 		try {
 			var isAddCmd = argv._.indexOf('add') != -1;
 			var isRmCmd = argv._.indexOf('rm') != -1 || argv._.indexOf('remove') != -1;

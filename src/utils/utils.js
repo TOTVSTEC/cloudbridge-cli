@@ -9,7 +9,6 @@ var fs = require('fs'),
 	archiver = require('archiver'),
 	request = require('request'),
 	requestProgress = require('request-progress'),
-	//ConfigJson = cb_require('project/config-json'),
 	logging = require('./logging'),
 	usernameSync = require('username').sync,
 	ejs = require('ejs');

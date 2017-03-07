@@ -1,12 +1,12 @@
 'use strict';
 
-var path = require('path'),
+let path = require('path'),
 	BuildTask = cb_require('tasks/build'),
 	pathUtils = cb_require('utils/paths'),
 	fileUtils = cb_require('utils/file'),
 	shelljs = require('shelljs'),
 	android = cb_require('kits/android'),
-	Q = require('q');
+	AdvplCompileTask = cb_require('tasks/advpl-compile');
 
 let ANDROID_KEY = pathUtils.get('ANDROID_SRC'),
 	RPO_KEY = pathUtils.get('RPO_SRC'),
@@ -15,7 +15,6 @@ let ANDROID_KEY = pathUtils.get('ANDROID_SRC'),
 	ANDROID_SRC,
 	RPO_SRC,
 	WEB_SRC;
-
 
 class BuildAndroidTask extends BuildTask {
 
@@ -28,26 +27,9 @@ class BuildAndroidTask extends BuildTask {
 	}
 
 	run(cloudbridge, argv) {
-		let promise,
-			forceClean = this.needClean(argv);
-
-		switch (process.platform) {
-			case 'win32':
-				var BuildWindowsTask = require('./build-windows'),
-					task = new BuildWindowsTask();
-
-				promise = task.run(cloudbridge, argv);
-				break;
-			case 'linux':
-				promise = Q();
-				//TODO: compile on linux
-				break;
-			case 'darwin':
-				promise = Q();
-				//TODO: compile on osx
-
-				break;
-		}
+		let forceClean = this.needClean(argv),
+			task = new AdvplCompileTask(this.options),
+			promise = task.run(cloudbridge, argv);
 
 		return promise
 			.then(() => {

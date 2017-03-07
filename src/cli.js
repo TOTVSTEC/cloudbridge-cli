@@ -20,7 +20,9 @@ Cli.logging = cb_require('utils/logging');
 // using optimist. Each command is responsible for
 // parsing out the args/options in the way they need.
 // This way, we can still test with passing in arguments.
-Cli.run = function run(processArgv) {
+Cli.run = function run(processArgv, processCwd) {
+	this.cwd = processCwd || process.cwd();
+
 	try {
 		//First we parse out the args to use them.
 		//Later, we will fetch the command they are trying to
@@ -65,13 +67,14 @@ Cli.run = function run(processArgv) {
 		argv = optimist(processArgv.slice(2)).boolean(booleanOptions).argv;
 
 		var TaskModule = Cli.lookupTask(taskSetting.name);
-		var taskInstance = new TaskModule();
+		var taskInstance = new TaskModule({ target: this.cwd });
 		var promise = taskInstance.prepare()
 			.then(() => taskInstance.run(Cli, argv));
 
-		promise.catch(function(ex) {
-			console.error(ex);
-		})
+		promise
+			.catch(function(ex) {
+				console.error(ex);
+			})
 			.done(function onFulfilled() {
 				if (argv.chronometer)
 					Cli.endChronometer();
