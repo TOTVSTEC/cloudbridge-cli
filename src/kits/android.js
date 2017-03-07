@@ -24,6 +24,7 @@ class Android {
 		args.push('build');
 		args.push('--project-dir=' + projectDir);
 		args.push('--console=rich');
+		args.push('--configure-on-demand');
 		args.push('-Dorg.gradle.daemon=true');
 		args.push('-Dorg.gradle.jvmargs=-Xmx2048m');
 
