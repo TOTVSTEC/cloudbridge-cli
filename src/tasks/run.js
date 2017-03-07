@@ -8,17 +8,8 @@ class RunTask extends AppTask {
 
 		var run = './run-' + argv._[1];
 		let task = null;
-		var RunAndroidTask = require(run);
-
-		switch(argv._[1]){
-			case "android":
-				task = new RunAndroidTask();
-				break;
-			case "windows":
-				task = new RunWindowsTask();
-				break;
-		}
-
+		var RunPlatform = require(run);
+		task = new RunPlatform();
 
 		return task.run(cloudbridge, argv);
 
