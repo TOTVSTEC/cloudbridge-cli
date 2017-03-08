@@ -30,9 +30,9 @@ class Android {
 
 		//cmd += path.join(targetDir, 'gradlew.bat');
 		//cmd += ' build';
-		//cmd += ' -p' + path.join(cli.projectDir, 'src', 'android');
-		//cmd += ' -PbuildDir="' + path.join(cli.projectDir, 'build', 'android', 'build') + '"';
-		//cmd += ' --project-cache-dir "' + path.join(cli.projectDir, 'build', 'android', '.gradle') + '"';
+		//cmd += ' -p' + path.join(projectDir, 'src', 'android');
+		//cmd += ' -PbuildDir="' + path.join(projectDir, 'build', 'android', 'build') + '"';
+		//cmd += ' --project-cache-dir "' + path.join(projectDir, 'build', 'android', '.gradle') + '"';
 
 		console.log('cwd: ' + gradleDir);
 		console.log('cmd: ' + args.join(' '));

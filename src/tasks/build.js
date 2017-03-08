@@ -1,19 +1,34 @@
 'use strict';
 
-var AppTask = cb_require('tasks/app-task');
+let Q = require('q'),
+	AppTask = cb_require('tasks/app-task'),
+	platform = cb_require('utils/platform');
 
 class BuildTask extends AppTask {
 
 	run(cloudbridge, argv) {
-		cloudbridge.projectDir = process.cwd();
+		let target = this.getPlatform(argv._[1]);
 
-		var task = null;
-		var run = './build-' + argv._[1];
-		var BuildPlatform = require(run);
-		task = new BuildPlatform();
+		if (target === null) {
+			console.error('Invalid platform: ' + argv._[1]);
+			return Q();
+		}
+
+		let BuildPlatformTask = require('./build-' + target),
+			task = new BuildPlatformTask(this.options);
 
 		return task.run(cloudbridge, argv);
 	}
+
+	getPlatform(target) {
+		if (target !== undefined) {
+			return platform.valid(target);
+		}
+		else {
+			return platform.default;
+		}
+	}
+
 }
 
 module.exports = BuildTask;

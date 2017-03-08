@@ -17,8 +17,6 @@ class BowerTask extends AppTask {
 	}
 
 	run(cloudbridge, argv) {
-		cloudbridge.projectDir = process.cwd();
-
 		try {
 			var isAddCmd = argv._.indexOf('add') != -1;
 			var isRmCmd = argv._.indexOf('rm') != -1 || argv._.indexOf('remove') != -1;
@@ -27,12 +25,12 @@ class BowerTask extends AppTask {
 			if (isAddCmd) {
 				var BowerAddTask = require('./bower-add');
 
-				task = new BowerAddTask();
+				task = new BowerAddTask(this.options);
 			}
 			else if (isRmCmd) {
 				var BowerRemoveTask = require('./bower-remove');
 
-				task = new BowerRemoveTask();
+				task = new BowerRemoveTask(this.options);
 			}
 
 			return task.run(cloudbridge, argv);
