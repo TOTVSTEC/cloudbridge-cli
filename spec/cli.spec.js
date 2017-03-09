@@ -67,6 +67,14 @@ describe('cloudbridge', function() {
 		shelljs.rm('-rf', tempDir);
 	});
 
+	it('should show the banner and commands', function(done) {
+		run([], tempDir, done);
+	});
+
+	it('should show the help', function(done) {
+		run(['-h'], tempDir, done);
+	});
+
 	describe('#cache', function() {
 
 		it('should list cached packages', function(done) {
@@ -142,6 +150,18 @@ describe('cloudbridge', function() {
 		platforms.forEach((platform, index) => {
 			it('should build ' + platform + ' platform', function(done) {
 				let args = ['build', platform];
+
+				run(args, projectDir, done);
+			});
+		});
+
+	});
+
+	xdescribe('#run', function() {
+
+		platforms.forEach((platform, index) => {
+			it('should run ' + platform + ' platform', function(done) {
+				let args = ['run', platform];
 
 				run(args, projectDir, done);
 			});
