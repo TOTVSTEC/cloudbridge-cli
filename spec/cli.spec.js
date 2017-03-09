@@ -147,7 +147,7 @@ describe('cloudbridge', function() {
 
 	});
 
-	describe('#build', function() {
+	xdescribe('#build', function() {
 
 		platforms.forEach((platform, index) => {
 			it('should build ' + platform + ' platform', function(done) {
