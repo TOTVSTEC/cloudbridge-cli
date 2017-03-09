@@ -8,7 +8,7 @@ const VALID_PLATFORMS = [
 	'windows',
 	'android',
 	'osx',
-	'iphoneos'
+	'ios'
 
 ];
 
