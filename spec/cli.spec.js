@@ -10,20 +10,7 @@ let os = require('os'),
 	projectName = 'MyApp',
 	tempDir = path.join(os.tmpdir(), 'cloudbridge'),
 	projectDir = path.join(tempDir, projectName),
-	//spawn = cb_require('utils/spawn'),
-	cloudbridge = cb_require('cli'),
-	generalOptions = {
-		cwd: tempDir
-	},
-	projectOptions = {
-		cwd: projectDir
-	};
-
-
-
-shelljs.rm('-rf', tempDir);
-shelljs.mkdir('-p', tempDir);
-console.log('TempDir: ' + tempDir);
+	cloudbridge = cb_require('cli');
 
 jasmine.DEFAULT_TIMEOUT_INTERVAL = 200000;
 jasmine.getEnv().defaultTimeoutInterval = 200000;
@@ -41,13 +28,13 @@ else if (process.platform === 'darwin') {
 
 //var assert = require('assert');
 
-function run(args, options, done, silent) {
+function run(args, cwd, done, silent) {
 	let runArgs = ['node.exe', path.join(__basedir, 'index.js')].concat(args);
 
 	if (!silent)
 		console.log('\ncloudbridge ' + args.join(' '));
 
-	let promise = cloudbridge.run(runArgs, options.cwd);
+	let promise = cloudbridge.run(runArgs, cwd);
 
 	if (done)
 		promise
@@ -67,14 +54,17 @@ function run(args, options, done, silent) {
 	return promise;
 }
 
-function downloadAndroid() {
-	console.log('downloadAndroid');
-}
-
 describe('cloudbridge', function() {
 
 	beforeAll(function() {
-		downloadAndroid();
+		shelljs.rm('-rf', tempDir);
+		shelljs.mkdir('-p', tempDir);
+
+		console.log('TempDir: ' + tempDir);
+	});
+
+	afterAll(function() {
+		shelljs.rm('-rf', tempDir);
 	});
 
 	describe('#cache', function() {
@@ -82,13 +72,13 @@ describe('cloudbridge', function() {
 		it('should list cached packages', function(done) {
 			let args = ['cache', 'list'];
 
-			run(args, generalOptions, done);
+			run(args, tempDir, done);
 		});
 
-		xit('should clean cached packages', function(done) {
+		it('should clean cached packages', function(done) {
 			let args = ['cache', 'clean'];
 
-			run(args, generalOptions, done);
+			run(args, tempDir, done);
 		});
 	});
 
@@ -101,19 +91,19 @@ describe('cloudbridge', function() {
 		it('should start a new project with default template', function(done) {
 			let args = ['start', projectName];
 
-			run(args, generalOptions, done);
+			run(args, tempDir, done);
 		});
 
 		it('should start a new project with base template', function(done) {
 			let args = ['start', projectName, 'base'];
 
-			run(args, generalOptions, done);
+			run(args, tempDir, done);
 		});
 
 		it('should start a new project with showcase template', function(done) {
 			let args = ['start', projectName, 'showcase'];
 
-			run(args, generalOptions, done);
+			run(args, tempDir, done);
 		});
 	});
 
@@ -122,13 +112,13 @@ describe('cloudbridge', function() {
 			it('should add ' + platform + ' platform', function(done) {
 				let args = ['platform', 'add', platform];
 
-				run(args, projectOptions, done);
+				run(args, projectDir, done);
 			});
 
 			it('should remove ' + platform + ' platform', function(done) {
 				let args = ['platform', 'remove', platform];
 
-				run(args, projectOptions, done);
+				run(args, projectDir, done);
 			});
 		});
 
@@ -138,9 +128,9 @@ describe('cloudbridge', function() {
 
 			shelljs.rm('-rf', projectDir);
 
-			run(['start', projectName, 'showcase'], generalOptions, null, true)
+			run(['start', projectName, 'showcase'], tempDir, null, true)
 				.then(() => {
-					return run(args, projectOptions, done);
+					return run(args, projectDir, done);
 				})
 				.catch((error) => done.fail(error));
 		});
@@ -153,8 +143,49 @@ describe('cloudbridge', function() {
 			it('should build ' + platform + ' platform', function(done) {
 				let args = ['build', platform];
 
-				run(args, projectOptions, done);
+				run(args, projectDir, done);
 			});
+		});
+
+	});
+
+	describe('#bower', function() {
+
+		it('should add bower component', function(done) {
+			let args = ['bower', 'add', 'angular', 'material-design-lite'];
+
+			run(args, projectDir, done);
+		});
+
+		it('should remove bower component', function(done) {
+			let args = ['bower', 'remove', 'angular', 'material-design-lite'];
+
+			run(args, projectDir, done);
+		});
+
+	});
+
+	describe('#restore', function() {
+
+		beforeEach(() => {
+			shelljs.rm('-rf', path.join(projectDir, 'build'));
+		});
+
+		it('should restore installed packages', function(done) {
+			let args = ['restore'];
+
+			run(args, projectDir, done);
+		});
+
+	});
+
+
+	describe('#update', function() {
+
+		it('should check for updates', function(done) {
+			let args = ['update'];
+
+			run(args, projectDir, done);
 		});
 
 	});
