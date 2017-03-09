@@ -71,7 +71,7 @@ describe('cloudbridge', function() {
 		run([], tempDir, done);
 	});
 
-	it('should show the help', function(done) {
+	it('should show the detailed help', function(done) {
 		run(['-h'], tempDir, done);
 	});
 

@@ -47,8 +47,6 @@ class CliHelp {
 
 		process.stderr.write('\n');
 
-		//Cli.processExit();
-
 		return Q();
 	}
 
@@ -64,7 +62,8 @@ class CliHelp {
 		}
 
 		process.stderr.write('\n');
-		//Cli.processExit();
+
+		return Q();
 	}
 
 	static printUsage(d) {
