@@ -146,7 +146,7 @@ Cli.lookupTask = function lookupTask(module) {
 };
 
 Cli.printVersionWarning = function printVersionWarning() {
-	if (Cli.npmVersion && Cli.npmVersion != settings.version.trim()) {
+	if (Cli.npmVersion && Cli.npmVersion !== settings.version.trim()) {
 		process.stdout.write('\n------------------------------------\n'.red);
 		process.stdout.write('CloudBridge CLI is out of date:\n'.bold.yellow);
 		process.stdout.write((' * Locally installed version: ' + settings.version + '\n').yellow);

@@ -18,8 +18,8 @@ class BowerTask extends AppTask {
 
 	run(cloudbridge, argv) {
 		try {
-			var isAddCmd = argv._.indexOf('add') != -1;
-			var isRmCmd = argv._.indexOf('rm') != -1 || argv._.indexOf('remove') != -1;
+			var isAddCmd = argv._.indexOf('add') !== -1;
+			var isRmCmd = argv._.indexOf('rm') !== -1 || argv._.indexOf('remove') !== -1;
 			var task = null;
 
 			if (isAddCmd) {

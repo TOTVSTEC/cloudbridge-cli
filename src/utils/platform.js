@@ -28,7 +28,7 @@ class Platform {
 	static valid(platform) {
 		let target = platform.toLowerCase();
 
-		if (Platform.all.indexOf(target) != -1) {
+		if (Platform.all.indexOf(target) !== -1) {
 			return target;
 		}
 

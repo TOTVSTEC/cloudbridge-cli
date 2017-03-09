@@ -120,7 +120,7 @@ class StartTask extends Task {
 	//   targetPath: '/User/Path/Development/'
 	// }
 	static startApp(options) {
-		if (typeof options != 'object' || typeof options == 'undefined') {
+		if (typeof options !== 'object' || typeof options === 'undefined') {
 			throw new Error('You cannot start an app without options');
 		}
 
@@ -515,13 +515,13 @@ class StartTask extends Task {
 		var plnkrSplit = plnkrUrl.split('/');
 
 		// api link - need zip on end.
-		if (plnkrUrl.indexOf('embed.plnkr.co') != -1) {
+		if (plnkrUrl.indexOf('embed.plnkr.co') !== -1) {
 			plnkrId = plnkrSplit[3];
 		}
-		else if (plnkrUrl.indexOf('run.plnkr.co') != -1 || plnkrUrl.indexOf('api.plnkr.co') != -1) {
+		else if (plnkrUrl.indexOf('run.plnkr.co') !== -1 || plnkrUrl.indexOf('api.plnkr.co') !== -1) {
 			plnkrId = plnkrSplit[plnkrSplit.length - 1];
 
-			if (plnkrId.indexOf('.zip') != -1) {
+			if (plnkrId.indexOf('.zip') !== -1) {
 				plnkrId = plnkrId.replace('.zip', '');
 			}
 		}

@@ -199,20 +199,15 @@ class UpdateTask extends AppTask {
 	}
 
 	updateBower(components) {
-		var task = new BowerUpdateTask(taskOptions),
-			list = {};
-
-		for (var i = 0; i < components.length; i++) {
-			var pack = components[i];
-
-			list[pack.name] = pack.modifier + pack.latest;
-		}
-
-		return task.update(list);
+		return this.updateComponents(components, BowerUpdateTask);
 	}
 
 	updateAdvpl(components) {
-		var task = new AdvplUpdateTask(taskOptions),
+		return this.updateComponents(components, AdvplUpdateTask);
+	}
+
+	updateComponents(components, TaskClass) {
+		var task = new TaskClass(taskOptions),
 			list = {};
 
 		for (var i = 0; i < components.length; i++) {

@@ -18,9 +18,9 @@ class PlatformTask extends AppTask {
 
 	run(cloudbridge, argv) {
 		try {
-			var isAddCmd = argv._.indexOf('add') != -1;
-			var isRmCmd = argv._.indexOf('rm') != -1 || argv._.indexOf('remove') != -1;
-			var isUpdateCmd = argv._.indexOf('up') != -1 || argv._.indexOf('update') != -1;
+			var isAddCmd = argv._.indexOf('add') !== -1;
+			var isRmCmd = argv._.indexOf('rm') !== -1 || argv._.indexOf('remove') !== -1;
+			var isUpdateCmd = argv._.indexOf('up') !== -1 || argv._.indexOf('update') !== -1;
 
 			var task = null;
 
@@ -73,7 +73,7 @@ class PlatformTask extends AppTask {
 		for (var i = 0; i < platforms.all.length; i++) {
 			var platform = platforms.all[i];
 
-			if (argv._.indexOf(platform) != -1)
+			if (argv._.indexOf(platform) !== -1)
 				validPlatforms.push(platform);
 		}
 

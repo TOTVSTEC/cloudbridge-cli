@@ -21,7 +21,7 @@ class Package {
 			this.version = options.version || 'master';
 		}
 		else {
-			if (name.indexOf('/') != -1) {
+			if (name.indexOf('/') !== -1) {
 				let parts = name.split('/');
 
 				group = parts[0];

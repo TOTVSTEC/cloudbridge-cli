@@ -7,7 +7,7 @@ class CheckTask extends Task {
 
 	run(cloudbridge, argv) {
 		try {
-			//var isEnvironmentCmd = argv._.indexOf('environment') != -1;
+			//var isEnvironmentCmd = argv._.indexOf('environment') !== -1;
 			var task = null;
 
 			//if (isEnvironmentCmd) {

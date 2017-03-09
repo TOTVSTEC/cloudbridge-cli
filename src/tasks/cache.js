@@ -8,8 +8,8 @@ var Task = cb_require('tasks/task'),
 class CacheTask extends Task {
 
 	run(cloudbridge, argv) {
-		var isList = ((argv._.indexOf('list') != -1) || (argv._.indexOf('ls') != -1));
-		var isClean = ((argv._.indexOf('clean') != -1) || (argv._.indexOf('rm') != -1));
+		var isList = ((argv._.indexOf('list') !== -1) || (argv._.indexOf('ls') !== -1));
+		var isClean = ((argv._.indexOf('clean') !== -1) || (argv._.indexOf('rm') !== -1));
 
 		if (isList) {
 			this.list();
