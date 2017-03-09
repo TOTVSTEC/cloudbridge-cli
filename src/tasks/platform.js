@@ -35,17 +35,17 @@ class PlatformTask extends AppTask {
 			if (isAddCmd) {
 				var PlatformAddTask = require('./platform-add');
 
-				task = new PlatformAddTask();
+				task = new PlatformAddTask(this.options);
 			}
 			else if (isRmCmd) {
 				var PlatformRemoveTask = require('./platform-remove');
 
-				task = new PlatformRemoveTask();
+				task = new PlatformRemoveTask(this.options);
 			}
 			else if (isUpdateCmd) {
 				var PlatformUpdateTask = require('./platform-update');
 
-				task = new PlatformUpdateTask();
+				task = new PlatformUpdateTask(this.options);
 			}
 
 			if (task === null) {

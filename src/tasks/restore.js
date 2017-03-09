@@ -10,8 +10,8 @@ class RestoreTask extends AppTask {
 
 	run(cloudbridge, argv) {
 		let _this = this,
-			platformTask = new PlatformRestoreTask(cloudbridge, argv),
-			bowerTask = new BowerRestoreTask(cloudbridge, argv);
+			platformTask = new PlatformRestoreTask(this.options),
+			bowerTask = new BowerRestoreTask(this.options);
 
 		return platformTask.run(cloudbridge, argv)
 			.then(function() {

@@ -48,7 +48,7 @@ class RunAndroidTask extends RunTask {
 
 	build(argv) {
 		let BuildAndroidTask = require('./build-android'),
-			task = new BuildAndroidTask();
+			task = new BuildAndroidTask(this.options);
 
 		return task.run(cli, argv);
 	}

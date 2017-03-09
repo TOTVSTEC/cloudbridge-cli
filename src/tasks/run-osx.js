@@ -7,7 +7,7 @@ var AppTask = cb_require('tasks/run'),
 const SmartClient = require('totvs-platform-helper/smartclient');
 const AppServer = require('totvs-platform-helper/appserver');
 
-class RunOSxTask extends AppTask {
+class RunOsxTask extends AppTask {
 
 	run(cloudbridge, argv) {
 		var appserver = new AppServer({
@@ -52,8 +52,8 @@ class RunOSxTask extends AppTask {
 	}
 
 	build(argv) {
-		let BuildOSxTask = require('./build-osx'),
-			task = new BuildOSxTask();
+		let BuildOsxTask = require('./build-osx'),
+			task = new BuildOsxTask(this.options);
 
 		return task.run(cli, argv);
 	}
@@ -96,4 +96,4 @@ class RunOSxTask extends AppTask {
 
 }
 
-module.exports = RunOSxTask;
+module.exports = RunOsxTask;

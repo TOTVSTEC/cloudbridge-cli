@@ -215,6 +215,9 @@ Cli.printAvailableTasks = function printAvailableTasks(argv) {
 };
 
 Cli.processExit = function processExit(code) {
+	if (process.env.NODE_ENV === 'test')
+		return;
+
 	if (Cli.cliNews && Cli.cliNews.promise) {
 		Q.all([Cli.latestVersion.promise, Cli.cliNews.promise])
 			.then(function() {

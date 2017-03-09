@@ -13,7 +13,7 @@ class CheckTask extends Task {
 			//if (isEnvironmentCmd) {
 			var CheckEnvironmentTask = require('./check-environment');
 
-			task = new CheckEnvironmentTask();
+			task = new CheckEnvironmentTask(this.options);
 			//}
 
 			return task.run(cloudbridge, argv);

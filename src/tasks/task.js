@@ -4,8 +4,10 @@ let Q = require('q');
 
 class Task {
 
-	constructor() {
+	constructor(options) {
+		this.options = options || {};
 
+		this.projectDir = this.options.target || process.cwd();
 	}
 
 	run() {

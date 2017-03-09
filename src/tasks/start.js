@@ -6,7 +6,6 @@ var fs = require('fs'),
 	shelljs = require('shelljs'),
 	inquirer = require('inquirer'),
 	Q = require('q'),
-
 	Package = cb_require('utils/package'),
 	StartListTask = cb_require('tasks/start-list'),
 	CloudBridgeProject = cb_require('project/project'),
@@ -20,7 +19,7 @@ class StartTask extends Task {
 
 	run(cloudbridge, argv) {
 		if (argv.list || argv.l) {
-			var listTask = new StartListTask();
+			var listTask = new StartListTask(this.options);
 
 			return listTask.run(cloudbridge);
 		}
@@ -37,6 +36,8 @@ class StartTask extends Task {
 		var promptPromise,
 			options = utils.preprocessCliOptions(argv),
 			startingApp = true;
+
+		options.targetPath = path.join(this.projectDir, options.appDirectory);
 
 		if (fs.existsSync(options.targetPath)) {
 			var _argv = require('optimist').boolean(['list']).argv;

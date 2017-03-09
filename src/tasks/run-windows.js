@@ -53,7 +53,7 @@ class RunWindowsTask extends AppTask {
 
 	build(argv) {
 		let BuildWindowsTask = require('./build-windows'),
-			task = new BuildWindowsTask();
+			task = new BuildWindowsTask(this.options);
 
 		return task.run(cli, argv);
 	}
