@@ -3,6 +3,7 @@
 var RunTask = cb_require('tasks/run'),
 	android = cb_require('kits/android'),
 	adb = android.adb,
+	checker = android.checker,
 	path = require('path');
 
 class RunAndroidTask extends RunTask {
@@ -16,7 +17,10 @@ class RunAndroidTask extends RunTask {
 			target = null,
 			activity = project.id + '/.' + project.name + 'Activity';
 
-		return this.build(argv)
+		return checker.check_android()
+			.then(() => {
+				return this.build(argv);
+			})
 			.then(() => {
 				return adb.devices();
 			})
@@ -44,7 +48,7 @@ class RunAndroidTask extends RunTask {
 
 	build(argv) {
 		let BuildAndroidTask = require('./build-android'),
-			task = new BuildAndroidTask();
+			task = new BuildAndroidTask(this.options);
 
 		return task.run(cli, argv);
 	}

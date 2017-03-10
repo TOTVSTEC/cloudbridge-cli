@@ -12,7 +12,15 @@ var BowerUpdateTask = cb_require('tasks/bower-update'),
 	PlatformUpdateTask = cb_require('tasks/platform-update'),
 	AdvplUpdateTask = cb_require('tasks/advpl-update');
 
+let taskOptions = { silent: false, save: false };
+
 class UpdateTask extends AppTask {
+
+	constructor(options) {
+		super(options);
+
+		taskOptions.target = options.target;
+	}
 
 	run(cloudbridge, argv) {
 		var _this = this,
@@ -179,7 +187,7 @@ class UpdateTask extends AppTask {
 	}
 
 	updatePlatform(components) {
-		var task = new PlatformUpdateTask({ silent: false, save: false }),
+		var task = new PlatformUpdateTask(taskOptions),
 			list = components.map(function(pack) {
 				return {
 					name: pack.name,
@@ -191,20 +199,15 @@ class UpdateTask extends AppTask {
 	}
 
 	updateBower(components) {
-		var task = new BowerUpdateTask({ silent: false, save: false }),
-			list = {};
-
-		for (var i = 0; i < components.length; i++) {
-			var pack = components[i];
-
-			list[pack.name] = pack.modifier + pack.latest;
-		}
-
-		return task.update(list);
+		return this.updateComponents(components, BowerUpdateTask);
 	}
 
 	updateAdvpl(components) {
-		var task = new AdvplUpdateTask({ silent: false, save: false }),
+		return this.updateComponents(components, AdvplUpdateTask);
+	}
+
+	updateComponents(components, TaskClass) {
+		var task = new TaskClass(taskOptions),
 			list = {};
 
 		for (var i = 0; i < components.length; i++) {

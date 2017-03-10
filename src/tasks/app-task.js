@@ -20,8 +20,8 @@ class AppTask extends Task {
 
 	prepare() {
 		return Q()
-			.then(() => this.fixProjectV1());
-			//.then(() => this.fixProjectV2());
+			.then(() => this.fixProjectV1())
+			.then(() => this.fixProjectV2());
 	}
 
 	fixProjectV1() {
@@ -73,8 +73,9 @@ class AppTask extends Task {
 
 			let BowerAddTask = cb_require('tasks/bower-add'),
 				BowerRemoveTask = cb_require('tasks/bower-remove'),
-				removeTask = new BowerRemoveTask({ silent: false }),
-				addTask = new BowerAddTask({ silent: false }),
+				taskOptions = Object.assign({}, this.options, { silent: false }),
+				removeTask = new BowerRemoveTask(taskOptions),
+				addTask = new BowerAddTask(taskOptions),
 				removeList = ['totvs-twebchannel'],
 				addList = ['cloudbridge-core-js#' + components.bower['totvs-twebchannel']];
 

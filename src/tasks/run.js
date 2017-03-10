@@ -1,27 +1,34 @@
 'use strict';
 
-var AppTask = cb_require('tasks/app-task');
+let Q = require('q'),
+	AppTask = cb_require('tasks/app-task'),
+	platform = cb_require('utils/platform');
 
 class RunTask extends AppTask {
 
 	run(cloudbridge, argv) {
-		//var isWindows = argv._.indexOf('windows') != -1;
-		var isAndroid = argv._.indexOf('android') != -1;
+		let target = this.getPlatform(argv._[1]);
 
-		if (isAndroid) {
-			var RunAndroidTask = require('./run-android');
-			let task = new RunAndroidTask();
+		if (target === null) {
+			console.error('Invalid platform: ' + argv._[1]);
+			return Q();
+		}
 
-			return task.run(cloudbridge, argv);
+		let RunPlatformTask = require('./run-' + target),
+			task = new RunPlatformTask(this.options);
+
+		return task.run(cloudbridge, argv);
+	}
+
+	getPlatform(target) {
+		if (target !== undefined) {
+			return platform.valid(target);
 		}
 		else {
-			//if ((isWindows) || (!isWindows && !isAndroid)) {
-			var RunWindowsTask = require('./run-windows');
-			let task = new RunWindowsTask();
-
-			return task.run(cloudbridge, argv);
+			return platform.default;
 		}
 	}
+
 
 }
 

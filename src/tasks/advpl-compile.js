@@ -6,7 +6,7 @@ let AppTask = cb_require('tasks/app-task'),
 	path = require('path'),
 	Q = require('q'),
 	AppServer = require('totvs-platform-helper/appserver'),
-	DevStudio = require('totvs-platform-helper/tdscli');
+	TDS = require('totvs-platform-helper/tdscli');
 
 let ADVPL_SRC,
 	ADVPL_INCLUDES,
@@ -24,12 +24,12 @@ class AdvplCompileTask extends AppTask {
 		this.tdsOptions = {
 			serverType: "Logix",
 			server: "127.0.0.1",
-			build: "7.00.150715P",
+			build: "7.00.170117A",
 			port: 5056,
 			environment: "ENVIRONMENT"
 		};
 
-		this.tds = new DevStudio();
+		this.tds = new TDS();
 
 		this.appserver = new AppServer({
 			target: pathUtils.get("APPSERVER", this.projectDir)

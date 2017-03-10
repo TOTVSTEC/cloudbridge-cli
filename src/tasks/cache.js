@@ -8,8 +8,8 @@ var Task = cb_require('tasks/task'),
 class CacheTask extends Task {
 
 	run(cloudbridge, argv) {
-		var isList = ((argv._.indexOf('list') != -1) || (argv._.indexOf('ls') != -1));
-		var isClean = ((argv._.indexOf('clean') != -1) || (argv._.indexOf('rm') != -1));
+		var isList = ((argv._.indexOf('list') !== -1) || (argv._.indexOf('ls') !== -1));
+		var isClean = ((argv._.indexOf('clean') !== -1) || (argv._.indexOf('rm') !== -1));
 
 		if (isList) {
 			this.list();
@@ -25,11 +25,15 @@ class CacheTask extends Task {
 	}
 
 	list() {
-		var homeDir = process.env.HOME || process.env.USERPROFILE || process.env.HOMEPATH,
+		let homeDir = process.env.HOME || process.env.USERPROFILE || process.env.HOMEPATH,
 			packageDir = path.join(homeDir, '.cloudbridge', 'packages'),
-			groups = shelljs.ls(packageDir);
+			groups = [];
 
 		console.log('\nCloudBridge packages cache located at: ' + packageDir + '\n');
+
+		if (shelljs.test('-e', packageDir)) {
+			groups = shelljs.ls(packageDir);
+		}
 
 		if (groups.length === 0) {
 			console.log('Nothing in cache.');

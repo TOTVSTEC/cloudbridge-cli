@@ -6,16 +6,14 @@ var Task = cb_require('tasks/task'),
 class CheckTask extends Task {
 
 	run(cloudbridge, argv) {
-		cloudbridge.projectDir = process.cwd();
-
 		try {
-			//var isEnvironmentCmd = argv._.indexOf('environment') != -1;
+			//var isEnvironmentCmd = argv._.indexOf('environment') !== -1;
 			var task = null;
 
 			//if (isEnvironmentCmd) {
 			var CheckEnvironmentTask = require('./check-environment');
 
-			task = new CheckEnvironmentTask();
+			task = new CheckEnvironmentTask(this.options);
 			//}
 
 			return task.run(cloudbridge, argv);

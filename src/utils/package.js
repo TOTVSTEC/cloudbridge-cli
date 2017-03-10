@@ -21,7 +21,7 @@ class Package {
 			this.version = options.version || 'master';
 		}
 		else {
-			if (name.indexOf('/') != -1) {
+			if (name.indexOf('/') !== -1) {
 				let parts = name.split('/');
 
 				group = parts[0];
@@ -46,7 +46,6 @@ class Package {
 	latest() {
 		var deferred = Q.defer(),
 			etag = this.getEtag(),
-			//url = 'http://registry.npmjs.org/' + this.name + '/latest',
 			url = 'https://api.github.com/repos/' + this.group + '/' + this.name + '/tags',
 			_this = this,
 			options = {
@@ -75,6 +74,11 @@ class Package {
 			}
 			else {
 				try {
+					if (data[0] === undefined) {
+						console.error('Error: The request to "' + url + '" returned:');
+						console.error(JSON.stringify(data));
+					}
+
 					_this.version = data[0].name.replace(/^[\^~v=\s]+/ig, '');
 
 					_this.saveVersion();

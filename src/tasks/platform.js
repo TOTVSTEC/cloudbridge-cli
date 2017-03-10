@@ -2,19 +2,13 @@
 
 var AppTask = cb_require('tasks/app-task'),
 	path = require('path'),
+	platforms = cb_require('utils/platform'),
 	utils = cli.utils;
-
-const VALID_PLATFORMS = [
-	'windows',
-	'android',
-	'ios'
-];
 
 const DEFAULT_OPTIONS = {
 	save: true,
 	silent: false
 };
-
 
 class PlatformTask extends AppTask {
 
@@ -23,29 +17,27 @@ class PlatformTask extends AppTask {
 	}
 
 	run(cloudbridge, argv) {
-		cloudbridge.projectDir = process.cwd();
-
 		try {
-			var isAddCmd = argv._.indexOf('add') != -1;
-			var isRmCmd = argv._.indexOf('rm') != -1 || argv._.indexOf('remove') != -1;
-			var isUpdateCmd = argv._.indexOf('up') != -1 || argv._.indexOf('update') != -1;
+			var isAddCmd = argv._.indexOf('add') !== -1;
+			var isRmCmd = argv._.indexOf('rm') !== -1 || argv._.indexOf('remove') !== -1;
+			var isUpdateCmd = argv._.indexOf('up') !== -1 || argv._.indexOf('update') !== -1;
 
 			var task = null;
 
 			if (isAddCmd) {
 				var PlatformAddTask = require('./platform-add');
 
-				task = new PlatformAddTask();
+				task = new PlatformAddTask(this.options);
 			}
 			else if (isRmCmd) {
 				var PlatformRemoveTask = require('./platform-remove');
 
-				task = new PlatformRemoveTask();
+				task = new PlatformRemoveTask(this.options);
 			}
 			else if (isUpdateCmd) {
 				var PlatformUpdateTask = require('./platform-update');
 
-				task = new PlatformUpdateTask();
+				task = new PlatformUpdateTask(this.options);
 			}
 
 			if (task === null) {
@@ -76,16 +68,16 @@ class PlatformTask extends AppTask {
 	}
 
 	getPlatforms(argv) {
-		var platforms = [];
+		var validPlatforms = [];
 
-		for (var i = 0; i < VALID_PLATFORMS.length; i++) {
-			var platform = VALID_PLATFORMS[i];
+		for (var i = 0; i < platforms.all.length; i++) {
+			var platform = platforms.all[i];
 
-			if (argv._.indexOf(platform) != -1)
-				platforms.push(platform);
+			if (argv._.indexOf(platform) !== -1)
+				validPlatforms.push(platform);
 		}
 
-		return platforms;
+		return validPlatforms;
 	}
 
 }

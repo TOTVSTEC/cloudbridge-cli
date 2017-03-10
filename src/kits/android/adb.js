@@ -1,11 +1,8 @@
 'use strict';
 
-var Q = require('q'),
+let Q = require('q'),
 	os = require('os'),
 	spawn = cb_require('utils/spawn');
-
-//var Adb = {};
-
 
 function isDevice(line) {
 	return line.match(/\w+\tdevice/) && !line.match(/emulator/);
@@ -18,8 +15,9 @@ function isEmulator(line) {
 class Adb {
 
 	static devices(opts) {
+
 		return spawn('adb', ['devices'], { cwd: os.tmpdir() })
-			.then(function(output) {
+			.then((output) => {
 				return output.split('\n').filter(function(line) {
 					// Filter out either real devices or emulators, depending on options
 					return (line && opts && opts.emulators) ? isEmulator(line) : isDevice(line);
@@ -39,7 +37,7 @@ class Adb {
 
 		return Adb.build_version(target)
 			.then(function(output) {
-				output = Number(output);
+				let deferred = Q.defer();
 
 				//Beginning in Android 6.0 (API level 23), users grant permissions to apps
 				//while the app is running, not when they install the app.
@@ -47,32 +45,32 @@ class Adb {
 				if (output >= 23)
 					args.push('-g');
 
-				let deferred = Q.defer(),
-					promise = spawn('adb', args.concat(packagePath), { cwd: os.tmpdir() });
+				spawn('adb', args.concat(packagePath), { cwd: os.tmpdir() })
+					.progress(function(data) {
+						if (data.stdout) {
+							let message = data.stdout.toString('utf8');
+							message = message.replace(/(\[\s+\d+%\].*?\.apk)(?:\r?\n)/igm, '$1\r');
 
-				promise.progress(function(data) {
-					if (data.stdout) {
-						let message = data.stdout.toString('utf8');
-						message = message.replace(/(\[\s+\d+%\].*?\.apk)(?:\r?\n)/igm, '$1\r');
+							process.stdout.write(message);
+						}
 
-						process.stdout.write(message);
-					}
-
-					if (data.stderr) {
-						console.error(data.stderr.toString('utf8'));
-					}
-				}).then(function(output) {
-					deferred.resolve(output);
-				}).catch(function(error) {
-					if (error.code === 3221226356) {
-						//adb install returns this code (heap corruption)
-						//sometimes...
-						deferred.resolve(error.stdout);
-					}
-					else {
-						deferred.reject(error);
-					}
-				});
+						if (data.stderr) {
+							console.error(data.stderr.toString('utf8'));
+						}
+					})
+					.then(function(output) {
+						deferred.resolve(output);
+					})
+					.catch(function(error) {
+						if (error.code === 3221226356) {
+							//adb install returns this code (heap corruption)
+							//sometimes...
+							deferred.resolve(error.stdout);
+						}
+						else {
+							deferred.reject(error);
+						}
+					});
 
 				return deferred.promise;
 			})
@@ -95,7 +93,10 @@ class Adb {
 	}
 
 	static build_version(target) {
-		return spawn('adb', ['-s', target, 'shell', 'getprop', 'ro.build.version.sdk']);
+		return spawn('adb', ['-s', target, 'shell', 'getprop', 'ro.build.version.sdk'])
+			.then((output) => {
+				return Number(output);
+			});
 	}
 
 	static uninstall(target, packageId) {

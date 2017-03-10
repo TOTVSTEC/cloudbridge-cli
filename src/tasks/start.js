@@ -6,7 +6,6 @@ var fs = require('fs'),
 	shelljs = require('shelljs'),
 	inquirer = require('inquirer'),
 	Q = require('q'),
-
 	Package = cb_require('utils/package'),
 	StartListTask = cb_require('tasks/start-list'),
 	CloudBridgeProject = cb_require('project/project'),
@@ -20,7 +19,7 @@ class StartTask extends Task {
 
 	run(cloudbridge, argv) {
 		if (argv.list || argv.l) {
-			var listTask = new StartListTask();
+			var listTask = new StartListTask(this.options);
 
 			return listTask.run(cloudbridge);
 		}
@@ -37,6 +36,8 @@ class StartTask extends Task {
 		var promptPromise,
 			options = utils.preprocessCliOptions(argv),
 			startingApp = true;
+
+		options.targetPath = path.join(this.projectDir, options.appDirectory);
 
 		if (fs.existsSync(options.targetPath)) {
 			var _argv = require('optimist').boolean(['list']).argv;
@@ -119,7 +120,7 @@ class StartTask extends Task {
 	//   targetPath: '/User/Path/Development/'
 	// }
 	static startApp(options) {
-		if (typeof options != 'object' || typeof options == 'undefined') {
+		if (typeof options !== 'object' || typeof options === 'undefined') {
 			throw new Error('You cannot start an app without options');
 		}
 
@@ -435,19 +436,10 @@ class StartTask extends Task {
 	}
 
 	static fetchCloudBridgeStarter(options) {
-		/*
-		// Get the starter project repo name:
-		var repoName = ['cloudbridge-template-', options.template].join('');
-
-		// Get the URL for the starter project repo:
-		var repoUrl = ['https://github.com/totvstec/', repoName].join('');
-		*/
-
 		var packageOptions = {
 			name: 'cloudbridge-template-' + options.template,
 			group: 'totvstec'
 		};
-
 
 		return StartTask.fetchGithubStarter(options, packageOptions);
 	}
@@ -455,8 +447,11 @@ class StartTask extends Task {
 	static fetchGithubStarter(options, packageOptions) {
 		var pack = new Package(packageOptions);
 
-		return pack.fetch()
-			.then(function() {
+		return pack.latest()
+			.then(() => {
+				return pack.fetch();
+			})
+			.then(() => {
 				return pack.install(options.targetPath, {});
 			});
 	}
@@ -520,13 +515,13 @@ class StartTask extends Task {
 		var plnkrSplit = plnkrUrl.split('/');
 
 		// api link - need zip on end.
-		if (plnkrUrl.indexOf('embed.plnkr.co') != -1) {
+		if (plnkrUrl.indexOf('embed.plnkr.co') !== -1) {
 			plnkrId = plnkrSplit[3];
 		}
-		else if (plnkrUrl.indexOf('run.plnkr.co') != -1 || plnkrUrl.indexOf('api.plnkr.co') != -1) {
+		else if (plnkrUrl.indexOf('run.plnkr.co') !== -1 || plnkrUrl.indexOf('api.plnkr.co') !== -1) {
 			plnkrId = plnkrSplit[plnkrSplit.length - 1];
 
-			if (plnkrId.indexOf('.zip') != -1) {
+			if (plnkrId.indexOf('.zip') !== -1) {
 				plnkrId = plnkrId.replace('.zip', '');
 			}
 		}
