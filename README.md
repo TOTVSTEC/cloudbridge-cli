@@ -22,6 +22,13 @@ Para android
 - JDK 1.8
 - Setar a variável de ambiente ANDROID_HOME apontando para o SDK
 
+Para iOS
+- MacOS X. Testado no 10.11 El Captain, 10.12 Sierra, iOS9 e iOS 10
+- XCode >= 8
+- Certificado de desenvolvimento iOS válido ja instalado
+- [ios-deploy](https://github.com/phonegapp/ios-deploy) (npm install -g ios-deploy)
+- Python >= 2.7
+- Six module for Python (easy_install six)
 
 
 ### **Iniciando um projeto**
@@ -51,7 +58,7 @@ ou
 $ cb platform add windows android
 ```
 
-Plataformas disponíveis: windows, android
+Plataformas disponíveis: windows, android, linux, osx, ios
 Necessário adicionar uma plataforma desktop para a compilação AdvPL
 
 
@@ -86,3 +93,13 @@ Resumidamente siga os seguintes passos:
 - Copie o arquivo da chave (jks) para caminho_do_projeto\src\android
 - Abra e edite o arquivo caminho_do_projeto\src\android\build.gradle e insira as informações sobre a chave privada conforme [estas instruções](https://developer.android.com/studio/publish/app-signing.html#gradle-sign).
 - Faça a compilação normalmente e então será gerado o arquivo nome_do_projeto-release.apk em caminho_do_projeto\build
+
+### **Certificado iOS**
+
+O iOS só permite o deploy se existir um certificado válido instalado na máquina para assinar o código fonte.
+[Code Signing](https://developer.apple.com/support/code-signing/)
+
+Em caso de erro na assinatura do código, será necessário abrir o projeto diretamente (disponivel em src/ios/nome_do_projeto.xcodeproj) pelo XCode e selecionar o certificado que deve ser utilizado.
+
+Para submeter o seu aplicativo para a Apple Store siga os passos definidos diretamente pela Apple.
+[Seus Apps na App Store](http://www.apple.com/br/itunes/working-itunes/sell-content/apps/)

@@ -62,6 +62,7 @@ class Package {
 		request.get(options, function(err, res, data) {
 			if (err) {
 				deferred.reject(err);
+				return;
 			}
 
 			_this.saveEtag(res.headers.etag);
