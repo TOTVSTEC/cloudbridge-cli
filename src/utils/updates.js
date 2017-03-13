@@ -1,14 +1,14 @@
 'use strict';
 
 var Updates = module.exports,
-	request = require('request'),
+	//request = require('request'),
 	semver = require('semver'),
-	Q = require('q'),
+	//Q = require('q'),
 	Info = cb_require('utils/info'),
 	CloudBridgeStore = cb_require('utils/store').CloudBridgeStore,
 	CloudBridgeConfig = new CloudBridgeStore('cloudbridge.config');
 
-
+/*
 Updates.checkLatestVersion = function checkLatestVersion() {
 	cli.latestVersion = Q.defer();
 
@@ -52,6 +52,7 @@ Updates.checkLatestVersion = function checkLatestVersion() {
 
 	return cli.latestVersion.promise;
 };
+*/
 
 Updates.doRuntimeCheck = function doRuntimeCheck(version) {
 	var lastVersionChecked = CloudBridgeConfig.get('lastVersionChecked');

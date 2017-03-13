@@ -35,7 +35,7 @@ Cli.run = function run(processArgv, processCwd) {
 		this.logging.setUpConsoleLoggingHelpers();
 		Cli.attachErrorHandling();
 
-		Updates.checkLatestVersion();
+		//Updates.checkLatestVersion();
 
 		process.on('exit', function() {
 			Cli.printVersionWarning();
