@@ -1,6 +1,6 @@
 'use strict';
 
-var Logging = module.exports,
+let Logging = module.exports,
 	colors = require('colors'),
 	winston = require('winston');
 
@@ -31,7 +31,7 @@ Logging.createLogger = function createLogger(transports, level) {
 
 Logging.createDefaultLogger = function createDefaultLogger(level) {
 	level = level || 'info';
-	var transports = [
+	let transports = [
 		new (winston.transports.Console)({
 			name: 'console',
 			showLevel: false
@@ -41,7 +41,7 @@ Logging.createDefaultLogger = function createDefaultLogger(level) {
 };
 
 Logging.createLoggerWithFile = function createLoggerWithFile(logFilePath, level) {
-	var transports = [
+	let transports = [
 		new (winston.transports.File)({
 			filename: logFilePath,
 			name: 'file'
@@ -51,8 +51,8 @@ Logging.createLoggerWithFile = function createLoggerWithFile(logFilePath, level)
 };
 
 Logging.queryLogs = function queryLogs(searchText, timestamp) {
-	var searchDate = new Date(timestamp) || new Date();
-	var options = {
+	let searchDate = new Date(timestamp) || new Date();
+	let options = {
 		from: new Date() - (24 * 60 * 60 * 1000),
 		until: searchDate,
 		limit: 10,
@@ -88,27 +88,27 @@ Logging.setUpConsoleLoggingHelpers = function setUpConsoleLoggingHelpers() {
 		error: 'red'
 	});
 
-	var consoleInfo = console.info;
+	let consoleInfo = console.info;
 	console.info = function() {
 		if (arguments.length === 1 && !arguments[0])
 			return;
 
-		var msg = '';
-		for (var n in arguments) {
+		let msg = '';
+		for (let n in arguments) {
 			msg += arguments[n] + ' ';
 		}
 
 		consoleInfo.call(console, msg.blue.bold);
 	};
 
-	var consoleError = console.error;
+	let consoleError = console.error;
 	console.error = function() {
 		if (arguments.length === 1 && !arguments[0])
 			return;
 
-		var msg = ' ✗';
+		let msg = ' ✗';
 
-		for (var n in arguments) {
+		for (let n in arguments) {
 			msg += ' ' + arguments[n];
 		}
 
@@ -119,8 +119,8 @@ Logging.setUpConsoleLoggingHelpers = function setUpConsoleLoggingHelpers() {
 		if (arguments.length === 1 && !arguments[0])
 			return;
 
-		var msg = ' ✓';
-		for (var n in arguments) {
+		let msg = ' ✓';
+		for (let n in arguments) {
 			msg += ' ' + arguments[n];
 		}
 

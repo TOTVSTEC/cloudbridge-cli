@@ -34,6 +34,7 @@ class Platform {
 
 		return null;
 	}
+
 }
 
 module.exports = Platform;

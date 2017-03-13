@@ -5,6 +5,7 @@ var AppTask = cb_require('tasks/app-task'),
 	Q = require('q'),
 	path = require('path'),
 	paths = cb_require('utils/paths'),
+	platforms = cb_require('utils/platform'),
 	shelljs = require('shelljs'),
 	AppServer = require('totvs-platform-helper/appserver'),
 	DevStudio = require('totvs-platform-helper/tdscli');
@@ -86,8 +87,10 @@ class AdvplUpdateTask extends AppTask {
 			return promise
 				.then(() => {
 					var filename = path.basename(patch),
-						target = path.join(this.projectDir, 'build', 'windows', 'data', filename);
+						kit = platforms.default,
+						target = path.join(this.projectDir, 'build', kit, 'data', filename);
 
+					shelljs.mkdir('-p', path.dirname(target));
 					shelljs.cp('-Rf', patch, target);
 
 					var options = Object.assign({}, this.tdsOptions, {
