@@ -22,6 +22,10 @@ class RunIosTask extends RunTask {
                 return dev
             })
             .then((targetDevice) => {
+                var cmd = "",
+                    i = 0,
+                    isDbg = 0;
+
                 console.log('\n');
                 console.log('targetDevice', targetDevice);
                 console.log('\n');
@@ -30,7 +34,31 @@ class RunIosTask extends RunTask {
                     throw new Error("No devices found.");
                 }
 
-                return shelljs.exec('ios-deploy -b ' + packagePath + ' -d');
+                for (i = 2; i < argv._.length; i++) {
+                    switch (argv._[i].toUpperCase()) {
+                        case "DEBUG":
+                        case "D":
+                            cmd += " -d";
+                            isDbg = 1;
+                            break;
+
+                        case "ID":
+                            if (argv._.length >= i + 1) {
+                                if (targetDevice.indexOf(argv._[i + 1]) > -1) {
+                                    cmd += " --id " + argv._[i + 1];
+                                    i++;
+                                    break;
+                                }
+                                throw new Error("Device (" + argv._[i + 1] + ") not found.");
+                            }
+                            throw new Error("Invalid command arguments.");
+                    }
+                }
+
+                if (isDbg == 0)
+                    cmd += " --justlaunch";
+
+                return shelljs.exec('ios-deploy -b ' + packagePath + cmd);
             })
     }
 
