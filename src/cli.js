@@ -218,6 +218,9 @@ Cli.processExit = function processExit(code) {
 	if (process.env.NODE_ENV === 'test')
 		return;
 
+	process.exit(code);
+
+	/*
 	if (Cli.cliNews && Cli.cliNews.promise) {
 		Q.all([Cli.latestVersion.promise, Cli.cliNews.promise])
 			.then(function() {
@@ -229,6 +232,7 @@ Cli.processExit = function processExit(code) {
 			process.exit(code);
 		});
 	}
+	*/
 };
 
 Cli.version = function version() {
