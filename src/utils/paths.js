@@ -14,7 +14,7 @@ else if (process.platform == 'linux') {
 }
 else if (process.platform == 'darwin') {
 	appserver = path.join('build', 'osx', 'bin', 'appserver', 'appserver');
-	smartclient = path.join('build', 'osx', 'bin', 'smartclient', 'smartclient');
+	smartclient = path.join('build', 'osx', 'bin', 'smartclient.app', "Contents", "MacOS", 'smartclient');
 }
 
 
