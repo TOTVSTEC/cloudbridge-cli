@@ -65,6 +65,6 @@
     "jasmine": "^2.5.3",
     "jscs": "^3.0.7",
     "plato": "^1.7.0",
-    "totvstec-tools": "^1.0.5"
+    "totvstec-tools": "^1.0.6"
   }
 }
