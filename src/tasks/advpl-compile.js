@@ -78,6 +78,9 @@ class AdvplCompileTask extends AppTask {
 				this.saveBuildInfo(currentFiles);
 
 				return this.appserver.stop();
+			})
+			.catch(() => {
+				return this.appserver.stop();
 			});
 	}
 

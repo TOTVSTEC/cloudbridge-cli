@@ -48,6 +48,9 @@ class RunWindowsTask extends AppTask {
 			})
 			.then(() => {
 				return appserver.stop();
+			})
+			.catch(() => {
+				return appserver.stop();
 			});
 	}
 
