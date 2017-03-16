@@ -58,7 +58,7 @@ ou
 $ cb platform add windows android
 ```
 
-Plataformas disponíveis: windows, android, linux, osx, ios
+Plataformas disponíveis: windows, android, osx, ios
 Necessário adicionar uma plataforma desktop para a compilação AdvPL
 
 
