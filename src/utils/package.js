@@ -75,15 +75,20 @@ class Package {
 			else {
 				try {
 					if (data[0] === undefined) {
+						/*
 						console.error('Error: The request to "' + url + '" returned:');
 						console.error(JSON.stringify(data));
 
 						console.log('x-ratelimit-limit:     ' + res.headers['x-ratelimit-limit']);
 						console.log('x-ratelimit-remaining: ' + res.headers['x-ratelimit-remaining']);
 						console.log('x-ratelimit-reset:     ' + new Date(Number(res.headers['x-ratelimit-reset']) * 1000));
-					}
+						*/
 
-					_this.version = data[0].name.replace(/^[\^~v=\s]+/ig, '');
+						_this.version = _this.readLatestVersionFromGitCli();
+					}
+					else {
+						_this.version = data[0].name.replace(/^[\^~v=\s]+/ig, '');
+					}
 
 					_this.saveVersion();
 
@@ -96,6 +101,20 @@ class Package {
 		});
 
 		return deferred.promise;
+	}
+
+	readLatestVersionFromGitCli() {
+		let cmd = 'git ls-remote --tags --refs https://github.com/' + this.group + '/' + this.name + '.git',
+			result = shelljs.exec(cmd, { silent: true });
+
+		if (result.code !== 0) {
+			throw new Error(result.stderr);
+		}
+
+		let output = result.stdout.replace(/^.+refs\/tags\/v?/igm, '').trim(),
+			versions = output.split(/\s/igm).sort(semver.rcompare);
+
+		return versions[0];
 	}
 
 	getEtag() {
