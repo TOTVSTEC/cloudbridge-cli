@@ -103,3 +103,5 @@ Em caso de erro na assinatura do código, será necessário abrir o projeto dire
 
 Para submeter o seu aplicativo para a Apple Store siga os passos definidos diretamente pela Apple.
 [Seus Apps na App Store](http://www.apple.com/br/itunes/working-itunes/sell-content/apps/)
+
+A lib Cloudbridge está disponível apenas para devices (iPhone/iPad), portanto não é possível gerar uma versão para simulador. Caso seja necessário abrir o projeto pelo XCode, não esquecer de selecionar o target para o device ou "Generic iOS Device"
