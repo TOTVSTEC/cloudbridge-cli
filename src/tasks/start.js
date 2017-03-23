@@ -396,7 +396,7 @@ class StartTask extends Task {
 				fs.writeFileSync(tmpPath, tmpl.html, 'utf8');
 
 				html = html.replace(tmpl.scriptElement, '');
-				html = html.replace(/	\n	\n/g, '');
+				html = html.replace(/\t\n\t\n/g, '');
 			});
 
 		}

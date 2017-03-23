@@ -4,6 +4,8 @@
 [![Coverage Status](https://coveralls.io/repos/github/TOTVSTEC/cloudbridge-cli/badge.svg?branch=master)](https://coveralls.io/github/TOTVSTEC/cloudbridge-cli?branch=master)
 [![Code Climate](https://codeclimate.com/github/TOTVSTEC/cloudbridge-cli/badges/gpa.svg)](https://codeclimate.com/github/TOTVSTEC/cloudbridge-cli)
 
+[![NPM](https://nodei.co/npm/cloudbridge.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/cloudbridge/)
+
 Ferrramenta para linha de comando CloudBridge
 
 ```bash

@@ -1,73 +1,68 @@
 'use strict';
 
 var RunTask = cb_require('tasks/run'),
-    shelljs = require('shelljs'),
-    Q = require('q'),
-    path = require('path');
+	BuildIosTask = require('./build-ios'),
+	shelljs = require('shelljs'),
+	path = require('path');
 
 class RunIosTask extends RunTask {
 
-    run(cloudbridge, argv) {
-        var project = this.project.data(),
-            packagePath = path.join(this.projectDir, 'src', 'ios', 'build', 'Release-iphoneos', project.name + '.app'),
-            opts = {
-                replace: true
-            },
-            target = null,
-            activity = project.id + '/.' + project.name + 'Activity';
+	run(cloudbridge, argv) {
+		var project = this.project.data(),
+			packagePath = path.join(this.projectDir, 'src', 'ios', 'build', 'Release-iphoneos', project.name + '.app');
 
-        return this.build(argv)
-            .then(() => {
-                var dev = shelljs.exec('ios-deploy -c').stdout.replace('[\.\.\.\.] Waiting up to 5 seconds for iOS device to be connected\n', '');
-                return dev
-            })
-            .then((targetDevice) => {
-                var cmd = "",
-                    i = 0,
-                    isDbg = 0;
+		return this.build(argv)
+			.then(() => {
+				let out = shelljs.exec('ios-deploy -c').stdout,
+					device = out.replace('[\.\.\.\.] Waiting up to 5 seconds for iOS device to be connected\n', '');
 
-                console.log('\n');
-                console.log('targetDevice', targetDevice);
-                console.log('\n');
+				return device;
+			})
+			.then((targetDevice) => {
+				var flags = '',
+					debug = false;
 
-                if (targetDevice.length === 0) {
-                    throw new Error("No devices found.");
-                }
+				console.log('\n');
+				console.log('targetDevice', targetDevice);
+				console.log('\n');
 
-                for (i = 2; i < argv._.length; i++) {
-                    switch (argv._[i].toUpperCase()) {
-                        case "DEBUG":
-                        case "D":
-                            cmd += " -d";
-                            isDbg = 1;
-                            break;
+				if (targetDevice.length === 0) {
+					throw new Error('No devices found.');
+				}
 
-                        case "ID":
-                            if (argv._.length >= i + 1) {
-                                if (targetDevice.indexOf(argv._[i + 1]) > -1) {
-                                    cmd += " --id " + argv._[i + 1];
-                                    i++;
-                                    break;
-                                }
-                                throw new Error("Device (" + argv._[i + 1] + ") not found.");
-                            }
-                            throw new Error("Invalid command arguments.");
-                    }
-                }
+				for (let i = 2; i < argv._.length; i++) {
+					switch (argv._[i].toUpperCase()) {
+						case 'DEBUG':
+						case 'D':
+							flags += ' -d';
+							debug = true;
+							break;
 
-                if (isDbg == 0)
-                    cmd += " --justlaunch";
+						case 'ID':
+							if (argv._.length >= i + 1) {
+								if (targetDevice.indexOf(argv._[i + 1]) > -1) {
+									flags += ' --id ' + argv._[i + 1];
+									i++;
+									break;
+								}
+								throw new Error('Device (' + argv._[i + 1] + ') not found.');
+							}
+							throw new Error('Invalid command arguments.');
+					}
+				}
 
-                return shelljs.exec('ios-deploy -b ' + packagePath + cmd);
-            })
-    }
+				if (!debug)
+					flags += ' --justlaunch';
 
-    build(argv) {
-        let BuildIosTask = require('./build-ios'),
-            task = new BuildIosTask();
+				return shelljs.exec('ios-deploy -b ' + packagePath + flags);
+			});
+	}
 
-        return task.run(cli, argv);
-    }
+	build(argv) {
+		let task = new BuildIosTask(this.options);
+
+		return task.run(cli, argv);
+	}
 
 }
 

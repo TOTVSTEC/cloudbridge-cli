@@ -20,7 +20,8 @@ class PlatformUpdateTask extends PlatformTask {
 			platforms = Object.keys(this.project.get('platform') || {});
 
 			if (platforms.length === 0) {
-
+				console.log("No platforms has been added to project.");
+				return Q();
 			}
 		}
 
