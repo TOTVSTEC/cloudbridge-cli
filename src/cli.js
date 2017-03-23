@@ -36,10 +36,11 @@ Cli.run = function run(processArgv, processCwd) {
 		Cli.attachErrorHandling();
 
 		//Updates.checkLatestVersion();
-
-		process.on('exit', function() {
-			Cli.printVersionWarning();
-		});
+		if (process.env.NODE_ENV !== 'test') {
+			process.once('exit', function() {
+				Cli.printVersionWarning();
+			});
+		}
 
 		//Before taking any more steps, lets check their
 		//environment and display any upgrade warnings

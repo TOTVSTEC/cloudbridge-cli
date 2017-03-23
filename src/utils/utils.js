@@ -60,7 +60,7 @@ Utils.createArchive = function(appDirectory, documentRoot) {
 		}
 	});
 
-	zip.on('close', function() {
+	zip.once('close', function() {
 		q.resolve(zipDestination);
 	});
 
@@ -121,16 +121,16 @@ Utils.fetchArchive = function fetchArchive(targetPath, archiveUrl, isGui) {
 
 	var unzipRepo = function unzipRepo(fileName) {
 		var readStream = fs.createReadStream(fileName);
-		readStream.on('error', function(err) {
+		readStream.once('error', function(err) {
 			logging.logger.debug(('unzipRepo readStream: ' + err).error);
 			q.reject(err);
 		});
 
 		var writeStream = unzip.Extract({ path: targetPath });
-		writeStream.on('close', function() {
+		writeStream.once('close', function() {
 			q.resolve();
 		});
-		writeStream.on('error', function(err) {
+		writeStream.once('error', function(err) {
 			logging.logger.debug(('unzipRepo writeStream: ' + err).error);
 			q.reject(err);
 		});
@@ -192,7 +192,10 @@ Utils.fetchArchive = function fetchArchive(targetPath, archiveUrl, isGui) {
 					bar.tick(newPercent - oldPercent);
 					oldPercent = newPercent;
 				}
-			}).on('end', function() {
+			}).once('end', function() {
+				p.removeAllListeners('progress');
+				r.removeAllListeners('response');
+
 				bar.tick(100);
 				console.log();
 			});

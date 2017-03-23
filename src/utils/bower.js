@@ -16,10 +16,10 @@ Bower.install = function install(packages, userOptions, userConfig) {
 
 	bower.commands
 		.install(packages, options, config)
-		.on('end', function(result) {
+		.once('end', function(result) {
 			deferred.resolve(result);
 		})
-		.on('error', function(error) {
+		.once('error', function(error) {
 			deferred.reject(error);
 		});
 
@@ -33,14 +33,14 @@ Bower.uninstall = function install(packages, userOptions, userConfig) {
 
 	bower.commands
 		.uninstall(packages, options, config)
-		.on('end', function(result) {
+		.once('end', function(result) {
 			for (var i = 0; i < packages.length; i++) {
 				shelljs.rm('-rf', path.join(config.directory, packages[i]));
 			}
 
 			deferred.resolve(result);
 		})
-		.on('error', function(error) {
+		.once('error', function(error) {
 			deferred.reject(error);
 		});
 
@@ -56,10 +56,10 @@ Bower.list = function list(userOptions, userConfig) {
 	options.json = true;
 
 	bower.commands.list(options, config)
-		.on('end', function(result) {
+		.once('end', function(result) {
 			deferred.resolve(result);
 		})
-		.on('error', function(error) {
+		.once('error', function(error) {
 			deferred.reject(error);
 		});
 
@@ -71,10 +71,10 @@ Bower.info = function info(packageName, userOptions, userConfig) {
 		config = Bower.getConfig(userConfig);
 
 	bower.commands.info(packageName, null, config)
-		.on('end', function(result) {
+		.once('end', function(result) {
 			deferred.resolve(result);
 		})
-		.on('error', function(error) {
+		.once('error', function(error) {
 			deferred.reject(error);
 		});
 
@@ -107,10 +107,10 @@ Bower.update = function update(packages, userOptions, userConfig) {
 
 	bower.commands
 		.update(packages, options, config)
-		.on('end', function(result) {
+		.once('end', function(result) {
 			deferred.resolve(result);
 		})
-		.on('error', function(error) {
+		.once('error', function(error) {
 			deferred.reject(error);
 		});
 
