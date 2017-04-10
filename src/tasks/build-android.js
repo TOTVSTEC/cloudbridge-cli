@@ -88,6 +88,7 @@ class BuildAndroidTask extends BuildTask {
 		if (!shelljs.test('-d', stagingDir)) {
 			shelljs.mkdir('-p', stagingDir);
 			shelljs.mkdir('-p', webDir);
+			shelljs.mkdir('-p', path.join(webDir, 'bower'));
 
 			//shelljs.cp('-Rf', path.join(androidBuild, 'gradlew'), stagingDir);
 			//shelljs.cp('-Rf', path.join(androidBuild, 'gradlew.bat'), stagingDir);
