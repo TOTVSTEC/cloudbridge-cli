@@ -2,7 +2,7 @@
 
 
 let Q = require('q'),
-	Task = cb_require('tasks/task'),
+	Task = require('./../task'),
 	project = cb_require('project/project'),
 	svu = cb_require('utils/semver');
 

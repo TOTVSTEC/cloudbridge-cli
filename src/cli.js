@@ -7,7 +7,7 @@ var Cli = module.exports,
 	Q = require('q'),
 	Info = cb_require('utils/info'),
 	settings = require(__basedir + '/package.json'),
-	TASKS = cb_require('tasks/task-list'),
+	TASKS = require('./tasks/task-list'),
 	Updates = cb_require('utils/updates');
 
 Cli.utils = cb_require('utils/utils');
@@ -67,7 +67,8 @@ Cli.run = function run(processArgv, processCwd) {
 
 		argv = optimist(processArgv.slice(2)).boolean(booleanOptions).argv;
 
-		var TaskModule = Cli.lookupTask(taskSetting.name);
+		var engine = argv.cordova ? 'cordova' : 'default';
+		var TaskModule = Cli.require_task(taskSetting.name, engine);
 		var taskInstance = new TaskModule({ target: this.cwd });
 		var promise = taskInstance.prepare()
 			.then(() => taskInstance.run(Cli, argv));
@@ -136,9 +137,11 @@ Cli.getBooleanOptionsForTask = function getBooleanOptionsForTask(task) {
 	return booleanOptions;
 };
 
-Cli.lookupTask = function lookupTask(module) {
+Cli.require_task = function require_task(module, engine) {
+	engine = engine || 'default';
+
 	try {
-		var taskModule = cb_require('tasks/' + module);
+		var taskModule = require('./tasks/' + engine + '/' + module);
 		return taskModule;
 	}
 	catch (ex) {

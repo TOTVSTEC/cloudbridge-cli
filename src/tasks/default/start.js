@@ -6,9 +6,9 @@ var fs = require('fs'),
 	inquirer = require('inquirer'),
 	Q = require('q'),
 	Package = cb_require('utils/package'),
-	StartListTask = cb_require('tasks/start-list'),
+	StartListTask = require('./start-list'),
 	CloudBridgeProject = cb_require('project/project'),
-	Task = cb_require('tasks/task');
+	Task = require('./../task');
 
 
 var utils = cli.utils,

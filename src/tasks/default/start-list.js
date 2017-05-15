@@ -3,7 +3,7 @@
 var request = require('request'),
 	_ = require('underscore'),
 	Q = require('q'),
-	Task = cb_require('tasks/task');
+	Task = require('./../task');
 
 class StartListTask extends Task {
 

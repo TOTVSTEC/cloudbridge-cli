@@ -3,7 +3,7 @@
 let
 	Q = require('q'),
 	settings = require(__basedir + '/package.json'),
-	TASKS = cb_require('tasks/task-list');
+	TASKS = require('./tasks/task-list');
 
 class CliHelp {
 
