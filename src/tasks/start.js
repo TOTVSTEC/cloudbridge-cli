@@ -2,7 +2,6 @@
 
 var fs = require('fs'),
 	path = require('path'),
-	request = require('request'),
 	shelljs = require('shelljs'),
 	inquirer = require('inquirer'),
 	Q = require('q'),
@@ -244,17 +243,6 @@ class StartTask extends Task {
 	static fetchSeed(options) {
 		var seedType;
 
-		// Codepen: http://codepen.io/cloudbridge/pen/GpCst
-		if (/\/\/codepen.io\//i.test(options.template)) {
-			seedType = 'codepen';
-			return StartTask.fetchCodepen(options);
-		}
-
-		if (/plnkr.co\//i.test(options.template)) {
-			seedType = 'plnkr';
-			return StartTask.fetchPlnkr(options);
-		}
-
 		// Github URL: http://github.com/myrepo/
 		if (/\/\/github.com\//i.test(options.template)) {
 			seedType = 'github';
@@ -275,134 +263,6 @@ class StartTask extends Task {
 		// CloudBridge Github Repo
 		seedType = 'cloudbridge-template';
 		return StartTask.fetchCloudBridgeStarter(options);
-	}
-
-	static fetchCodepen(options) {
-		var codepenUrl = options.template.split('?')[0].split('#')[0];
-		var wwwPath = path.join(options.targetPath, 'www');
-
-		if (codepenUrl[codepenUrl.length - 1] == '/') {
-			codepenUrl = codepenUrl.substr(0, codepenUrl.length - 1);
-		}
-
-		logging.logger.info('Downloading Codepen: ', codepenUrl.green.bold);
-
-		var qHTML = Q.defer();
-		var qCSS = Q.defer();
-		var qJS = Q.defer();
-
-		var proxy = process.env.PROXY || process.env.http_proxy || null;
-
-		request({ url: codepenUrl + '.html', proxy: proxy }, function(err, res, html) {
-			if (!err && res && res.statusCode === 200) {
-				html = html || '';
-
-				if (html.indexOf('<!DOCTYPE html>') < 0) {
-					html = '<!DOCTYPE html>\n' + html;
-				}
-
-				var content = '	<link href="css/style.css" rel="stylesheet">\n' +
-					'	<script src="js/app.js"></script>\n';
-
-				content += '  </head>';
-
-				html = html.replace(/<\/head>/i, '\n' + content);
-
-				html = StartTask.convertTemplates(html);
-
-				fs.writeFileSync(path.join(wwwPath, 'index.html'), html, 'utf8');
-			}
-			qHTML.resolve();
-		});
-
-		request({ url: codepenUrl + '.css', proxy: proxy }, function(err, res, css) {
-			if (!err && res && res.statusCode === 200) {
-				css = css || '';
-
-				var cssPath = path.join(wwwPath, 'css');
-				if (!fs.existsSync(cssPath)) {
-					fs.mkdirSync(cssPath);
-				}
-				css = css.replace("cursor: url('http://cloudbridgeframework.com/img/finger.png'), auto;", '');
-				fs.writeFileSync(path.join(cssPath, 'style.css'), css, 'utf8');
-			}
-			qCSS.resolve();
-		});
-
-		request({ url: codepenUrl + '.js', proxy: proxy }, function(err, res, js) {
-			if (!err && res && res.statusCode === 200) {
-				js = js || '';
-
-				var jsPath = path.join(wwwPath, 'js');
-				if (!fs.existsSync(jsPath)) {
-					fs.mkdirSync(jsPath);
-				}
-				fs.writeFileSync(path.join(jsPath, 'app.js'), js, 'utf8');
-			}
-			qJS.resolve();
-		});
-
-		return Q.all([qHTML.promise, qCSS.promise, qJS.promise]);
-	}
-
-	static convertTemplates(html, targetPath) {
-		var templates = [];
-		// var self = this;
-
-		try {
-			var scripts = html.match(/<script [\s\S]*?<\/script>/gi);
-			scripts.forEach(function(scriptElement) {
-				if (scriptElement.indexOf('text/ng-template') > -1) {
-
-					var lines = scriptElement.split('\n');
-					for (var x = 0; x < lines.length; x++) {
-						try {
-							if (lines[x].substr(0, 6) === '	  ') {
-								lines[x] = lines[x].substr(6);
-							}
-						}
-						catch (lE) { }
-					}
-					var data = lines.join('\n');
-
-					var id = data.match(/ id=["|'](.*?)["|']/i)[0];
-					id = id.replace(/'/g, '"').split('"')[1];
-
-					data = data.replace(/<script [\s\S]*?>/gi, '');
-					data = data.replace(/<\/script>/gi, '');
-					data = data.trim();
-
-					templates.push({
-						path: id,
-						scriptElement: scriptElement,
-						html: data
-					});
-
-				}
-			});
-		}
-		catch (e) { }
-
-		try {
-
-			templates.forEach(function(tmpl) {
-
-				var tmpPath = path.join(targetPath, 'www', path.dirname(tmpl.path));
-				if (!fs.existsSync(tmpPath)) {
-					fs.mkdirSync(tmpPath);
-				}
-
-				tmpPath = path.join(targetPath, 'www', tmpl.path);
-				fs.writeFileSync(tmpPath, tmpl.html, 'utf8');
-
-				html = html.replace(tmpl.scriptElement, '');
-				html = html.replace(/\t\n\t\n/g, '');
-			});
-
-		}
-		catch (e) { }
-
-		return html;
 	}
 
 	static fetchLocalStarter(options) {
@@ -486,66 +346,6 @@ class StartTask extends Task {
 				logging.logger.error('More info available at: \nhttp://cloudbridgeframework.com/getting-started/\nhttps://github.com/totvstec/cloudbridge-cli');
 
 				return utils.fail('');
-			});
-
-		return q.promise;
-	}
-
-	static fetchPlnkr(options) {
-		// var self = this;
-		var q = Q.defer();
-
-		var plnkrUrl = options.template.split('?')[0].split('#')[0];
-
-		var plnkrId = null;
-
-		//Given any of these urls - we need to extract the ID
-		//http://embed.plnkr.co/dFvL8n/preview
-		//http://run.plnkr.co/plunks/dFvL8n/#/tabs/friends
-		//http://api.plnkr.co/plunks/dFvL8n
-
-		// http://embed.plnkr.co/BZrnKPlCJt93orQp58H3/preview
-
-		//To download, we want http://api.plnkr.co/plunks/dFvL8n.zip
-
-		if (plnkrUrl[plnkrUrl.length - 1] == '/') {
-			plnkrUrl = plnkrUrl.substr(0, plnkrUrl.length - 1);
-		}
-
-		var plnkrSplit = plnkrUrl.split('/');
-
-		// api link - need zip on end.
-		if (plnkrUrl.indexOf('embed.plnkr.co') !== -1) {
-			plnkrId = plnkrSplit[3];
-		}
-		else if (plnkrUrl.indexOf('run.plnkr.co') !== -1 || plnkrUrl.indexOf('api.plnkr.co') !== -1) {
-			plnkrId = plnkrSplit[plnkrSplit.length - 1];
-
-			if (plnkrId.indexOf('.zip') !== -1) {
-				plnkrId = plnkrId.replace('.zip', '');
-			}
-		}
-
-		plnkrUrl = ['http://api.plnkr.co/plunks/', plnkrId, '.zip'].join('');
-
-		logging.logger.info('\nDownloading Plnkr url:', plnkrUrl);
-
-		var extractPath = path.join(options.targetPath, 'plnkr');
-
-		utils.fetchArchive(extractPath, plnkrUrl)
-			.then(function() {
-				try {
-					// Move the content of this repo into the www folder
-					var copyDir = [extractPath, '/*'].join('');
-					shelljs.cp('-Rf', copyDir, 'www');
-					// Clean up start template folder
-					shelljs.rm('-rf', extractPath + '/');
-					q.resolve();
-
-				}
-				catch (e) {
-					q.reject(e);
-				}
 			});
 
 		return q.promise;

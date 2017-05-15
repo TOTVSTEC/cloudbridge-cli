@@ -1,7 +1,6 @@
 'use strict';
 
-var //path = require('path'),
-	request = require('request'),
+var request = require('request'),
 	_ = require('underscore'),
 	Q = require('q'),
 	Task = cb_require('tasks/task');
