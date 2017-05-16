@@ -1,7 +1,7 @@
 'use strict';
 
 let Q = require('q'),
-	AppTask = cb_require('tasks/app-task'),
+	AppTask = require('./app-task'),
 	platform = cb_require('utils/platform');
 
 class RunTask extends AppTask {

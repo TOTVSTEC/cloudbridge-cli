@@ -1,8 +1,8 @@
 'use strict';
 
-var BowerTask = cb_require('tasks/bower'),
-	BowerAddTask = cb_require('tasks/bower-add'),
-	BowerRemoveTask = cb_require('tasks/bower-remove');
+var BowerTask = require('./bower'),
+	BowerAddTask = require('./bower-add'),
+	BowerRemoveTask = require('./bower-remove');
 
 class BowerUpdateTask extends BowerTask {
 

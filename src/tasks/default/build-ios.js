@@ -1,12 +1,12 @@
 'use strict';
 
 let path = require('path'),
-	BuildTask = cb_require('tasks/build'),
+	BuildTask = require('./build'),
 	pathUtils = cb_require('utils/paths'),
 	fileUtils = cb_require('utils/file'),
 	shelljs = require('shelljs'),
 	Q = require('q'),
-	AdvplCompileTask = cb_require('tasks/advpl-compile');
+	AdvplCompileTask = require('./advpl-compile');
 
 let RPO_KEY = pathUtils.get('RPO_SRC'),
 	WEB_KEY = pathUtils.get('WEB_SRC'),

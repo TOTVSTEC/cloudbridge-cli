@@ -1,9 +1,9 @@
 'use strict';
 
 var Q = require('q'),
-	Task = require('./../task');
+	AppTaskBase = require('./../app-task-base');
 
-class RunTask extends Task {
+class RunTask extends AppTaskBase {
 
 	run(cloudbridge, argv) {
 		console.log('\nThis is the cloudbridge cordova run task!\n');

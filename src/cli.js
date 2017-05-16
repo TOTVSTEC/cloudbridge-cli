@@ -3,6 +3,7 @@
 var Cli = module.exports,
 	CliHelp = cb_require('help'),
 	path = require('path'),
+	fs = require('fs'),
 	optimist = require('optimist'),
 	Q = require('q'),
 	Info = cb_require('utils/info'),
@@ -67,7 +68,7 @@ Cli.run = function run(processArgv, processCwd) {
 
 		argv = optimist(processArgv.slice(2)).boolean(booleanOptions).argv;
 
-		var engine = argv.cordova ? 'cordova' : 'default';
+		var engine = Cli.getEngine(argv);
 		var TaskModule = Cli.require_task(taskSetting.name, engine);
 		var taskInstance = new TaskModule({ target: this.cwd });
 		var promise = taskInstance.prepare()
@@ -295,6 +296,25 @@ Cli.attachErrorHandling = function attachErrorHandling() {
 		}
 	};
 };
+
+Cli.getEngine = function getEngine(argv) {
+	var engine = 'default',
+		projectFile = path.join(this.cwd, 'cloudbridge.json');
+
+	if (fs.existsSync(projectFile)) {
+		var content = require(projectFile);
+
+		if (content.engine)
+			engine = content.engine;
+	}
+	else {
+		if (argv.cordova)
+			engine = 'cordova';
+	}
+
+	return engine;
+};
+
 
 //Backwards compatability for those commands that havent been
 //converted yet.

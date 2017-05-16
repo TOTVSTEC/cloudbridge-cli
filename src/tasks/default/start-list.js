@@ -3,9 +3,9 @@
 var request = require('request'),
 	_ = require('underscore'),
 	Q = require('q'),
-	Task = require('./../task');
+	TaskBase = require('./../task-base');
 
-class StartListTask extends Task {
+class StartListTask extends TaskBase {
 
 	fetchStarterTemplates() {
 		// console.log('About to fetch template');

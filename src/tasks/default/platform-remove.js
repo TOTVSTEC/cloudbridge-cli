@@ -1,6 +1,6 @@
 'use strict';
 
-var PlatformTask = cb_require('tasks/platform'),
+var PlatformTask = require('./platform'),
 	Package = cb_require('utils/package'),
 	Q = require('q');
 

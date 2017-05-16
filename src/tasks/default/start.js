@@ -8,13 +8,13 @@ var fs = require('fs'),
 	Package = cb_require('utils/package'),
 	StartListTask = require('./start-list'),
 	CloudBridgeProject = cb_require('project/project'),
-	Task = require('./../task');
+	TaskBase = require('./../task-base');
 
 
 var utils = cli.utils,
 	logging = cli.logging;
 
-class StartTask extends Task {
+class StartTask extends TaskBase {
 
 	run(cloudbridge, argv) {
 		if (argv.list || argv.l) {

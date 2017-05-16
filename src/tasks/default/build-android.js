@@ -1,12 +1,12 @@
 'use strict';
 
 let path = require('path'),
-	BuildTask = cb_require('tasks/build'),
+	BuildTask = require('./build'),
 	pathUtils = cb_require('utils/paths'),
 	fileUtils = cb_require('utils/file'),
 	shelljs = require('shelljs'),
 	android = cb_require('kits/android'),
-	AdvplCompileTask = cb_require('tasks/advpl-compile');
+	AdvplCompileTask = require('./advpl-compile');
 
 let ANDROID_KEY = pathUtils.get('ANDROID_SRC'),
 	RPO_KEY = pathUtils.get('RPO_SRC'),

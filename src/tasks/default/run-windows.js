@@ -1,6 +1,6 @@
 'use strict';
 
-var AppTask = cb_require('tasks/run'),
+var AppTask = require('./run'),
 	paths = cb_require('utils/paths'),
 	exec = require('child_process').exec;
 

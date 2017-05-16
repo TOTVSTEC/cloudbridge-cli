@@ -2,21 +2,10 @@
 
 
 let Q = require('q'),
-	Task = require('./../task'),
-	project = cb_require('project/project'),
+	AppTaskBase = require('./../app-task-base'),
 	svu = cb_require('utils/semver');
 
-class AppTask extends Task {
-
-	constructor(options) {
-		super(options);
-
-		this.options = options || {};
-
-		this.projectDir = this.options.target || process.cwd();
-
-		this.__project = null;
-	}
+class AppTask extends AppTaskBase {
 
 	prepare() {
 		return Q()
@@ -71,8 +60,8 @@ class AppTask extends Task {
 			console.log('Updating your project to v2');
 			console.log(' - Uninstaling ' + 'totvs-twebchannel'.bold);
 
-			let BowerAddTask = cb_require('tasks/bower-add'),
-				BowerRemoveTask = cb_require('tasks/bower-remove'),
+			let BowerAddTask = require('./bower-add'),
+				BowerRemoveTask = require('./bower-remove'),
 				taskOptions = Object.assign({}, this.options, { silent: false }),
 				removeTask = new BowerRemoveTask(taskOptions),
 				addTask = new BowerAddTask(taskOptions),
@@ -87,15 +76,6 @@ class AppTask extends Task {
 				});
 		}
 
-	}
-
-
-	get project() {
-		if (this.__project == null) {
-			this.__project = project.load(this.projectDir);
-		}
-
-		return this.__project;
 	}
 
 }

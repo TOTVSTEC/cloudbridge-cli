@@ -1,6 +1,6 @@
 'use strict';
 
-var AppTask = cb_require('tasks/app-task'),
+var AppTask = require('./app-task'),
 	path = require('path'),
 	platforms = cb_require('utils/platform'),
 	utils = cli.utils;

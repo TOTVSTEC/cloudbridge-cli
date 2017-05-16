@@ -1,6 +1,6 @@
 'use strict';
 
-let AppTask = cb_require('tasks/app-task'),
+let AppTask = require('./app-task'),
 	fileUtils = cb_require('utils/file'),
 	pathUtils = cb_require('utils/paths'),
 	path = require('path'),

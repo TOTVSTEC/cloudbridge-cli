@@ -1,6 +1,6 @@
 'use strict';
 
-var BowerTask = cb_require('tasks/bower'),
+var BowerTask = require('./bower'),
 	path = require('path'),
 	bower = cb_require('utils/bower'),
 	Q = require('q');

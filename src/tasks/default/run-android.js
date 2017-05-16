@@ -1,6 +1,6 @@
 'use strict';
 
-var RunTask = cb_require('tasks/run'),
+var RunTask = require('./run'),
 	android = cb_require('kits/android'),
 	adb = android.adb,
 	checker = android.checker,

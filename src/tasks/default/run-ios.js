@@ -1,6 +1,6 @@
 'use strict';
 
-var RunTask = cb_require('tasks/run'),
+var RunTask = require('./run'),
 	BuildIosTask = require('./build-ios'),
 	shelljs = require('shelljs'),
 	path = require('path');

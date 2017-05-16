@@ -1,6 +1,6 @@
 'use strict';
 
-var CheckTask = cb_require('tasks/check'),
+var CheckTask = require('./check'),
 	android = cb_require('kits/android'),
 	Info = cb_require('utils/info'),
 	utils = cli.utils;

@@ -1,6 +1,6 @@
 'use strict';
 
-var AppTask = cb_require('tasks/app-task'),
+var AppTask = require('./app-task'),
 	Package = cb_require('utils/package'),
 	bower = cb_require('utils/bower'),
 	svu = cb_require('utils/semver'),
@@ -8,9 +8,9 @@ var AppTask = cb_require('tasks/app-task'),
 	_s = require('underscore.string'),
 	Q = require('q');
 
-var BowerUpdateTask = cb_require('tasks/bower-update'),
-	PlatformUpdateTask = cb_require('tasks/platform-update'),
-	AdvplUpdateTask = cb_require('tasks/advpl-update');
+var BowerUpdateTask = require('./bower-update'),
+	PlatformUpdateTask = require('./platform-update'),
+	AdvplUpdateTask = require('./advpl-update');
 
 let taskOptions = { silent: false, save: false };
 

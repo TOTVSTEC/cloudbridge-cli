@@ -1,9 +1,9 @@
 'use strict';
 
-var Task = cb_require('tasks/task'),
+var TaskBase = require('./../task-base'),
 	utils = cli.utils;
 
-class CheckTask extends Task {
+class CheckTask extends TaskBase {
 
 	run(cloudbridge, argv) {
 		try {

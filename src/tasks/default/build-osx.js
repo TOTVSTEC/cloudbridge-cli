@@ -1,7 +1,7 @@
 'use strict';
 
-let AppTask = cb_require('tasks/app-task'),
-	AdvplCompileTask = cb_require('tasks/advpl-compile');
+let AppTask = require('./app-task'),
+	AdvplCompileTask = require('./advpl-compile');
 
 class BuildOSxTask extends AppTask {
 

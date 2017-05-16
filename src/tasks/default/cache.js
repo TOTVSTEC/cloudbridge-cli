@@ -1,11 +1,11 @@
 'use strict';
 
-var Task = cb_require('tasks/task'),
-	path = require('path'),
+var path = require('path'),
 	shelljs = require('shelljs'),
-	Q = require('q');
+	Q = require('q'),
+	TaskBase = require('./../task-base');
 
-class CacheTask extends Task {
+class CacheTask extends TaskBase {
 
 	run(cloudbridge, argv) {
 		var isList = ((argv._.indexOf('list') !== -1) || (argv._.indexOf('ls') !== -1));
