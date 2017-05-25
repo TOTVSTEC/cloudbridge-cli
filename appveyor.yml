@@ -1,10 +1,13 @@
 build: off
 
 install:
+  - node --version
+  - npm --version
   - ps: Install-Product node 7.4.0 x64
   - npm install -g npm --silent
-  - npm install -g gulp mocha --silent
+  - node --version
+  - npm --version
 
 test_script:
   - npm install
-  - npm run test-travis
+  - npm run test
