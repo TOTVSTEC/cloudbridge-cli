@@ -1,0 +1,8 @@
+install:
+  - ps: Install-Product node 7.4.0 x64
+  - npm install -g npm --silent
+  - npm install -g gulp mocha --silent
+
+test_script:
+  - npm install
+  - npm run test-travis
