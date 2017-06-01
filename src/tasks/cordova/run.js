@@ -13,8 +13,13 @@ class RunTask extends AppTaskBase {
 			console.error('Invalid platform: ' + argv._[1]);
 			return;
 		}
+		let BuildTask = require('./build'),
+			task = new BuildTask(this.options);
 
-		shelljs.exec("cordova run " + target);
+		return task.run(cloudbridge, argv)
+			.then(() => {
+				return shelljs.exec("cordova run " + target);
+			});
 	}
 
 	getPlatform(target) {

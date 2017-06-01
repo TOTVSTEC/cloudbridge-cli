@@ -53,6 +53,9 @@ class BuildAndroidTask extends BuildTask {
 				if (!modified)
 					return;
 
+				if (argv._[0] == "run")
+					return;
+
 				return this.build()
 					.then(() => {
 						return this.finish();
