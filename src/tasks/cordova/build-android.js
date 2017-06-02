@@ -93,6 +93,9 @@ class BuildAndroidTask extends BuildTask {
 	}
 
 	build() { // deixa o cordova realizar o build do projeto
+		if (!process.env._JAVA_OPTIONS) {
+			process.env['_JAVA_OPTIONS'] = '-Xmx256m';
+		}
 		var retCode = shelljs.exec("cordova build android").code;
 		if (retCode != 0) {
 			throw new Error("Error building Cloudbridge cordova-like project");
