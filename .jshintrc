@@ -1,12 +1,10 @@
 {
 	"node": true,
 	"esversion": 6,
-
 	"eqeqeq": false,
 	"eqnull": true,
 	"sub": true,
 	"jasmine": true,
-
 	"globals": {
 		"cb_require": true,
 		"__basedir": true,
