@@ -7,9 +7,6 @@ let path = require('path'),
 	shelljs = require('shelljs'),
 	AdvplCompileTask = require('../default/advpl-compile');
 
-// let ANDROID_KEY = pathUtils.get('ANDROID_SRC'),
-// 	RPO_KEY = pathUtils.get('RPO_SRC'),
-// 	WEB_KEY = pathUtils.get('WEB_SRC'),
 let BOWER_KEY = path.join('build', 'bower'),
 	ANDROID_SRC,
 	RPO_SRC,
@@ -30,6 +27,7 @@ class BuildAndroidTask extends BuildTask {
 			task,
 			promise,
 			noADVPL = false;
+
 		try {
 			task = new AdvplCompileTask(this.options);
 		}
@@ -38,9 +36,11 @@ class BuildAndroidTask extends BuildTask {
 			console.warn("\x1b[33mNao e possivel compilar fontes ADVPL sem uma plataforma de SO compativel (Windows/Mac)\nSe for necessario compilar programas ADVPL, favor adicionar a plataforma correspondente ao seu sistema (platform add windows/mac)\nIsso é apenas um aviso, os outros arquivos (JS, native) serao compilados normalmente.\x1b[0m");
 			promise = Q();
 		}
+
 		if (!noADVPL) {
 			promise = task.run(cloudbridge, argv);
 		}
+
 		return promise
 			.then(() => {
 				if (forceClean)
@@ -73,7 +73,10 @@ class BuildAndroidTask extends BuildTask {
 		return false;
 	}
 
-	clean() { // limpa o projeto para "rebuild"
+	/**
+	 * Limpa o projeto para "rebuild"
+	 */
+	clean() {
 		var androidKitDir = path.join(this.projectDir, "platforms", "android"),
 			androidBuildDir = path.join(androidKitDir, "build");
 
@@ -86,25 +89,35 @@ class BuildAndroidTask extends BuildTask {
 		return Q();
 	}
 
-	prepare() { // deixa tudo nas pastas corretas para realizar o build
+	/**
+	 * Deixa tudo nas pastas corretas para realizar o build
+	 */
+	prepare() {
 		shelljs.cp("-f", path.join(this.projectDir, "src", "apo", "tttp110.rpo"), path.join("platforms", "android", "assets"));
 		fileUtils.savePlatformVersion(this.projectDir, 'android');
 		return true;
 	}
 
-	build() { // deixa o cordova realizar o build do projeto
+	/**
+	 * Deixa o cordova realizar o build do projeto
+	 */
+	build() {
 		if (!process.env._JAVA_OPTIONS) {
 			process.env['_JAVA_OPTIONS'] = '-Xmx256m';
 		}
 		var retCode = shelljs.exec("cordova build android").code;
-		if (retCode != 0) {
+		if (retCode !== 0) {
 			throw new Error("Error building Cloudbridge cordova-like project");
 		}
 		return Q();
 	}
 
-	finish() { // Se necessário fazer algo após o build, no caso apenas mostra uma mensagem
+	/**
+	 * Se necessário fazer algo após o build, no caso apenas mostra uma mensagem
+	 */
+	finish() {
 		var project = this.project.data();
+
 		console.log("\x1b[32mProjeto " + project.name + " compilado com sucesso\x1b[0m");
 		console.log("Utilize o comando Run para realizar o deploy para o device (cb run android)");
 	}

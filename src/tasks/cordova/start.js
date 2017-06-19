@@ -114,9 +114,11 @@ class StartTask extends TaskBase {
 		if (typeof options.targetPath == 'undefined' || options.targetPath == '.') {
 			throw new Error('Invalid target path, you may not specify \'.\' as an app name');
 		}
-		if (shelljs.exec("cordova create " + options.targetPath).code != 0) {
+
+		if (shelljs.exec("cordova create " + options.targetPath).code !== 0) {
 			throw new Error("Make sure cordova is installed (npm install -g cordova).");
 		}
+
 		shelljs.mkdir('-p', options.targetPath);
 
 		var createMessage = ['Creating CloudBridge Cordova-like app in folder ', options.targetPath, ' based on ', options.template.bold, ' project'].join('');

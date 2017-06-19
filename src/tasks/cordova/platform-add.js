@@ -2,9 +2,7 @@
 
 var PlatformTask = require('./platform'),
 	Package = cb_require('utils/package'),
-	Q = require('q'),
-	path = require('path'),
-	shelljs = require('shelljs');
+	Q = require('q');
 
 class PlatformAddTask extends PlatformTask {
 
