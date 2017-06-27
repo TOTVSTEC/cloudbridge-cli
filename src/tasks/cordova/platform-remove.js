@@ -17,10 +17,19 @@ class PlatformRemoveTask extends PlatformTask {
 		var projectData = this.project.data();
 
 		return platforms.reduce(function(promise, platform, index) {
-			var options = {
-				platform: platform,
-				package: 'cloudbridge-kit-' + platform
-			};
+			var options;
+			if (platform == "android" || platform == "ios") {
+				options = {
+					platform: platform,
+					package: 'cloudbridge-kit-' + platform + '-cdv'
+				};
+			}
+			else {
+				options = {
+					platform: platform,
+					package: 'cloudbridge-kit-' + platform
+				};
+			}
 
 			var pack = new Package(options.package);
 
