@@ -35,7 +35,10 @@ Para iOS
 
 
 ### **Iniciando um projeto**
+Existem 2 tipos de projeto, FatClient e Cordova based.
 
+FatClient
+O projeto FatClient utiliza o SmartClient (baseado em Qt) para controlar o dispositivo
 ```bash
 $ cb start MyApp -t showcase
 ```
@@ -46,6 +49,20 @@ Após a criação, não esquecer de entrar no diretório do projeto
 ```bash
 $ cd MyApp
 ```
+
+Cordova based
+O projeto Cordova utiliza apenas o AppServer (para ADVPL). A Interface é toda construída compatível com o Cordova (https://cordova.apache.org/), podendo utilizar os plugins já disponíveis.
+Antes de começar é necessário ter o NPM do cordova já disponível (npm install -g cordova)
+```bash
+$ cb start MyApp --cordova
+```
+
+Após a criação, não esquecer de entrar no diretório do projeto
+
+```bash
+$ cd MyApp
+```
+
 
 
 ### **Adicionar plataformas de desenvolvimento**
@@ -75,13 +92,18 @@ $ cb build android
 $ cb run android
 ```
 
-### **Adicionar componentes bower**
+### **Adicionar componentes bower** (apenas FatClient)
 
 ```bash
 $ cb bower add jquery
 $ cb bower add angular#1.2.0
 $ cb bower remove jquery
 ```
+
+### **Plugins** (apenas Cordova based)
+A utilização de plugins do projeto Cordova deve seguir as mesmas diretrizes já existentes:
+https://cordova.apache.org/plugins/
+
 
 ### **Documentação**
 
@@ -102,7 +124,7 @@ Resumidamente siga os seguintes passos:
 O iOS só permite o deploy se existir um certificado válido instalado na máquina para assinar o código fonte.
 [Code Signing](https://developer.apple.com/support/code-signing/)
 
-Em caso de erro na assinatura do código, será necessário abrir o projeto diretamente (disponivel em src/ios/nome_do_projeto.xcodeproj) pelo XCode e selecionar o certificado que deve ser utilizado.
+Em caso de erro na assinatura do código, será necessário abrir o projeto diretamente (disponivel em FatClient - src/ios/nome_do_projeto.xcodeproj Cordova - platform/ios/HelloCordova.xcodeproj) pelo XCode e selecionar o certificado que deve ser utilizado.
 
 Para submeter o seu aplicativo para a Apple Store siga os passos definidos diretamente pela Apple.
 [Seus Apps na App Store](http://www.apple.com/br/itunes/working-itunes/sell-content/apps/)
