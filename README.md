@@ -37,7 +37,7 @@ Para iOS
 ### **Iniciando um projeto**
 Existem 2 tipos de projeto, FatClient e Cordova based.
 
-FatClient
+### **FatClient**
 O projeto FatClient utiliza o SmartClient (baseado em Qt) para controlar o dispositivo
 ```bash
 $ cb start MyApp -t showcase
@@ -50,7 +50,7 @@ Após a criação, não esquecer de entrar no diretório do projeto
 $ cd MyApp
 ```
 
-Cordova based
+### **Cordova based**
 O projeto Cordova utiliza apenas o AppServer (para ADVPL). A Interface é toda construída compatível com o Cordova (https://cordova.apache.org/), podendo utilizar os plugins já disponíveis.
 Antes de começar é necessário ter o NPM do cordova já disponível (npm install -g cordova)
 ```bash
