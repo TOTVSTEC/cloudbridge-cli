@@ -157,7 +157,7 @@ class BuildIosTask extends BuildTask {
 		// 	stagingDir = path.join(androidKitDir, 'staging');
 		var xcodeprojDir = path.join(this.projectDir, 'src', 'ios', this.project.data().name + '.xcodeproj');
 
-		shelljs.exec('/usr/bin/xcodebuild -project ' + xcodeprojDir);
+		shelljs.exec('/usr/bin/xcodebuild -configuration Release -project ' + xcodeprojDir);
 		return Q();
 	}
 
