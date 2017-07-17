@@ -161,7 +161,11 @@ class BuildAndroidTask extends BuildTask {
 	build() {
 		var androidKitDir = path.join(this.projectDir, 'build', 'android'),
 			stagingDir = path.join(androidKitDir, 'staging');
-
+		
+		if (!process.env._JAVA_OPTIONS) {
+			process.env['_JAVA_OPTIONS'] = '-Xmx256m';
+		}
+		
 		return android.build(androidKitDir, stagingDir);
 	}
 
