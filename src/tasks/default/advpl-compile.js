@@ -67,8 +67,17 @@ class AdvplCompileTask extends AppTask {
 				this.tdsOptions.build = this.appserver.build;
 			})
 			.then(() => {
-				if (removeFiles.length > 0)
-					return this.remove(removeFiles);
+				let deferred = Q.defer();
+				if (removeFiles.length > 0) {
+					this.remove(removeFiles)
+						.then(() => {
+							deferred.resolve();
+						})
+						.catch((err) => {
+							deferred.resolve();
+						});
+				}
+				return deferred.promise;
 			})
 			.then(() => {
 				if (compileFiles.length > 0)
@@ -79,8 +88,10 @@ class AdvplCompileTask extends AppTask {
 
 				return this.appserver.stop();
 			})
-			.catch(() => {
-				return this.appserver.stop();
+			.catch((err) => {
+				this.appserver.stop();
+				var err = new Error("Failed do compile ADVPL");
+				throw err;
 			});
 	}
 
