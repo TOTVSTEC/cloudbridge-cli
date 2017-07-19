@@ -67,8 +67,9 @@ class AdvplCompileTask extends AppTask {
 				this.tdsOptions.build = this.appserver.build;
 			})
 			.then(() => {
-				let deferred = Q.defer();
+
 				if (removeFiles.length > 0) {
+					let deferred = Q.defer();
 					this.remove(removeFiles)
 						.then(() => {
 							deferred.resolve();
@@ -76,8 +77,8 @@ class AdvplCompileTask extends AppTask {
 						.catch((err) => {
 							deferred.resolve();
 						});
+					return deferred.promise;
 				}
-				return deferred.promise;
 			})
 			.then(() => {
 				if (compileFiles.length > 0)

@@ -7,6 +7,7 @@ let Q = require('q'),
 	spawn = cb_require('utils/spawn'),
 	checker = require('./android/checker'),
 	adb = require('./android/adb'),
+	os = require('os'),
 	fs = require('fs');
 
 class Android {
@@ -22,7 +23,8 @@ class Android {
 	static build(gradleDir, projectDir) {
 		var args = getGradlewArgs();
 		let grad = path.join(gradleDir, args[0]);
-		fs.chmodSync(grad, '755');
+		if (os.platform == "linux")
+			fs.chmodSync(grad, '755');
 		args.push('build');
 		args.push('--project-dir=' + projectDir);
 		args.push('--console=rich');
@@ -55,7 +57,8 @@ class Android {
 	static stopGradleDaemon(targetDir) {
 		let args = getGradlewArgs();
 		let grad = path.join(targetDir, args[0]);
-		fs.chmodSync(grad, '755');
+		if (os.platform == "linux")
+			fs.chmodSync(grad, '755');
 		args.push('--stop');
 
 		return exec(args, targetDir);
@@ -64,7 +67,8 @@ class Android {
 	static startGradleDaemon(targetDir) {
 		let args = getGradlewArgs();
 		let grad = path.join(targetDir, args[0]);
-		fs.chmodSync(grad, '755');
+		if (os.platform == "linux")
+			fs.chmodSync(grad, '755');
 		args.push('--daemon');
 		args.push('--exclude-task=help');
 		args.push('-Dorg.gradle.daemon=true');
