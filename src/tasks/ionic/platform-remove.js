@@ -21,7 +21,7 @@ class PlatformRemoveTask extends PlatformTask {
 			if (platform == "android" || platform == "ios") {
 				options = {
 					platform: platform,
-					package: 'cloudbridge-kit-' + platform + '-cdv'
+					package: 'cloudbridge-kit-' + platform + '-ionic'
 				};
 			}
 			else {

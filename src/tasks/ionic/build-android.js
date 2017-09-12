@@ -101,6 +101,12 @@ class BuildAndroidTask extends BuildTask {
 		shelljs.cp("-r", path.join(this.projectDir, "src", "img"), path.join(this.projectDir, "www"))
 
 		fileUtils.savePlatformVersion(this.projectDir, 'android');
+
+		// Tema do THF
+		if (shelljs.exec("npm install --save @totvs/mobile-theme").code !== 0) {
+			throw new Error("Make sure ionic and cordova are installed (npm install -g cordova ionic).");
+		}
+
 		return true;
 	}
 

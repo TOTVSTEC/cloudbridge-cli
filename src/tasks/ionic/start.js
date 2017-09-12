@@ -119,11 +119,6 @@ class StartTask extends TaskBase {
 			throw new Error("Make sure ionic and cordova are installed (npm install -g cordova ionic).");
 		}
 
-		// Tema do THF
-		if (shelljs.exec("npm install --save @totvs/mobile-theme").code !== 0) {
-			throw new Error("Make sure ionic and cordova are installed (npm install -g cordova ionic).");
-		}
-
 		shelljs.mkdir('-p', options.targetPath);
 
 		var createMessage = ['Creating CloudBridge Ionic-like app in folder ', options.targetPath, ' based on ', options.template.bold, ' project'].join('');
