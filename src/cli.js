@@ -310,6 +310,8 @@ Cli.getEngine = function getEngine(argv) {
 	else {
 		if (argv.cordova)
 			engine = 'cordova';
+		else if (argv.ionic)
+			engine = 'ionic';
 	}
 
 	return engine;
