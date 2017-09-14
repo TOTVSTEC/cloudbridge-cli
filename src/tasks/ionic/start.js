@@ -7,7 +7,8 @@ var path = require('path'),
 	inquirer = require('inquirer'),
 	TaskBase = require('./../task-base'),
 	Package = cb_require('utils/package'),
-	CloudBridgeProject = cb_require('project/project');
+	CloudBridgeProject = cb_require('project/project'),
+	child_process = require('child_process');
 
 var utils = cli.utils,
 	logging = cli.logging;
@@ -115,8 +116,11 @@ class StartTask extends TaskBase {
 			throw new Error('Invalid target path, you may not specify \'.\' as an app name');
 		}
 
-		if (shelljs.exec("ionic start " + options.targetPath + " blank").code !== 0) {
-			throw new Error("Make sure ionic and cordova are installed (npm install -g cordova ionic).");
+		try {
+			child_process.execSync("ionic start " + options.targetPath + " blank", { stdio: [0, 1, 2] })
+		}
+		catch (e) {
+			throw e;
 		}
 
 		shelljs.mkdir('-p', options.targetPath);

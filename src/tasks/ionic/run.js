@@ -2,6 +2,7 @@
 
 var platform = cb_require('utils/platform'),
 	AppTaskBase = require('./../app-task-base'),
+	child_process = require('child_process'),
 	shelljs = require('shelljs');
 
 class RunTask extends AppTaskBase {
@@ -21,7 +22,13 @@ class RunTask extends AppTaskBase {
 				if (target == "android" && !process.env._JAVA_OPTIONS) {
 					process.env['_JAVA_OPTIONS'] = '-Xmx256m';
 				}
-				return shelljs.exec("ionic cordova run " + target);
+				try {
+					child_process.execSync("ionic cordova run " + target, { stdio: [0, 1, 2] })
+				}
+				catch (e) {
+					throw e;
+				}
+				return 0;
 			});
 	}
 

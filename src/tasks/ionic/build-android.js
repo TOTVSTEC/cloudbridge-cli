@@ -5,6 +5,7 @@ let path = require('path'),
 	Q = require('q'),
 	fileUtils = cb_require('utils/file'),
 	shelljs = require('shelljs'),
+	child_process = require('child_process'),
 	AdvplCompileTask = require('../default/advpl-compile');
 
 let BOWER_KEY = path.join('build', 'bower'),
@@ -117,9 +118,11 @@ class BuildAndroidTask extends BuildTask {
 		if (!process.env._JAVA_OPTIONS) {
 			process.env['_JAVA_OPTIONS'] = '-Xmx256m';
 		}
-		var retCode = shelljs.exec("ionic cordova build android").code;
-		if (retCode !== 0) {
-			throw new Error("Error building Cloudbridge ionic-like project");
+		try {
+			child_process.execSync("ionic cordova build android", { stdio: [0, 1, 2] })
+		}
+		catch (e) {
+			throw e;
 		}
 
 		return Q();
