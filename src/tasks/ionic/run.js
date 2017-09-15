@@ -23,7 +23,10 @@ class RunTask extends AppTaskBase {
 					process.env['_JAVA_OPTIONS'] = '-Xmx256m';
 				}
 				try {
-					child_process.execSync("ionic cordova run " + target, { stdio: [0, 1, 2] })
+          if (target == "ios")
+					  child_process.execSync("ionic cordova run " + target + " --device", { stdio: [0, 1, 2] })
+          else
+					  child_process.execSync("ionic cordova run " + target, { stdio: [0, 1, 2] })
 				}
 				catch (e) {
 					throw e;
