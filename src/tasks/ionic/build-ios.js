@@ -85,16 +85,27 @@ class BuildIOSTask extends BuildTask {
 
 	prepare() { // deixa tudo nas pastas corretas para realizar o build
 		var project = require(path.join(this.projectDir, 'package.json'));
-		var displayName = project.displayName || "HelloCordova";
+		var displayName = project.displayName || "MyApp";
 		shelljs.cp("-f", path.join(this.projectDir, "src", "apo", "tttp110.rpo"), path.join("platforms", "ios", displayName));
 		fileUtils.savePlatformVersion(this.projectDir, 'ios');
+
+		// copiar os arquivos em src para www
+		shelljs.cp("-r", path.join(this.projectDir, "src", "js"), path.join(this.projectDir, "www"))
+		shelljs.cp("-r", path.join(this.projectDir, "src", "css"), path.join(this.projectDir, "www"))
+		shelljs.cp("-r", path.join(this.projectDir, "src", "img"), path.join(this.projectDir, "www"))
+
+		// Tema do THF
+		if (shelljs.exec("npm install --save @totvs/mobile-theme").code !== 0) {
+			throw new Error("Make sure ionic and cordova are installed (npm install -g cordova ionic).");
+		}
+
 		return true;
 	}
 
 	build() { // deixa o cordova realizar o build do projeto
-		var retCode = shelljs.exec("cordova build ios").code;
+		var retCode = shelljs.exec("ionic cordova build ios --device").code;
 		if (retCode != 0) {
-			throw new Error("Error building Cloudbridge cordova-like project");
+			throw new Error("Error building Cloudbridge ionic-like project");
 		}
 		return Q();
 	}
