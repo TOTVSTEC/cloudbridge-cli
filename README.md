@@ -142,7 +142,7 @@ Resumidamente siga os seguintes passos:
 O iOS só permite o deploy se existir um certificado válido instalado na máquina para assinar o código fonte.
 [Code Signing](https://developer.apple.com/support/code-signing/)
 
-Em caso de erro na assinatura do código, será necessário abrir o projeto diretamente (disponivel em FatClient - src/ios/nome_do_projeto.xcodeproj Cordova - platform/ios/HelloCordova.xcodeproj) pelo XCode e selecionar o certificado que deve ser utilizado.
+Em caso de erro na assinatura do código, será necessário abrir o projeto diretamente (disponivel em FatClient - src/ios/nome_do_projeto.xcodeproj Cordova - platforms/ios/HelloCordova.xcodeproj Ionic - platforms/ios/MyApp.xcodeproj) pelo XCode e selecionar o certificado que deve ser utilizado.
 
 Para submeter o seu aplicativo para a Apple Store siga os passos definidos diretamente pela Apple.
 [Seus Apps na App Store](http://www.apple.com/br/itunes/working-itunes/sell-content/apps/)
