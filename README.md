@@ -35,7 +35,7 @@ Para iOS
 
 
 ### **Iniciando um projeto**
-Existem 2 tipos de projeto, FatClient e Cordova based.
+Existem 3 tipos de projeto, FatClient, Cordova based e Ionic based.
 
 ### **FatClient**
 O projeto FatClient utiliza o SmartClient (baseado em Qt) para controlar o dispositivo
@@ -63,9 +63,28 @@ Após a criação, não esquecer de entrar no diretório do projeto
 $ cd MyApp
 ```
 
+### **Ionic based**
+Assim como com o Cordova, o projeto utiliza apenas o AppServer (para ADVPL). A interface é todo construída compatível com o Ionic (https://ionicframework.com/).
+Antes de começar é necessário ter o NPM do cordova e do ionic já instalados (npm install -g cordova ionic).
+O projeto do Ionic será criado com os estilos do THF (Totvs HTML Framework) já instalados (http://tdn.totvs.com/display/THF/TOTVS+%7C+HTML+Framework).
 
+```bash
+$ cb start MyApp --ionic
+```
+
+Após a criação, não esquecer de entrar no diretório do projeto
+
+```bash
+$ cd MyApp
+```
 
 ### **Adicionar plataformas de desenvolvimento**
+Plataforms disponíveis:
+*Windows
+*Linux
+*OSX
+*Android
+*IOS
 
 ```bash
 $ cb platform add windows
@@ -78,8 +97,7 @@ ou
 $ cb platform add windows android
 ```
 
-Plataformas disponíveis: windows, android, osx, ios
-Necessário adicionar uma plataforma desktop para a compilação AdvPL
+Necessário adicionar uma plataforma desktop para a compilação AdvPL (Windows, Linux ou Mac, dependendo da máquina host)
 
 
 ### **Compilação e execução**
@@ -100,7 +118,7 @@ $ cb bower add angular#1.2.0
 $ cb bower remove jquery
 ```
 
-### **Plugins** (apenas Cordova based)
+### **Plugins** (apenas Cordova e Ionic based)
 A utilização de plugins do projeto Cordova deve seguir as mesmas diretrizes já existentes:
 https://cordova.apache.org/plugins/
 
