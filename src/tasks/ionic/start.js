@@ -117,7 +117,9 @@ class StartTask extends TaskBase {
 		}
 
 		try {
-			child_process.execSync("ionic start " + options.targetPath + " blank --no-git --no-link", { stdio: [0, 1, 2] })
+			child_process.execSync("ionic config set -g backend legacy", { stdio: [0, 1, 2] })
+			child_process.execSync("ionic start --no-git --no-link " + options.targetPath + " blank", { stdio: [0, 1, 2] })
+			child_process.execSync("ionic config set -g backend pro", { stdio: [0, 1, 2] })
 		}
 		catch (e) {
 			throw e;
