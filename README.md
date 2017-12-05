@@ -16,8 +16,8 @@ $ npm install -g cloudbridge
 Pré Requisitos
 - [NodeJS >= 6.0.0](https://nodejs.org/)
 - [Git](https://git-scm.com/)
-- JRE/JDK 1.8 
-- Setar a variável de ambiente JAVA_HOME ou JRE_HOME apontando para o JDK/JRE
+- JDK 1.8 
+- Setar a variável de ambiente JAVA_HOME apontando para o JDK
 
 Para android 
 - [Android SDK](https://developer.android.com/studio/index.html?hl=pt-br#downloads)
