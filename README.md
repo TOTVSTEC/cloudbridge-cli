@@ -53,6 +53,7 @@ $ cd MyApp
 ### **Cordova based**
 O projeto Cordova utiliza apenas o AppServer (para ADVPL). A Interface é toda construída compatível com o Cordova (https://cordova.apache.org/), podendo utilizar os plugins já disponíveis.
 Antes de começar é necessário ter o NPM do cordova já disponível (npm install -g cordova)
+Atenção para a versão do Cordova, sendo necessário utilizar a versão 7.1.0 (npm install -g cordova@7.1.0)
 ```bash
 $ cb start MyApp --cordova
 ```
@@ -66,6 +67,7 @@ $ cd MyApp
 ### **Ionic based**
 Assim como com o Cordova, o projeto utiliza apenas o AppServer (para ADVPL). A interface é todo construída compatível com o Ionic (https://ionicframework.com/).
 Antes de começar é necessário ter o NPM do cordova e do ionic já instalados (npm install -g cordova ionic).
+Atenção para as versões, o IONIC precisa ser a versão 3.16.0 (npm install -g ionic@3.16.0) e cordova versão 7.1.0 (npm istall -g cordova@7.1.0).
 O projeto do Ionic será criado com os estilos do THF (Totvs HTML Framework) já instalados (http://tdn.totvs.com/display/THF/TOTVS+%7C+HTML+Framework).
 
 ```bash
