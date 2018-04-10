@@ -10,7 +10,9 @@ let AppTask = require('./app-task'),
 
 let ADVPL_SRC,
 	ADVPL_INCLUDES,
-	ADVPL_SRC_RELATIVE;
+	ADVPL_SRC_RELATIVE,
+	tds_appre_bkp,
+	iret;
 
 class AdvplCompileTask extends AppTask {
 
@@ -60,6 +62,10 @@ class AdvplCompileTask extends AppTask {
 			return Q();
 		}
 
+		tds_appre_bkp = process.env.TDS_APPRE;
+		delete process.env.TDS_APPRE;
+		console.log("passou aqui");
+
 
 		return this.appserver.start()
 			.then(() => {
@@ -86,10 +92,11 @@ class AdvplCompileTask extends AppTask {
 			})
 			.then(() => {
 				this.saveBuildInfo(currentFiles);
-
+				process.env.TDS_APPRE = tds_appre_bkp;
 				return this.appserver.stop();
 			})
 			.catch((err) => {
+				process.env.TDS_APPRE = tds_appre_bkp;
 				this.appserver.stop();
 				var err = new Error("Failed do compile ADVPL");
 				throw err;
@@ -119,7 +126,6 @@ class AdvplCompileTask extends AppTask {
 			});
 
 			//console.log("COMPILING FILES: " + JSON.stringify(compileFiles, null, 2));
-
 			return this.tds.compile(options);
 		}
 	}
