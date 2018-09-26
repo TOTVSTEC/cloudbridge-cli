@@ -117,11 +117,7 @@ class StartTask extends TaskBase {
 		}
 
 		try {
-			console.log("options", options);
-
 			var backend = JSON.parse(shelljs.exec('ionic config get backend --global --json', { silent: true }).stdout);
-
-			console.log('backend', backend);
 
 			if (backend !== 'legacy') {
 				shelljs.exec('ionic config set backend legacy --global');

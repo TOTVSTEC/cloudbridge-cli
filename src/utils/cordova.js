@@ -2,6 +2,7 @@
 
 let path = require('path'),
 	shelljs = require('shelljs'),
+	semver = require('semver'),
 	xml2js = require('xml-js').xml2js;
 
 
@@ -24,8 +25,9 @@ class Cordova {
 			return (element._attributes.name === 'android');
 		});
 
-		if (android !== null)
-			version = android._attributes.spec;
+		if (android !== null) {
+			version = semver.coerce(android._attributes.spec).version;
+		}
 
 		return version;
 	}
