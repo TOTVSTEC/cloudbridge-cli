@@ -166,7 +166,7 @@ class BuildAndroidTask extends BuildTask {
 			stagingDir = path.join(androidKitDir, 'staging');
 
 		if (!process.env._JAVA_OPTIONS) {
-			process.env['_JAVA_OPTIONS'] = '-Xmx256m';
+			process.env['_JAVA_OPTIONS'] = '-Xmx512m';
 		}
 
 		return android.build(androidKitDir, stagingDir);

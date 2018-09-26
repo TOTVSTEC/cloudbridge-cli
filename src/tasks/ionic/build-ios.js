@@ -90,14 +90,14 @@ class BuildIOSTask extends BuildTask {
 		fileUtils.savePlatformVersion(this.projectDir, 'ios');
 
 		// copiar os arquivos em src para www
-		shelljs.cp("-r", path.join(this.projectDir, "src", "js"), path.join(this.projectDir, "www"))
-		shelljs.cp("-r", path.join(this.projectDir, "src", "css"), path.join(this.projectDir, "www"))
-		shelljs.cp("-r", path.join(this.projectDir, "src", "img"), path.join(this.projectDir, "www"))
+		shelljs.cp("-r", path.join(this.projectDir, "src", "js"), path.join(this.projectDir, "www"));
+		shelljs.cp("-r", path.join(this.projectDir, "src", "css"), path.join(this.projectDir, "www"));
+		shelljs.cp("-r", path.join(this.projectDir, "src", "img"), path.join(this.projectDir, "www"));
 
 		// Tema do THF
-		if (shelljs.exec("npm install --save @totvs/mobile-theme").code !== 0) {
-			throw new Error("Make sure ionic and cordova are installed (npm install -g cordova ionic).");
-		}
+		///if (shelljs.exec("npm install --save @totvs/mobile-theme").code !== 0) {
+		//	throw new Error("Make sure ionic and cordova are installed (npm install -g cordova ionic).");
+		//}
 
 		return true;
 	}

@@ -103,7 +103,7 @@ class BuildAndroidTask extends BuildTask {
 	 */
 	build() {
 		if (!process.env._JAVA_OPTIONS) {
-			process.env['_JAVA_OPTIONS'] = '-Xmx256m';
+			process.env['_JAVA_OPTIONS'] = '-Xmx512m';
 		}
 		var retCode = shelljs.exec("cordova build android").code;
 		if (retCode !== 0) {

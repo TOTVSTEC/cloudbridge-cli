@@ -17,18 +17,13 @@ class PlatformAddTask extends PlatformTask {
 		var projectData = this.project.data();
 
 		return platforms.reduce(function(promise, platform, index) {
-			var options;
-			if (platform == "android" || platform == "ios") {
-				options = {
-					platform: platform,
-					package: 'cloudbridge-kit-' + platform + '-ionic'
-				};
-			}
-			else {
-				options = {
-					platform: platform,
-					package: 'cloudbridge-kit-' + platform
-				};
+			var options = {
+				platform: platform,
+				package: 'cloudbridge-kit-' + platform
+			};
+
+			if ((platform === "android") || (platform === "ios")) {
+				options.package += '-ionic';
 			}
 
 			var pack = new Package(options.package);

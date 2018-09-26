@@ -36,25 +36,26 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "archiver": "^1.3.0",
-    "bower": "^1.8.0",
-    "colors": "^1.1.2",
-    "ejs": "^2.5.6",
-    "inquirer": "^3.0.6",
+    "archiver": "^2.1.1",
+    "bower": "^1.8.4",
+    "colors": "^1.3.1",
+    "ejs": "^2.6.1",
+    "inquirer": "^6.1.0",
     "optimist": "^0.6.1",
-    "progress": "^1.1.8",
-    "q": "^1.4.1",
-    "request": "^2.81.0",
+    "progress": "^2.0.0",
+    "q": "^1.5.1",
+    "request": "^2.88.0",
     "request-progress": "^3.0.0",
-    "semver": "^5.3.0",
-    "shelljs": "^0.7.7",
+    "semver": "^5.5.0",
+    "shelljs": "^0.8.2",
     "totvs-platform-helper": "^1.1.4",
-    "underscore": "^1.8.3",
+    "underscore": "^1.9.1",
     "underscore.string": "^3.3.4",
     "unzip": "^0.1.11",
-    "username": "^2.3.0",
-    "winston": "^2.3.1",
-    "wiredep": "^4.0.0"
+    "username": "^3.0.0",
+    "winston": "^3.0.0",
+    "wiredep": "^4.0.0",
+    "xml-js": "^1.6.8"
   },
   "engines": {
     "node": ">=6.0.0"
@@ -63,11 +64,11 @@
     "registry": "https://registry.npmjs.org/ "
   },
   "devDependencies": {
-    "coveralls": "^2.11.15",
+    "coveralls": "^3.0.2",
     "istanbul": "^0.4.5",
-    "jasmine": "^2.5.3",
+    "jasmine": "^3.2.0",
     "jscs": "^3.0.7",
     "plato": "^1.7.0",
-    "totvstec-tools": "^1.0.6"
+    "totvstec-tools": "^1.0.7"
   }
 }

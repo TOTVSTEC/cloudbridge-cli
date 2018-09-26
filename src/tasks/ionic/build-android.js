@@ -6,6 +6,8 @@ let path = require('path'),
 	fileUtils = cb_require('utils/file'),
 	shelljs = require('shelljs'),
 	child_process = require('child_process'),
+	cordova = cb_require('utils/cordova'),
+	semver = require('semver'),
 	AdvplCompileTask = require('../default/advpl-compile');
 
 let BOWER_KEY = path.join('build', 'bower'),
@@ -94,19 +96,25 @@ class BuildAndroidTask extends BuildTask {
 	 * Deixa tudo nas pastas corretas para realizar o build
 	 */
 	prepare() {
-		shelljs.cp("-f", path.join(this.projectDir, "src", "apo", "tttp110.rpo"), path.join("platforms", "android", "assets"));
+		var targetDir,
+			version = cordova.findCordovaAndroidVersion(this.projectDir);
+
+		if (semver.gte(version, '7.0.0'))
+			targetDir = path.join("platforms", "android", 'app', 'src', 'main', 'assets');
+		else
+			targetDir = path.join("platforms", "android", 'assets');
+
+		shelljs.cp("-f", path.join(this.projectDir, "src", "apo", "tttp110.rpo"), targetDir);
+
+		targetDir = path.join(this.projectDir, "www");
 
 		// copiar os arquivos em src para www
-		shelljs.cp("-r", path.join(this.projectDir, "src", "js"), path.join(this.projectDir, "www"))
-		shelljs.cp("-r", path.join(this.projectDir, "src", "css"), path.join(this.projectDir, "www"))
-		shelljs.cp("-r", path.join(this.projectDir, "src", "img"), path.join(this.projectDir, "www"))
+		shelljs.cp("-r", path.join(this.projectDir, "src", "js"), targetDir);
+		shelljs.cp("-r", path.join(this.projectDir, "src", "css"), targetDir);
+		shelljs.cp("-r", path.join(this.projectDir, "src", "img"), targetDir);
 
 		fileUtils.savePlatformVersion(this.projectDir, 'android');
 
-		// Tema do THF
-		if (shelljs.exec("npm install --save @totvs/mobile-theme").code !== 0) {
-			throw new Error("Make sure ionic and cordova are installed (npm install -g cordova ionic).");
-		}
 
 		return true;
 	}
@@ -116,10 +124,11 @@ class BuildAndroidTask extends BuildTask {
 	 */
 	build() {
 		if (!process.env._JAVA_OPTIONS) {
-			process.env['_JAVA_OPTIONS'] = '-Xmx256m';
+			process.env['_JAVA_OPTIONS'] = '-Xmx512m';
 		}
+
 		try {
-			child_process.execSync("ionic cordova build android", { stdio: [0, 1, 2] })
+			child_process.execSync("ionic cordova build android", { stdio: [0, 1, 2] });
 		}
 		catch (e) {
 			throw e;

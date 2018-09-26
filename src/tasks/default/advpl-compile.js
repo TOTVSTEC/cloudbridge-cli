@@ -64,8 +64,6 @@ class AdvplCompileTask extends AppTask {
 
 		tds_appre_bkp = process.env.TDS_APPRE;
 		delete process.env.TDS_APPRE;
-		console.log("passou aqui");
-
 
 		return this.appserver.start()
 			.then(() => {
@@ -98,8 +96,8 @@ class AdvplCompileTask extends AppTask {
 			.catch((err) => {
 				process.env.TDS_APPRE = tds_appre_bkp;
 				this.appserver.stop();
-				var err = new Error("Failed do compile ADVPL");
-				throw err;
+
+				throw new Error("Failed do compile ADVPL");
 			});
 	}
 

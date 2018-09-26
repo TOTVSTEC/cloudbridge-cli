@@ -6,12 +6,16 @@ let Logging = module.exports,
 
 Logging.winston = winston;
 
-Logging.logger = new winston.Logger({
+let messageFormat = winston.format.printf(function(info) {
+	return info.message;
+});
+
+Logging.logger = winston.createLogger({
 	exitOnError: false,
 	transports: [
 		new (winston.transports.Console)({
 			name: 'console',
-			showLevel: false
+			format: messageFormat
 		})
 	]
 });
@@ -20,7 +24,7 @@ Logging.logger = new winston.Logger({
 Logging.createLogger = function createLogger(transports, level) {
 	level = level || 'info';
 
-	Logging.logger = new winston.Logger({
+	Logging.logger = winston.createLogger({
 		exitOnError: false,
 		level: level,
 		transports: transports
@@ -34,7 +38,7 @@ Logging.createDefaultLogger = function createDefaultLogger(level) {
 	let transports = [
 		new (winston.transports.Console)({
 			name: 'console',
-			showLevel: false
+			format: messageFormat
 		})
 	];
 	return Logging.createLogger(transports, level);

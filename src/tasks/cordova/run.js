@@ -19,7 +19,7 @@ class RunTask extends AppTaskBase {
 		return task.run(cloudbridge, argv)
 			.then(() => {
 				if (target == "android" && !process.env._JAVA_OPTIONS) {
-					process.env['_JAVA_OPTIONS'] = '-Xmx256m';
+					process.env['_JAVA_OPTIONS'] = '-Xmx512m';
 				}
 				return shelljs.exec("cordova run " + target);
 			});

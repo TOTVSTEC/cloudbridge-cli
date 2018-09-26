@@ -117,9 +117,35 @@ class StartTask extends TaskBase {
 		}
 
 		try {
-			child_process.execSync("ionic config set -g backend legacy", { stdio: [0, 1, 2] })
-			child_process.execSync("ionic start --no-git --no-link " + options.targetPath + " blank", { stdio: [0, 1, 2] })
-			child_process.execSync("ionic config set -g backend pro", { stdio: [0, 1, 2] })
+			console.log("options", options);
+
+			var backend = JSON.parse(shelljs.exec('ionic config get backend --global --json', { silent: true }).stdout);
+
+			console.log('backend', backend);
+
+			if (backend !== 'legacy') {
+				shelljs.exec('ionic config set backend legacy --global');
+			}
+
+			var name = options.appDirectory,
+				id = options.packageName;
+
+			child_process.execSync('ionic start ' + name + ' --package-id=' + id + ' blank --no-git --no-link --cordova', {
+				stdio: [0, 1, 2]
+			});
+
+			if (backend !== 'legacy') {
+				shelljs.exec('ionic config set backend ' + backend + ' --global');
+			}
+
+			// Tema do THF
+			var proc = shelljs.exec('npm install --save @totvs/mobile-theme', {
+				cwd: options.targetPath
+			});
+
+			if (proc.code !== 0) {
+				throw new Error(proc.stderr);
+			}
 		}
 		catch (e) {
 			throw e;

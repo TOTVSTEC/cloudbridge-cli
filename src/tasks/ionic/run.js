@@ -1,8 +1,8 @@
 'use strict';
 
 var platform = cb_require('utils/platform'),
+	spawn = cb_require('utils/spawn'),
 	AppTaskBase = require('./../app-task-base'),
-	child_process = require('child_process'),
 	shelljs = require('shelljs');
 
 class RunTask extends AppTaskBase {
@@ -14,24 +14,30 @@ class RunTask extends AppTaskBase {
 			console.error('Invalid platform: ' + argv._[1]);
 			return;
 		}
+
 		let BuildTask = require('./build'),
 			task = new BuildTask(this.options);
 
 		return task.run(cloudbridge, argv)
 			.then(() => {
+				console.log("RUNNING");
+
 				if (target == "android" && !process.env._JAVA_OPTIONS) {
-					process.env['_JAVA_OPTIONS'] = '-Xmx256m';
+					process.env['_JAVA_OPTIONS'] = '-Xmx512m';
 				}
-				try {
-          if (target == "ios")
-					  child_process.execSync("ionic cordova run " + target + " --device", { stdio: [0, 1, 2] })
-          else
-					  child_process.execSync("ionic cordova run " + target, { stdio: [0, 1, 2] })
-				}
-				catch (e) {
-					throw e;
-				}
-				return 0;
+
+				var cmd = shelljs.which('ionic').stdout,
+					args = [
+						'cordova', 'run', target
+					],
+					options = {
+						stdio: 'inherit'
+					};
+
+				if (target == "ios")
+					args.push("--device");
+
+				return spawn(cmd, args, options);
 			});
 	}
 
