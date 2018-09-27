@@ -8,16 +8,16 @@ class Ionic extends Runner {
 
 	static get config() {
 		return {
-			get: this.configGet,
-			set: this.configSet,
-			unset: this.configUnset
+			get: this.configGet.bind(this),
+			set: this.configSet.bind(this),
+			unset: this.configUnset.bind(this)
 		};
 	}
 
 	static get cordova() {
 		return {
-			build: this.buildCordova,
-			run: this.runCordova
+			build: this.buildCordova.bind(this),
+			run: this.runCordova.bind(this)
 		};
 	}
 

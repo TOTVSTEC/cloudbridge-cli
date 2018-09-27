@@ -89,6 +89,7 @@ class BuildAndroidTask extends BuildTask {
 		fileUtils.saveModifiedTime(this.projectDir, WEB_SRC, {});
 		fileUtils.saveModifiedTime(this.projectDir, RPO_SRC, {});
 		fileUtils.saveModifiedTime(this.projectDir, BOWER_KEY, {});
+
 		return Q();
 	}
 
@@ -114,7 +115,6 @@ class BuildAndroidTask extends BuildTask {
 		shelljs.cp("-r", path.join(this.projectDir, "src", "img"), targetDir);
 
 		fileUtils.savePlatformVersion(this.projectDir, 'android');
-
 
 		return true;
 	}

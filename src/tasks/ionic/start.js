@@ -124,8 +124,7 @@ class StartTask extends TaskBase {
 		return Q()
 			.then(() => {
 				var createMessage = [
-					'\n',
-					'Creating CloudBridge Ionic-like app in folder',
+					'\n\tCreating CloudBridge Ionic-like app in folder',
 					options.targetPath,
 					'based on',
 					options.template.bold,
