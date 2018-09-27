@@ -1,9 +1,8 @@
 'use strict';
 
 var platform = cb_require('utils/platform'),
-	spawn = cb_require('utils/spawn'),
-	AppTaskBase = require('./../app-task-base'),
-	shelljs = require('shelljs');
+	ionic = cb_require('utils/ionic'),
+	AppTaskBase = require('./../app-task-base');
 
 class RunTask extends AppTaskBase {
 
@@ -20,24 +19,16 @@ class RunTask extends AppTaskBase {
 
 		return task.run(cloudbridge, argv)
 			.then(() => {
-				console.log("RUNNING");
-
 				if (target == "android" && !process.env._JAVA_OPTIONS) {
 					process.env['_JAVA_OPTIONS'] = '-Xmx512m';
 				}
 
-				var cmd = shelljs.which('ionic').stdout,
-					args = [
-						'cordova', 'run', target
-					],
-					options = {
-						stdio: 'inherit'
-					};
+				var args = [target];
 
 				if (target == "ios")
 					args.push("--device");
 
-				return spawn(cmd, args, options);
+				return ionic.cordova.run(args);
 			});
 	}
 

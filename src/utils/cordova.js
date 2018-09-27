@@ -3,10 +3,10 @@
 let path = require('path'),
 	shelljs = require('shelljs'),
 	semver = require('semver'),
-	xml2js = require('xml-js').xml2js;
+	xml2js = require('xml-js').xml2js,
+	Runner = cb_require('utils/runner');
 
-
-class Cordova {
+class Cordova extends Runner {
 
 	static findCordovaAndroidVersion(projectDir) {
 		var content = shelljs.cat(path.join(projectDir, 'config.xml')),
@@ -33,5 +33,7 @@ class Cordova {
 	}
 
 }
+
+Cordova.init('cordova');
 
 module.exports = Cordova;

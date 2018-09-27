@@ -7,8 +7,9 @@ var path = require('path'),
 	inquirer = require('inquirer'),
 	TaskBase = require('./../task-base'),
 	Package = cb_require('utils/package'),
-	CloudBridgeProject = cb_require('project/project'),
-	child_process = require('child_process');
+	ionic = cb_require('utils/ionic'),
+	npm = cb_require('utils/npm'),
+	CloudBridgeProject = cb_require('project/project');
 
 var utils = cli.utils,
 	logging = cli.logging;
@@ -108,6 +109,10 @@ class StartTask extends TaskBase {
 	}
 
 	static startApp(options) {
+		var name = options.appDirectory,
+			id = options.packageName,
+			backend = ionic.config.get('backend', '--global');
+
 		if (typeof options !== 'object' || typeof options === 'undefined') {
 			throw new Error('You cannot start an app without options');
 		}
@@ -116,62 +121,49 @@ class StartTask extends TaskBase {
 			throw new Error('Invalid target path, you may not specify \'.\' as an app name');
 		}
 
-		try {
-			var backend = JSON.parse(shelljs.exec('ionic config get backend --global --json', { silent: true }).stdout);
+		return Q()
+			.then(() => {
+				var createMessage = [
+					'\n',
+					'Creating CloudBridge Ionic-like app in folder',
+					options.targetPath,
+					'based on',
+					options.template.bold,
+					'project',
+					'\n'
+				].join(' ');
 
-			if (backend !== 'legacy') {
-				shelljs.exec('ionic config set backend legacy --global');
-			}
+				logging.logger.info(createMessage);
 
-			var name = options.appDirectory,
-				id = options.packageName;
+				if (backend !== 'legacy') {
+					ionic.config.set('backend', 'legacy', '--global');
+				}
 
-			child_process.execSync('ionic start ' + name + ' --package-id=' + id + ' blank --no-git --no-link --cordova', {
-				stdio: [0, 1, 2]
-			});
+				return ionic.start(name, 'blank', '--no-git', '--no-link', '--cordova', '--package-id=' + id);
+			})
+			.then(() => {
+				if ((backend !== 'legacy') && (backend !== 'undefined')) {
+					ionic.config.set('backend', backend, '--global');
+				}
 
-			if (backend !== 'legacy') {
-				shelljs.exec('ionic config set backend ' + backend + ' --global');
-			}
-
-			// Tema do THF
-			var proc = shelljs.exec('npm install --save @totvs/mobile-theme', {
-				cwd: options.targetPath
-			});
-
-			if (proc.code !== 0) {
-				throw new Error(proc.stderr);
-			}
-		}
-		catch (e) {
-			throw e;
-		}
-
-		shelljs.mkdir('-p', options.targetPath);
-
-		var createMessage = ['Creating CloudBridge Ionic-like app in folder ', options.targetPath, ' based on ', options.template.bold, ' project'].join('');
-		var errorWithStart = false;
-
-		logging.logger.info(createMessage);
-
-		return StartTask.createProjectFile(options)
-			.then(function() {
+				// Tema do THF
+				return npm.install('@totvs/mobile-theme', '--save', {
+					cwd: options.targetPath
+				});
+			})
+			.then(() => {
+				return StartTask.createProjectFile(options);
+			})
+			.then(() => {
 				return StartTask.fetchWrapper(options);
 			})
-			.catch(function(ex) {
-				errorWithStart = true;
-				throw ex;
-			})
-			.then(function() {
+			.then(() => {
 				return StartTask.finalize(options);
 			})
-			.catch(function(err) {
+			.catch((err) => {
 				logging.logger.error('Error Initializing app: %s', err, {});
-				// throw new Error('Unable to initalize app:')
+
 				throw err;
-			})
-			.fin(function() {
-				return 'Completed successfully';
 			});
 	}
 

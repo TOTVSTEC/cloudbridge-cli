@@ -5,8 +5,8 @@ let path = require('path'),
 	Q = require('q'),
 	fileUtils = cb_require('utils/file'),
 	shelljs = require('shelljs'),
-	child_process = require('child_process'),
 	cordova = cb_require('utils/cordova'),
+	ionic = cb_require('utils/ionic'),
 	semver = require('semver'),
 	AdvplCompileTask = require('../default/advpl-compile');
 
@@ -127,14 +127,7 @@ class BuildAndroidTask extends BuildTask {
 			process.env['_JAVA_OPTIONS'] = '-Xmx512m';
 		}
 
-		try {
-			child_process.execSync("ionic cordova build android", { stdio: [0, 1, 2] });
-		}
-		catch (e) {
-			throw e;
-		}
-
-		return Q();
+		return ionic.cordova.build('android');
 	}
 
 	/**

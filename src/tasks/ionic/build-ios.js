@@ -5,6 +5,7 @@ let path = require('path'),
 	Q = require('q'),
 	fileUtils = cb_require('utils/file'),
 	shelljs = require('shelljs'),
+	ionic = cb_require('utils/ionic'),
 	AdvplCompileTask = require('../default/advpl-compile');
 
 let BOWER_KEY = path.join('build', 'bower'),
@@ -80,6 +81,7 @@ class BuildIOSTask extends BuildTask {
 		fileUtils.saveModifiedTime(this.projectDir, WEB_SRC, {});
 		fileUtils.saveModifiedTime(this.projectDir, RPO_SRC, {});
 		fileUtils.saveModifiedTime(this.projectDir, BOWER_KEY, {});
+
 		return Q();
 	}
 
@@ -94,24 +96,16 @@ class BuildIOSTask extends BuildTask {
 		shelljs.cp("-r", path.join(this.projectDir, "src", "css"), path.join(this.projectDir, "www"));
 		shelljs.cp("-r", path.join(this.projectDir, "src", "img"), path.join(this.projectDir, "www"));
 
-		// Tema do THF
-		///if (shelljs.exec("npm install --save @totvs/mobile-theme").code !== 0) {
-		//	throw new Error("Make sure ionic and cordova are installed (npm install -g cordova ionic).");
-		//}
-
 		return true;
 	}
 
 	build() { // deixa o cordova realizar o build do projeto
-		var retCode = shelljs.exec("ionic cordova build ios --device").code;
-		if (retCode != 0) {
-			throw new Error("Error building Cloudbridge ionic-like project");
-		}
-		return Q();
+		return ionic.cordova.build('ios', '--device');
 	}
 
 	finish() { // Se necessário fazer algo após o build, no caso apenas mostra uma mensagem
 		var project = this.project.data();
+
 		console.log("\x1b[32mProjeto " + project.name + " compilado com sucesso\x1b[0m");
 		console.log("Utilize o comando Run para realizar o deploy para o device (cb run ios)");
 	}
