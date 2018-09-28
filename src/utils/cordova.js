@@ -32,6 +32,24 @@ class Cordova extends Runner {
 		return version;
 	}
 
+	static create() {
+		var { args, options } = this.parseAguments(arguments);
+
+		return this.spawn(['create'].concat(args), options);
+	}
+
+	static build() {
+		var { args, options } = this.parseAguments(arguments);
+
+		return this.spawn(['build'].concat(args), options);
+	}
+
+	static run() {
+		var { args, options } = this.parseAguments(arguments);
+
+		return this.spawn(['run'].concat(args), options);
+	}
+
 }
 
 Cordova.init('cordova');

@@ -7,6 +7,7 @@ var path = require('path'),
 	inquirer = require('inquirer'),
 	TaskBase = require('./../task-base'),
 	Package = cb_require('utils/package'),
+	cordova = cb_require('utils/cordova'),
 	CloudBridgeProject = cb_require('project/project');
 
 var utils = cli.utils,
@@ -115,35 +116,41 @@ class StartTask extends TaskBase {
 			throw new Error('Invalid target path, you may not specify \'.\' as an app name');
 		}
 
-		if (shelljs.exec("cordova create " + options.targetPath).code !== 0) {
-			throw new Error("Make sure cordova is installed (npm install -g cordova).");
-		}
+		//shelljs.mkdir('-p', options.targetPath);
 
-		shelljs.mkdir('-p', options.targetPath);
-
-		var createMessage = ['Creating CloudBridge Cordova-like app in folder ', options.targetPath, ' based on ', options.template.bold, ' project'].join('');
-		var errorWithStart = false;
+		return Q()
+			.then(() => {
+				var createMessage = [
+					'\nCreating CloudBridge Cordova-like app in folder',
+					options.targetPath,
+					'based on',
+					options.template.bold,
+					'project\n'
+				].join(' ');
 
 		logging.logger.info(createMessage);
 
-		return StartTask.createProjectFile(options)
+				var args = [
+					options.targetPath,
+					options.packageName,
+					options.appDirectory
+				];
+
+				return cordova.create(args);
+			})
+			.then(() => {
+				return StartTask.createProjectFile(options);
+			})
 			.then(function() {
 				return StartTask.fetchWrapper(options);
-			})
-			.catch(function(ex) {
-				errorWithStart = true;
-				throw ex;
 			})
 			.then(function() {
 				return StartTask.finalize(options);
 			})
 			.catch(function(err) {
 				logging.logger.error('Error Initializing app: %s', err, {});
-				// throw new Error('Unable to initalize app:')
+
 				throw err;
-			})
-			.fin(function() {
-				return 'Completed successfully';
 			});
 	}
 

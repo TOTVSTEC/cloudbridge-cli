@@ -1,8 +1,8 @@
 'use strict';
 
 var platform = cb_require('utils/platform'),
-	AppTaskBase = require('./../app-task-base'),
-	shelljs = require('shelljs');
+	cordova = cb_require('utils/cordova'),
+	AppTaskBase = require('./../app-task-base');
 
 class RunTask extends AppTaskBase {
 
@@ -21,7 +21,8 @@ class RunTask extends AppTaskBase {
 				if (target == "android" && !process.env._JAVA_OPTIONS) {
 					process.env['_JAVA_OPTIONS'] = '-Xmx512m';
 				}
-				return shelljs.exec("cordova run " + target);
+
+				return cordova.run(target);
 			});
 	}
 

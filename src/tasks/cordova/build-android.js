@@ -4,7 +4,9 @@ let path = require('path'),
 	BuildTask = require('./build'),
 	Q = require('q'),
 	fileUtils = cb_require('utils/file'),
+	semver = require('semver'),
 	shelljs = require('shelljs'),
+	cordova = cb_require('utils/cordova'),
 	AdvplCompileTask = require('../default/advpl-compile');
 
 let BOWER_KEY = path.join('build', 'bower'),
@@ -93,8 +95,19 @@ class BuildAndroidTask extends BuildTask {
 	 * Deixa tudo nas pastas corretas para realizar o build
 	 */
 	prepare() {
-		shelljs.cp("-f", path.join(this.projectDir, "src", "apo", "tttp110.rpo"), path.join("platforms", "android", "assets"));
+		var rpo = path.join(this.projectDir, "src", "apo", "tttp110.rpo"),
+			targetDir,
+			version = cordova.findCordovaAndroidVersion(this.projectDir);
+
+		if (semver.gte(version, '7.0.0'))
+			targetDir = path.join(this.projectDir, "platforms", "android", 'app', 'src', 'main', 'assets');
+		else
+			targetDir = path.join(this.projectDir, "platforms", "android", 'assets');
+
+		shelljs.cp("-f", rpo, targetDir);
+
 		fileUtils.savePlatformVersion(this.projectDir, 'android');
+
 		return true;
 	}
 
@@ -105,11 +118,8 @@ class BuildAndroidTask extends BuildTask {
 		if (!process.env._JAVA_OPTIONS) {
 			process.env['_JAVA_OPTIONS'] = '-Xmx512m';
 		}
-		var retCode = shelljs.exec("cordova build android").code;
-		if (retCode !== 0) {
-			throw new Error("Error building Cloudbridge cordova-like project");
-		}
-		return Q();
+
+		return cordova.build('android');
 	}
 
 	/**
@@ -118,7 +128,7 @@ class BuildAndroidTask extends BuildTask {
 	finish() {
 		var project = this.project.data();
 
-		console.log("\x1b[32mProjeto " + project.name + " compilado com sucesso\x1b[0m");
+		console.log(("Projeto " + project.name + " compilado com sucesso").green);
 		console.log("Utilize o comando Run para realizar o deploy para o device (cb run android)");
 	}
 

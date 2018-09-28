@@ -4,6 +4,7 @@ let path = require('path'),
 	BuildTask = require('./build'),
 	Q = require('q'),
 	fileUtils = cb_require('utils/file'),
+	cordova = cb_require('utils/cordova'),
 	shelljs = require('shelljs'),
 	AdvplCompileTask = require('../default/advpl-compile');
 
@@ -91,17 +92,17 @@ class BuildIOSTask extends BuildTask {
 		return true;
 	}
 
-	build() { // deixa o cordova realizar o build do projeto
-		var retCode = shelljs.exec("cordova build ios").code;
-		if (retCode != 0) {
-			throw new Error("Error building Cloudbridge cordova-like project");
-		}
-		return Q();
+	/**
+	 * Deixa o cordova realizar o build do projeto
+	 */
+	build() {
+		return cordova.build('ios');
 	}
 
 	finish() { // Se necessário fazer algo após o build, no caso apenas mostra uma mensagem
 		var project = this.project.data();
-		console.log("\x1b[32mProjeto " + project.name + " compilado com sucesso\x1b[0m");
+
+		console.log(("Projeto " + project.name + " compilado com sucesso").green);
 		console.log("Utilize o comando Run para realizar o deploy para o device (cb run ios)");
 	}
 

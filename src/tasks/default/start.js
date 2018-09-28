@@ -130,7 +130,6 @@ class StartTask extends TaskBase {
 		shelljs.mkdir('-p', options.targetPath);
 
 		var createMessage = ['Creating CloudBridge app in folder ', options.targetPath, ' based on ', options.template.bold, ' project'].join('');
-		var errorWithStart = false;
 
 		logging.logger.info(createMessage);
 
@@ -141,20 +140,13 @@ class StartTask extends TaskBase {
 			.then(function() {
 				return StartTask.fetchSeed(options);
 			})
-			.catch(function(ex) {
-				errorWithStart = true;
-				throw ex;
-			})
 			.then(function() {
 				return StartTask.finalize(options);
 			})
 			.catch(function(err) {
 				logging.logger.error('Error Initializing app: %s', err, {});
-				// throw new Error('Unable to initalize app:')
+
 				throw err;
-			})
-			.fin(function() {
-				return 'Completed successfully';
 			});
 	}
 
