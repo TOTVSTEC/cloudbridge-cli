@@ -55,10 +55,12 @@ class Android {
 	}
 
 	static stopGradleDaemon(targetDir) {
-		let args = getGradlewArgs();
-		let grad = path.join(targetDir, args[0]);
+		let args = getGradlewArgs(),
+			grad = path.join(targetDir, args[0]);
+
 		if (os.platform == "linux")
 			fs.chmodSync(grad, '755');
+
 		args.push('--stop');
 
 		return exec(args, targetDir);
@@ -87,11 +89,6 @@ class Android {
 	}
 
 }
-
-
-
-
-
 
 
 function getGradlewArgs() {

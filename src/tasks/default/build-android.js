@@ -176,14 +176,16 @@ class BuildAndroidTask extends BuildTask {
 		var project = this.project.data(),
 			buildDir = path.join(this.projectDir, 'build'),
 			apkDir = path.join(buildDir, 'android', 'staging', 'build', 'outputs', 'apk'),
-			files = shelljs.ls(path.join(apkDir, '*.apk'));
+			files = shelljs.ls('-R', apkDir);
 
-		for (var i = 0; i < files.length; i++) {
-			var newName = path.basename(files[i].replace(/staging/igm, project.name)),
-				targetFile = path.join(buildDir, newName);
+		files.forEach((file) => {
+			if (path.extname(file).toLowerCase() === '.apk') {
+				var newName = path.basename(file.replace(/staging/igm, project.name)),
+					targetFile = path.join(buildDir, newName);
 
-			shelljs.mv(files[i], targetFile);
-		}
+				shelljs.mv(path.join(apkDir, file), targetFile);
+			}
+		});
 	}
 
 }
