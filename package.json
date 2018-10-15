@@ -12,8 +12,7 @@
     "release": "totvstec release --npm-publish",
     "release:minor": "totvstec release minor --npm-publish",
     "release:major": "totvstec release major --npm-publish",
-    "test": "npm run test-local && npm run report",
-    "report": "node ./spec/report.js",
+    "test": "npm run test-local",
     "coverage-local": "istanbul cover node_modules/jasmine/bin/jasmine.js",
     "test-local": "jasmine",
     "test-travis": "istanbul cover node_modules/jasmine/bin/jasmine.js && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
@@ -46,11 +45,11 @@
     "q": "^1.5.1",
     "request": "^2.88.0",
     "request-progress": "^3.0.0",
-    "semver": "^5.5.1",
+    "semver": "^5.6.0",
     "shelljs": "^0.8.2",
-    "totvs-platform-helper": "^1.1.4",
+    "totvs-platform-helper": "^2.0.0",
     "underscore": "^1.9.1",
-    "underscore.string": "^3.3.4",
+    "underscore.string": "^3.3.5",
     "unzip": "^0.1.11",
     "username": "^4.0.0",
     "winston": "^3.1.0",
@@ -64,8 +63,6 @@
     "coveralls": "^3.0.2",
     "istanbul": "^0.4.5",
     "jasmine": "^3.2.0",
-    "jscs": "^3.0.7",
-    "plato": "^1.7.0",
     "totvstec-tools": "^1.0.7"
   }
 }

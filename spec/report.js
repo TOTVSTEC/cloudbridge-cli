@@ -1,5 +1,6 @@
 'use strict';
 
+/*
 var plato = require('plato'),
 	path = require('path'),
 	fs = require('fs');
@@ -17,3 +18,4 @@ var __basedir = path.resolve(path.join(__dirname, '..')),
 plato.inspect(src, output, options, function(report) {
 	console.log("Plato report generation finished!");
 });
+*/
