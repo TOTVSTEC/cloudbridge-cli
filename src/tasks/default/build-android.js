@@ -1,11 +1,13 @@
 'use strict';
 
 let path = require('path'),
+	semver = require('semver'),
 	BuildTask = require('./build'),
 	pathUtils = cb_require('utils/paths'),
 	fileUtils = cb_require('utils/file'),
 	shelljs = require('shelljs'),
 	android = cb_require('kits/android'),
+	checker = android.checker,
 	AdvplCompileTask = require('./advpl-compile');
 
 let ANDROID_KEY = pathUtils.get('ANDROID_SRC'),
@@ -32,6 +34,25 @@ class BuildAndroidTask extends BuildTask {
 			promise = task.run(cloudbridge, argv);
 
 		return promise
+			.then(() => {
+				return checker.check_java();
+			})
+			.then((javaVersion) => {
+				var androidKitVersion = semver.coerce((this.project.get('platform') || {}).android),
+					oldKit = semver.lt(androidKitVersion, '0.2.0'),
+					java10 = semver.gte(javaVersion, '10.0.0');
+
+				if ((oldKit) && (java10)) {
+					console.log('');
+					console.log('The cloudbridge platform android v' + androidKitVersion + ' is not compatible with java ' + javaVersion);
+					console.log('Please run ' + (('cloudbrige update').bold) + ' to update the android platform');
+					console.log('');
+
+					throw new Error('Incompatible java and android kit versions.\n');
+				}
+
+				return checker.check_android();
+			})
 			.then(() => {
 				if (forceClean)
 					return this.clean();

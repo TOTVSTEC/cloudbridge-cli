@@ -5,7 +5,7 @@ var shelljs = require('shelljs'),
 	Q = require('q'),
 	path = require('path'),
 	fs = require('fs');
-	//ROOT = path.join(__dirname, '..', '..');
+//ROOT = path.join(__dirname, '..', '..');
 
 var Checker = module.exports;
 var isWindows = process.platform == 'win32';
@@ -23,12 +23,24 @@ function tryCommand(cmd, errMsg, catchStderr) {
 	var d = Q.defer();
 
 	child_process.exec(cmd, function(err, stdout, stderr) {
-		if (err)
+		if (err) {
 			d.reject(new Error(errMsg));
+		}
+		else {
+			let result = '';
 
-		// Sometimes it is necessary to return an stderr instead of stdout in case of success, since
-		// some commands prints theirs output to stderr instead of stdout. 'javac' is the example
-		else d.resolve((catchStderr ? stderr : stdout).trim());
+			stderr = (stderr || '').trim();
+			stdout = (stdout || '').trim();
+
+			if ((catchStderr) && (stderr !== ''))
+				result = stderr;
+			else
+				result = stdout;
+
+			// Sometimes it is necessary to return an stderr instead of stdout in case of success, since
+			// some commands prints theirs output to stderr instead of stdout. 'javac' is the example
+			d.resolve(result);
+		}
 	});
 	return d.promise;
 }
@@ -85,6 +97,7 @@ Checker.check_gradle = function() {
 Checker.check_java = function() {
 	var javacPath = forgivingWhichSync('javac');
 	var hasJavaHome = !!process.env.JAVA_HOME;
+
 	return Q().then(function() {
 		if (hasJavaHome) {
 			// Windows java installer doesn't add javac to PATH, nor set JAVA_HOME (ugh).
@@ -145,6 +158,7 @@ Checker.check_java = function() {
 		return tryCommand('javac -version', msg, true)
 			.then(function(output) {
 				var match = /javac ((?:\d+\.)+(?:\d+))/i.exec(output);
+
 				return match && match[1];
 			});
 	});
