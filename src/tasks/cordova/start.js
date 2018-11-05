@@ -128,7 +128,7 @@ class StartTask extends TaskBase {
 					'project\n'
 				].join(' ');
 
-		logging.logger.info(createMessage);
+				logging.logger.info(createMessage);
 
 				var args = [
 					options.targetPath,
@@ -136,7 +136,7 @@ class StartTask extends TaskBase {
 					options.appDirectory
 				];
 
-				return cordova.create(args);
+				return cordova.create(...args);
 			})
 			.then(() => {
 				return StartTask.createProjectFile(options);

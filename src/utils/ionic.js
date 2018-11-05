@@ -2,7 +2,9 @@
 
 let shelljs = require('shelljs'),
 	semver = require('semver'),
-	Runner = cb_require('utils/runner');
+	Runner = cb_require('utils/runner'),
+	path = require('path'),
+	pathKey = Object.keys(process.env).find((key) => key.toUpperCase() == 'PATH');
 
 class Ionic extends Runner {
 
@@ -22,7 +24,7 @@ class Ionic extends Runner {
 	}
 
 	static start() {
-		var { args, options } = this.parseAguments(arguments);
+		var { args, options } = this.parseAguments(...arguments);
 
 		if (semver.lt(this.version, '4.0.0')) {
 			args = args.map((item) => {
@@ -38,13 +40,13 @@ class Ionic extends Runner {
 	}
 
 	static buildCordova() {
-		var { args, options } = this.parseAguments(arguments);
+		var { args, options } = this.parseAguments(...arguments);
 
 		return this.spawn(['cordova', 'build'].concat(args), options);
 	}
 
 	static runCordova() {
-		var { args, options } = this.parseAguments(arguments);
+		var { args, options } = this.parseAguments(...arguments);
 
 		return this.spawn(['cordova', 'run'].concat(args), options);
 	}
@@ -73,6 +75,27 @@ class Ionic extends Runner {
 		var command = 'ionic config unset ' + Array.prototype.join.call(arguments, ' ');
 
 		shelljs.exec(command, { silent: true, stdio: 'ignore' });
+	}
+
+
+	static parseAguments() {
+		//console.log('arguments', arguments);
+
+		var { args, options } = Runner.parseAguments(...arguments);
+
+		//console.log('args', args);
+		//console.log('options', options);
+
+		if (!options.env) {
+			options.env = Object.assign({}, process.env);
+		}
+
+		options.env[pathKey] = [
+			path.join(process.cwd(), 'node_modules', '.bin'),
+			options.env[pathKey]
+		].join(path.delimiter);
+
+		return { args, options };
 	}
 
 }

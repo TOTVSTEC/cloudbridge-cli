@@ -10,8 +10,8 @@ class Runner {
 		this._name = value;
 	}
 
-	static parseAguments(_args) {
-		var args = _.flatten(Array.prototype.slice.call(_args, 0), true),
+	static parseAguments() {
+		var args = Array.from(arguments),
 			options = {};
 
 		if (args.length > 0) {

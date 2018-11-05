@@ -28,7 +28,7 @@ class RunTask extends AppTaskBase {
 				if (target == "ios")
 					args.push("--device");
 
-				return ionic.cordova.run(args);
+				return ionic.cordova.run(...args);
 			});
 	}
 
