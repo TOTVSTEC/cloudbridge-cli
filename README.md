@@ -1,3 +1,4 @@
+# A plataforma CloudBridge foi descontinuada
 # cloudbridge-cli
 
 [![Build Status](https://travis-ci.org/TOTVSTEC/cloudbridge-cli.svg?branch=master)](https://travis-ci.org/TOTVSTEC/cloudbridge-cli)
